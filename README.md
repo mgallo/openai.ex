@@ -210,7 +210,7 @@ OpenAI.answers(
 See: https://beta.openai.com/docs/api-reference/answers
 
 ## TODO:
-[] integrate file apis
+- [ ] integrate file apis
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
