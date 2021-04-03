@@ -9,7 +9,8 @@ defmodule Openai.MixProject do
       description: description(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      package: package()
+      package: package(),
+      source_url: "https://github.com/mgallo/openai.ex"
     ]
   end
 
