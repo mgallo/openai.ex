@@ -26,12 +26,11 @@ defmodule OpenAI.Client do
   end
 
   def add_organization_header(headers) do
-    unless Config.org_key() == nil do
+    if Config.org_key() do
+      [{"OpenAI-Organization", Config.org_key()} | headers]
+    else
       headers
-      |> Enum.concat({"OpenAI-Organization", Config.org_key()})
     end
-
-    headers
   end
 
   def request_headers do

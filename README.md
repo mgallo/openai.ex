@@ -21,8 +21,8 @@ You can configure openai in your mix config.exs (default $project_root/config/co
 use Mix.Config
 
 config :openai,
-  api_key: "your-api-key" # find it at https://beta.openai.com/account/api-keys
-  orgainization_key: "your-organization-key" # find it at https://beta.openai.com/account/api-keys
+  api_key: "your-api-key", # find it at https://beta.openai.com/account/api-keys
+  organization_key: "your-organization-key" # find it at https://beta.openai.com/account/api-keys
 
 ```
 
