@@ -12,6 +12,7 @@ defmodule OpenAI do
   alias OpenAI.Completions
   alias OpenAI.Engines
   alias OpenAI.Search
+  alias OpenAI.Finetunes
 
   def start(_type, _args) do
     children = [Config]
@@ -196,6 +197,50 @@ defmodule OpenAI do
   """
   def classifications(params) do
     Classifications.fetch(params)
+  end
+
+
+  @doc """
+  Gets info about the fine-tune job.
+  ## Example request
+      OpenAI.fetch("ft-")
+
+  ## Example response
+      {:ok, %{
+        "data" => [
+          %{"created_at" => 1654767448, "fine_tuned_model" => "curie:ft-betafi-2022-06-09-09-40-26", "model": ...},
+          ...,
+          ...
+        ]
+      }
+  See: https://beta.openai.com/docs/api-reference/fine-tunes/list
+  """
+  def finetunes do
+    Finetunes.fetch()
+  end
+
+  @doc """
+  List your organization's fine-tuning jobs
+  ## Example request
+      OpenAI.fetch("ft-BmnI4AphjKc0ktq2oEKT2VNe")
+
+  ## Example response
+      {:ok, %{
+        created_at: 1657093797,
+        events: [
+          %{
+            "created_at" => 1657093797,
+            "level" => "info",
+            "message" => "Created fine-tune: ft-BmnI4AphjKc0ktq2oEKT2VNe",
+            "object" => "fine-tune-event"
+          },
+          ...,
+          ...
+      }
+  See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
+  """
+  def finetunes(finetune_id) do
+    Finetunes.fetch(finetune_id)
   end
 
   # TODO: files apis
