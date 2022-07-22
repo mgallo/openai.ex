@@ -201,14 +201,14 @@ defmodule OpenAI do
 
 
   @doc """
-  Gets info about the fine-tune job.
+  List your organization's fine-tuning jobs
   ## Example request
-      OpenAI.fetch("ft-")
+      OpenAI.finetunes()
 
   ## Example response
       {:ok, %{
         "data" => [
-          %{"created_at" => 1654767448, "fine_tuned_model" => "curie:ft-betafi-2022-06-09-09-40-26", "model": ...},
+          %{"created_at" => 1614807352, "fine_tuned_model" => "curie:ft-acmeco-2021-03-03-21-44-20", "model": ...},
           ...,
           ...
         ]
@@ -220,18 +220,24 @@ defmodule OpenAI do
   end
 
   @doc """
-  List your organization's fine-tuning jobs
+  Gets info about the fine-tune job.
   ## Example request
-      OpenAI.fetch("ft-BmnI4AphjKc0ktq2oEKT2VNe")
+      OpenAI.finetunes("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
 
   ## Example response
       {:ok, %{
-        created_at: 1657093797,
+        created_at: 1614807352,
         events: [
           %{
-            "created_at" => 1657093797,
+            "created_at" => 1614807352,
             "level" => "info",
-            "message" => "Created fine-tune: ft-BmnI4AphjKc0ktq2oEKT2VNe",
+            "message" => "Created fine-tune: ft-AF1WoRqd3aJAHsqc9NY7iL8F",
+            "object" => "fine-tune-event"
+          },
+          %{
+            "created_at" => 1614807360,
+            "level" => "info",
+            "message" => "Fine-tune costs $0.02",
             "object" => "fine-tune-event"
           },
           ...,
