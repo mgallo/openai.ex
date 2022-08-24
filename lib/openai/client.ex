@@ -41,9 +41,11 @@ defmodule OpenAI.Client do
     |> add_organization_header()
   end
 
+  def request_options(), do: Config.http_options()
+
   def api_get(url) do
     url
-    |> get(request_headers())
+    |> get(request_headers(), request_options())
     |> handle_response()
   end
 
@@ -55,7 +57,7 @@ defmodule OpenAI.Client do
       |> elem(1)
 
     url
-    |> post(body, request_headers())
+    |> post(body, request_headers(), request_options())
     |> handle_response()
   end
 end
