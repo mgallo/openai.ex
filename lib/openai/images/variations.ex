@@ -1,13 +1,13 @@
-defmodule OpenAI.Images.Edits do
+defmodule OpenAI.Images.Variations do
   @moduledoc false
   alias OpenAI.Client
 
-  @base_url "/v1/images/edits"
+  @base_url "/v1/images/variations"
 
   def url(), do: @base_url
 
-  def fetch(params, request_options \\ []) do
+  def fetch(file_path, params, request_options \\ []) do
     url()
-    |> Client.api_post(params, request_options)
+    |> Client.multipart_api_post(file_path, params, request_options)
   end
 end
