@@ -41,13 +41,13 @@ defmodule OpenAI.Client do
     |> add_organization_header()
   end
 
-  def api_get(url) do
+  def api_get(url, request_options) do
     url
-    |> get(request_headers())
+    |> get(request_headers(), request_options)
     |> handle_response()
   end
 
-  def api_post(url, params) do
+  def api_post(url, params, request_options \\ []) do
     body =
       params
       |> Enum.into(%{})
@@ -55,7 +55,7 @@ defmodule OpenAI.Client do
       |> elem(1)
 
     url
-    |> post(body, request_headers())
+    |> post(body, request_headers(), request_options)
     |> handle_response()
   end
 end

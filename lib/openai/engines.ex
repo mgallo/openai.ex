@@ -7,13 +7,13 @@ defmodule OpenAI.Engines do
   def url(), do: @engines_base_url
   def url(engine_id), do: "#{@engines_base_url}/#{engine_id}"
 
-  def fetch(engine_id) do
+  def fetch(engine_id, request_options) do
     url(engine_id)
-    |> Client.api_get()
+    |> Client.api_get(request_options)
   end
 
-  def fetch() do
+  def fetch(request_options \\ []) do
     url()
-    |> Client.api_get()
+    |> Client.api_get(request_options)
   end
 end
