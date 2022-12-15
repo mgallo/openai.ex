@@ -198,6 +198,94 @@ defmodule OpenAI do
     Classifications.fetch(params)
   end
 
+  @doc """
+  This generates an image based on the given prompt.
+
+  ## Example Request
+      OpenAI.Images.Generations.fetch(
+        [prompt: "A developer writing a test", size: "256x256"],
+         recv_timeout: 10 * 60 * 1000
+      )
+
+  ## Example Response
+    {:ok,
+      %{
+      created: 1670341737,
+      data: [
+        %{
+         "url" => ...Returned url
+       }
+      ]
+    }}
+  See: https://beta.openai.com/docs/api-reference/images/create for the complete list of parameters you can pass to the image creation function
+  """
+
+  def image_generations(params, request_options) do
+    Images.Generations.fetch(params, request_options)
+  end
+
+  @doc """
+  This edits an image based on the given prompt.
+
+  ## Example Request
+  ```elixir
+  OpenAI.image_edits(
+     "/home/developer/myImg.png",
+    { "prompt", "A developer writing a test", "size": "256x256"},
+     recv_timeout: 10 * 60 * 1000
+  )
+  ```
+
+  ## Example Response
+  ```elixir
+  {:ok,
+  %{
+   created: 1670341737,
+   data: [
+     %{
+       "url" => ...Returned url
+     }
+   ]
+  }}
+  ```
+  See: https://beta.openai.com/docs/api-reference/images/create-edit for the complete list of parameters you can pass to the image creation function
+  """
+
+  def image_edits(file_path, params, request_options) do
+    Images.Edits.fetch(file_path, params, request_options)
+  end
+
+  @doc """
+  This generates an image based on the given prompt.
+
+  ## Example Request
+  ```elixir
+  OpenAI.image_variations(
+     "/home/developer/myImg.png",
+    { "prompt", "A developer writing a test", "size": "256x256"},
+     recv_timeout: 10 * 60 * 1000
+  )
+  ```
+
+  ## Example Response
+  ```elixir
+  {:ok,
+  %{
+   created: 1670341737,
+   data: [
+     %{
+       "url" => ...Returned url
+     }
+   ]
+  }}
+  ```
+  See: https://beta.openai.com/docs/api-reference/images/create-variation for the complete list of parameters you can pass to the image creation function
+  """
+
+  def image_variations(file_path, params, request_options) do
+    Images.Variations.fetch(file_path, params, request_options)
+  end
+
   # TODO: files apis
   # def files do
   # end
