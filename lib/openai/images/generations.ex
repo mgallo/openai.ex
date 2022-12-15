@@ -1,8 +1,8 @@
-defmodule OpenAI.Classifications do
+defmodule OpenAI.Images.Generations do
   @moduledoc false
   alias OpenAI.Client
 
-  @base_url "/v1/classifications"
+  @base_url "/v1/images/generations"
 
   def url(), do: @base_url
 
