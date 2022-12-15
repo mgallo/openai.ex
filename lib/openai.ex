@@ -12,6 +12,7 @@ defmodule OpenAI do
   alias OpenAI.Completions
   alias OpenAI.Engines
   alias OpenAI.Search
+  alias OpenAI.Finetunes
 
   def start(_type, _args) do
     children = [Config]
@@ -197,6 +198,54 @@ defmodule OpenAI do
   def classifications(params) do
     Classifications.fetch(params)
   end
+
+  @doc """
+  List your organization's fine-tuning jobs
+  ## Example request
+      OpenAI.finetunes()
+
+  ## Example response
+      {:ok, %{
+        "data" => [
+          %{"created_at" => 1614807352, "fine_tuned_model" => "curie:ft-acmeco-2021-03-03-21-44-20", "model": ...},
+          ...,
+          ...
+        ]
+      }
+  See: https://beta.openai.com/docs/api-reference/fine-tunes/list
+  """
+  def finetunes do
+    Finetunes.fetch()
+  end
+
+  @doc """
+  Gets info about the fine-tune job.
+  ## Example request
+      OpenAI.finetunes("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
+
+  ## Example response
+      {:ok, %{
+        created_at: 1614807352,
+        events: [
+          %{
+            "created_at" => 1614807352,
+            "level" => "info",
+            "message" => "Created fine-tune: ft-AF1WoRqd3aJAHsqc9NY7iL8F",
+            "object" => "fine-tune-event"
+          },
+          %{
+            "created_at" => 1614807360,
+            "level" => "info",
+            "message" => "Fine-tune costs $0.02",
+            "object" => "fine-tune-event"
+          },
+          ...,
+          ...
+      }
+  See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
+  """
+  def finetunes(finetune_id) do
+    Finetunes.fetch(finetune_id)
 
   @doc """
   This generates an image based on the given prompt.
