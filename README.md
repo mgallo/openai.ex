@@ -210,6 +210,73 @@ OpenAI.answers(
 See: https://beta.openai.com/docs/api-reference/answers
 
 
+### finetunes()
+List your organization's fine-tuning jobs.
+
+#### Example request
+```elixir
+OpenAI.finetunes()
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    object: "list",
+    data: [%{
+      "id" => "t-AF1WoRqd3aJAHsqc9NY7iL8F",
+      "object" => "fine-tune",
+      "model" => "curie",
+      "created_at" => 1614807352,
+      "fine_tuned_model" => null,
+      "hyperparams" => { ... },
+      "organization_id" => "org-...",
+      "result_files" = [],
+      "status": "pending",
+      "validation_files" => [],
+      "training_files" => [ { ... } ],
+      "updated_at" => 1614807352,
+    }],
+  }
+}
+```
+
+See: https://beta.openai.com/docs/api-reference/fine-tunes/list
+
+### finetunes(finetune_id)
+Gets info about a fine-tune job.
+
+#### Example request
+```elixir
+OpenAI.finetunes("t-AF1WoRqd3aJAHsqc9NY7iL8F")
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    object: "list",
+    data: [%{
+      "id" => "t-AF1WoRqd3aJAHsqc9NY7iL8F",
+      "object" => "fine-tune",
+      "model" => "curie",
+      "created_at" => 1614807352,
+      "fine_tuned_model" => null,
+      "hyperparams" => { ... },
+      "organization_id" => "org-...",
+      "result_files" = [],
+      "status": "pending",
+      "validation_files" => [],
+      "training_files" => [ { ... } ],
+      "updated_at" => 1614807352,
+    }],
+  }
+}
+```
+
+See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
+
+
 ## Images
 Create, edit, or create variations of images.
 
