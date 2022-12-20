@@ -35,11 +35,13 @@ defmodule OpenAI.Client do
 
   def request_headers do
     [
-      {"Authorization", "Bearer #{Config.api_key()}"},
+      bearer(),
       {"Content-type", "application/json"}
     ]
     |> add_organization_header()
   end
+  
+  def bearer(), do: {"Authorization", "Bearer #{Config.api_key()}"};
 
   def request_options(), do: Config.http_options()
 
@@ -49,7 +51,7 @@ defmodule OpenAI.Client do
     |> handle_response()
   end
 
-  def api_post(url, params) do
+  def api_post(url, params, request_options \\ []) do
     body =
       params
       |> Enum.into(%{})
@@ -57,7 +59,19 @@ defmodule OpenAI.Client do
       |> elem(1)
 
     url
-    |> post(body, request_headers(), request_options())
+    |> post(body, request_headers(), request_options || request_options())
     |> handle_response()
+  end
+
+  def multipart_api_post(url, file_path, params, request_options) do
+  body = {:multipart,
+    [
+      {:file, file_path, {"form-data", [{:name, "image"}, {:filename, Path.basename(file_path)}]}, []}
+    ] ++ if(tuple_size(params) != 0, do: [params], else: []) # Very fragile, this interface doesn't work if given an empty tuple!
+  }
+
+  url
+  |> post(body, [bearer()], request_options)
+  |> handle_response()
   end
 end

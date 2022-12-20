@@ -9,7 +9,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.1.1"}
+    {:openai, "~> 0.2.1"}
   ]
 end
 ```
@@ -209,6 +209,155 @@ OpenAI.answers(
 ```
 
 See: https://beta.openai.com/docs/api-reference/answers
+
+
+### finetunes()
+List your organization's fine-tuning jobs.
+
+#### Example request
+```elixir
+OpenAI.finetunes()
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    object: "list",
+    data: [%{
+      "id" => "t-AF1WoRqd3aJAHsqc9NY7iL8F",
+      "object" => "fine-tune",
+      "model" => "curie",
+      "created_at" => 1614807352,
+      "fine_tuned_model" => null,
+      "hyperparams" => { ... },
+      "organization_id" => "org-...",
+      "result_files" = [],
+      "status": "pending",
+      "validation_files" => [],
+      "training_files" => [ { ... } ],
+      "updated_at" => 1614807352,
+    }],
+  }
+}
+```
+
+See: https://beta.openai.com/docs/api-reference/fine-tunes/list
+
+### finetunes(finetune_id)
+Gets info about a fine-tune job.
+
+#### Example request
+```elixir
+OpenAI.finetunes("t-AF1WoRqd3aJAHsqc9NY7iL8F")
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    object: "list",
+    data: [%{
+      "id" => "t-AF1WoRqd3aJAHsqc9NY7iL8F",
+      "object" => "fine-tune",
+      "model" => "curie",
+      "created_at" => 1614807352,
+      "fine_tuned_model" => null,
+      "hyperparams" => { ... },
+      "organization_id" => "org-...",
+      "result_files" = [],
+      "status": "pending",
+      "validation_files" => [],
+      "training_files" => [ { ... } ],
+      "updated_at" => 1614807352,
+    }],
+  }
+}
+```
+
+See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
+
+
+## Images
+Create, edit, or create variations of images.
+
+### Generations
+Generate a new image by AI.
+#### Example Request
+```elixir
+OpenAI.Images.Generations.fetch(
+    [prompt: "A developer writing a test", size: "256x256"],
+     recv_timeout: 10 * 60 * 1000
+ )
+```
+
+#### Example Response
+```elixir
+{:ok,
+ %{
+   created: 1670341737,
+   data: [
+     %{
+       "url" => ...Returned url
+     }
+   ]
+ }}
+```
+
+See: https://beta.openai.com/docs/api-reference/images/create
+
+### Edits
+Edit an existing image based on prompt
+#### Example Request
+```elixir
+OpenAI.image_edits.fetch(
+     "/home/developer/myImg.png",
+    { "prompt", "A developer writing a test", "size": "256x256"},
+     recv_timeout: 10 * 60 * 1000
+ )
+```
+
+#### Example Response
+```elixir
+{:ok,
+ %{
+   created: 1670341737,
+   data: [
+     %{
+       "url" => ...Returned url
+     }
+   ]
+ }}
+```
+
+See: https://beta.openai.com/docs/api-reference/images/create-edits
+
+### Variations
+
+#### Example Request
+```elixir
+OpenAI.image_variations.fetch(
+     "/home/developer/myImg.png",
+    { "n": "5"},
+     recv_timeout: 10 * 60 * 1000
+ )
+```
+
+#### Example Response
+```elixir
+{:ok,
+ %{
+   created: 1670341737,
+   data: [
+     %{
+       "url" => ...Returned url
+     }
+   ]
+ }}
+```
+
+See: https://beta.openai.com/docs/api-reference/images/create-variation
+
 
 ## TODO:
 - [ ] integrate file apis
