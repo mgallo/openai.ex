@@ -10,7 +10,8 @@ defmodule OpenAI.Config do
 
   @config_keys [
     :api_key,
-    :organization_key
+    :organization_key,
+    :http_options
   ]
 
   def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -32,10 +33,16 @@ defmodule OpenAI.Config do
   # API Url
   def api_url, do: @openai_url
 
-  defp get_config_value(key) do
-    :openai
-    |> Application.get_env(key)
-    |> parse_config_value()
+  # HTTP Options
+  def http_options, do: get_config_value(:http_options, [])
+
+  defp get_config_value(key, default \\ nil) do
+    value =
+      :openai
+      |> Application.get_env(key)
+      |> parse_config_value()
+
+    if is_nil(value), do: default, else: value
   end
 
   defp parse_config_value({:system, env_name}), do: fetch_env!(env_name)

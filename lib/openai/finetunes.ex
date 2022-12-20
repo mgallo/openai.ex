@@ -7,13 +7,13 @@ defmodule OpenAI.Finetunes do
   def url(), do: @finetuning_base_url
   def url(finetune_id), do: "#{@finetuning_base_url}/#{finetune_id}"
 
-  def fetch(finetune_id, request_options) do
+  def fetch(finetune_id) do
     url(finetune_id)
-    |> Client.api_get(request_options)
+    |> Client.api_get()
   end
 
-  def fetch(request_options \\ []) do
+  def fetch() do
     url()
-    |> Client.api_get(request_options)
+    |> Client.api_get()
   end
 end

@@ -22,7 +22,8 @@ use Mix.Config
 
 config :openai,
   api_key: "your-api-key", # find it at https://beta.openai.com/account/api-keys
-  organization_key: "your-organization-key" # find it at https://beta.openai.com/account/api-keys
+  organization_key: "your-organization-key", # find it at https://beta.openai.com/account/api-keys
+  http_options: [recv_timeout: 30_000] # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
 
 ```
 
@@ -282,6 +283,8 @@ Create, edit, or create variations of images.
 
 ### Generations
 Generate a new image by AI.
+If needed, you can pass a second argument to the function to add specific http options for this specific call (i.e. increasing the timeout)
+
 #### Example Request
 ```elixir
 OpenAI.Images.Generations.fetch(
@@ -307,6 +310,8 @@ See: https://beta.openai.com/docs/api-reference/images/create
 
 ### Edits
 Edit an existing image based on prompt
+If needed, you can pass a second argument to the function to add specific http options for this specific call (i.e. increasing the timeout)
+
 #### Example Request
 ```elixir
 OpenAI.image_edits.fetch(

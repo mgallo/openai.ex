@@ -251,6 +251,7 @@ defmodule OpenAI do
 
   @doc """
   This generates an image based on the given prompt.
+  If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
   
   ## Example Request
       OpenAI.Images.Generations.fetch(
@@ -277,6 +278,7 @@ defmodule OpenAI do
 
   @doc """
   This edits an image based on the given prompt.
+  If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
   
   ## Example Request
   ```elixir
@@ -308,6 +310,7 @@ defmodule OpenAI do
 
   @doc """
   This generates an image based on the given prompt.
+  If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
   
   ## Example Request
   ```elixir
