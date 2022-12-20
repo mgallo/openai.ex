@@ -6,8 +6,8 @@ defmodule OpenAI.Completions do
 
   def url(engine_id), do: "#{@base_url}/#{engine_id}/completions"
 
-  def fetch(engine_id, params, request_options \\ []) do
+  def fetch(engine_id, params) do
     url(engine_id)
-    |> Client.api_post(params, request_options)
+    |> Client.api_post(params)
   end
 end

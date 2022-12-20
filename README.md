@@ -283,6 +283,8 @@ Create, edit, or create variations of images.
 
 ### Generations
 Generate a new image by AI.
+If needed, you can pass a second argument to the function to add specific http options for this specific call (i.e. increasing the timeout)
+
 #### Example Request
 ```elixir
 OpenAI.Images.Generations.fetch(
@@ -308,6 +310,8 @@ See: https://beta.openai.com/docs/api-reference/images/create
 
 ### Edits
 Edit an existing image based on prompt
+If needed, you can pass a second argument to the function to add specific http options for this specific call (i.e. increasing the timeout)
+
 #### Example Request
 ```elixir
 OpenAI.image_edits.fetch(

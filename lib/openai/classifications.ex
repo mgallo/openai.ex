@@ -6,8 +6,8 @@ defmodule OpenAI.Classifications do
 
   def url(), do: @base_url
 
-  def fetch(params, request_options \\ []) do
+  def fetch(params) do
     url()
-    |> Client.api_post(params, request_options)
+    |> Client.api_post(params)
   end
 end
