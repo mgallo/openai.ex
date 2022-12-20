@@ -364,7 +364,8 @@ See: https://beta.openai.com/docs/api-reference/images/create-variation
 
 
 ## TODO:
-- [ ] integrate file apis
+- [ ] introduce missing new apis (models, edits, embeddings, files, moderations)
+- [ ] deprecate old apis (answers, search)
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
