@@ -45,9 +45,12 @@ defmodule OpenAI.Client do
 
   def request_options(), do: Config.http_options()
 
-  def api_get(url) do
+  def api_get(url, request_options \\ []) do
+    request_options =
+      Keyword.merge(request_options(), request_options)
+
     url
-    |> get(request_headers(), request_options())
+    |> get(request_headers(), request_options)
     |> handle_response()
   end
 
@@ -58,8 +61,11 @@ defmodule OpenAI.Client do
       |> JSON.Encoder.encode()
       |> elem(1)
 
+    request_options =
+      Keyword.merge(request_options(), request_options)
+
     url
-    |> post(body, request_headers(), request_options || request_options())
+    |> post(body, request_headers(), request_options)
     |> handle_response()
   end
 
