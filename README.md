@@ -9,7 +9,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.2.1"}
+    {:openai, "~> 0.2.2"}
   ]
 end
 ```
