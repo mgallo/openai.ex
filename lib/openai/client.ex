@@ -69,7 +69,7 @@ defmodule OpenAI.Client do
     |> handle_response()
   end
 
-  def multipart_api_post(url, file_path, params, request_options) do
+  def multipart_api_post(url, file_path, params, request_options \\ []) do
     body = {
       :multipart,
       # Very fragile, this interface doesn't work if given an empty tuple!
