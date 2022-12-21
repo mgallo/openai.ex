@@ -6,8 +6,8 @@ defmodule OpenAI.Answers do
 
   def url(), do: @base_url
 
-  def fetch(params) do
+  def fetch(params, request_options \\ []) do
     url()
-    |> Client.api_post(params)
+    |> Client.api_post(params, request_options)
   end
 end
