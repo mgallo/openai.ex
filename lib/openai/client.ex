@@ -79,6 +79,9 @@ defmodule OpenAI.Client do
       ] ++ if(tuple_size(params) != 0, do: [params], else: [])
     }
 
+    request_options =
+      Keyword.merge(request_options(), request_options)
+
     url
     |> post(body, [bearer()], request_options)
     |> handle_response()
