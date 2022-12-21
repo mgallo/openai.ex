@@ -45,9 +45,12 @@ defmodule OpenAI.Client do
 
   def request_options(), do: Config.http_options()
 
-  def api_get(url) do
+  def api_get(url, request_options \\ []) do
+    request_options =
+      Keyword.merge(request_options(), request_options)
+
     url
-    |> get(request_headers(), request_options())
+    |> get(request_headers(), request_options)
     |> handle_response()
   end
 
@@ -58,12 +61,15 @@ defmodule OpenAI.Client do
       |> JSON.Encoder.encode()
       |> elem(1)
 
+    request_options =
+      Keyword.merge(request_options(), request_options)
+
     url
-    |> post(body, request_headers(), request_options || request_options())
+    |> post(body, request_headers(), request_options)
     |> handle_response()
   end
 
-  def multipart_api_post(url, file_path, params, request_options) do
+  def multipart_api_post(url, file_path, params, request_options \\ []) do
     body = {
       :multipart,
       # Very fragile, this interface doesn't work if given an empty tuple!
@@ -72,6 +78,9 @@ defmodule OpenAI.Client do
          {"form-data", [{:name, "image"}, {:filename, Path.basename(file_path)}]}, []}
       ] ++ if(tuple_size(params) != 0, do: [params], else: [])
     }
+
+    request_options =
+      Keyword.merge(request_options(), request_options)
 
     url
     |> post(body, [bearer()], request_options)
