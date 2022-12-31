@@ -58,7 +58,7 @@ Retrieve specific engine info
 OpenAI.engines("davinci")
 ```
 
-#### Example respone
+#### Example response
 ```elixir
 {:ok, %{
     "id" => "davinci",
