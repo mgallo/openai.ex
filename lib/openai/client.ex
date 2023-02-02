@@ -46,8 +46,7 @@ defmodule OpenAI.Client do
   def request_options(), do: Config.http_options()
 
   def api_get(url, request_options \\ []) do
-    request_options =
-      Keyword.merge(request_options(), request_options)
+    request_options = Keyword.merge(request_options(), request_options)
 
     url
     |> get(request_headers(), request_options)
@@ -61,29 +60,36 @@ defmodule OpenAI.Client do
       |> JSON.Encoder.encode()
       |> elem(1)
 
-    request_options =
-      Keyword.merge(request_options(), request_options)
+    request_options = Keyword.merge(request_options(), request_options)
 
     url
     |> post(body, request_headers(), request_options)
     |> handle_response()
   end
 
-  def multipart_api_post(url, file_path, params, request_options \\ []) do
+  def multipart_api_post(url, file_path, file_param, params, request_options \\ []) do
+    body_params = params |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+
     body = {
       :multipart,
-      # Very fragile, this interface doesn't work if given an empty tuple!
       [
         {:file, file_path,
-         {"form-data", [{:name, "image"}, {:filename, Path.basename(file_path)}]}, []}
-      ] ++ if(tuple_size(params) != 0, do: [params], else: [])
+         {"form-data", [{:name, file_param}, {:filename, Path.basename(file_path)}]}, []}
+      ] ++ body_params
     }
 
-    request_options =
-      Keyword.merge(request_options(), request_options)
+    request_options = Keyword.merge(request_options(), request_options)
 
     url
-    |> post(body, [bearer()], request_options)
+    |> post(body, request_headers(), request_options)
+    |> handle_response()
+  end
+
+  def api_delete(url, request_options \\ []) do
+    request_options = Keyword.merge(request_options(), request_options)
+
+    url
+    |> delete(request_headers(), request_options)
     |> handle_response()
   end
 end

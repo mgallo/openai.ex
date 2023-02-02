@@ -14,6 +14,7 @@ defmodule OpenAI do
   alias OpenAI.Search
   alias OpenAI.Finetunes
   alias OpenAI.Images
+  alias OpenAI.Files
 
   def start(_type, _args) do
     children = [Config]
@@ -254,9 +255,9 @@ defmodule OpenAI do
   If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
   
   ## Example Request
-      OpenAI.Images.Generations.fetch(
+      OpenAI.image_generations(
         [prompt: "A developer writing a test", size: "256x256"],
-         recv_timeout: 10 * 60 * 1000
+        [recv_timeout: 10 * 60 * 1000]
       )
   
   ## Example Response
@@ -278,14 +279,13 @@ defmodule OpenAI do
 
   @doc """
   This edits an image based on the given prompt.
-  If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
   
   ## Example Request
   ```elixir
   OpenAI.image_edits(
-     "/home/developer/myImg.png",
-    { "prompt", "A developer writing a test", "size": "256x256"},
-     recv_timeout: 10 * 60 * 1000
+    "/home/developer/myImg.png",
+    [prompt: "A developer writing a test", "size": "256x256"],
+    [recv_timeout: 10 * 60 * 1000]
   )
   ```
   
@@ -304,20 +304,20 @@ defmodule OpenAI do
   See: https://beta.openai.com/docs/api-reference/images/create-edit for the complete list of parameters you can pass to the image creation function
   """
 
-  def image_edits(file_path, params, request_options) do
+  def image_edits(file_path, params, request_options \\ []) do
     Images.Edits.fetch(file_path, params, request_options)
   end
 
   @doc """
-  This generates an image based on the given prompt.
+  Creates a variation of a given image.
   If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
   
   ## Example Request
   ```elixir
   OpenAI.image_variations(
      "/home/developer/myImg.png",
-    { "prompt", "A developer writing a test", "size": "256x256"},
-     recv_timeout: 10 * 60 * 1000
+     [size: "256x256"],
+     [recv_timeout: 10 * 60 * 1000]
   )
   ```
   
@@ -336,17 +336,117 @@ defmodule OpenAI do
   See: https://beta.openai.com/docs/api-reference/images/create-variation for the complete list of parameters you can pass to the image creation function
   """
 
-  def image_variations(file_path, params, request_options) do
+  def image_variations(file_path, params \\ [], request_options \\ []) do
     Images.Variations.fetch(file_path, params, request_options)
   end
 
-  # TODO: files apis
-  # def files do
-  # end
+  @doc """
+  Returns a list of files that belong to the user's organization.
+  
+  ## Example Request
+  ```elixir
+  OpenAI.files()
+  ```
+  
+  ## Example Response
+  ```elixir
+  {:ok,
+    %{
+    data: [
+      %{
+        "bytes" => 123,
+        "created_at" => 213,
+        "filename" => "file.jsonl",
+        "id" => "file-123321",
+        "object" => "file",
+        "purpose" => "fine-tune",
+        "status" => "processed",
+        "status_details" => nil
+      }
+    ],
+    object: "list"
+    }
+  }
+  ```
+  See: https://platform.openai.com/docs/api-reference/files for the complete list of parameters you can pass to the image creation function
+  """
+  def files do
+    Files.fetch()
+  end
 
-  # def upload_file do
-  # end
+  @doc """
+  Returns a file that belong to the user's organization, given a file id
+  
+  ## Example Request
+  ```elixir
+  OpenAI.files("file-123321")
+  ```
+  
+  ## Example Response
+  ```elixir
+  {:ok,
+    %{
+      bytes: 923,
+      created_at: 1675370979,
+      filename: "file.jsonl",
+      id: "file-123321",
+      object: "file",
+      purpose: "fine-tune",
+      status: "processed",
+      status_details: nil
+    }
+  }
+  ```
+  See: https://platform.openai.com/docs/api-reference/files/retrieve for the complete list of parameters you can pass to the image creation function
+  """
+  def files(file_id) do
+    Files.fetch(file_id)
+  end
 
-  # def delete_file do
-  # end
+  @doc """
+  Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
+  
+  ## Example Request
+  ```elixir
+  OpenAI.upload_file("./file.jsonl", purpose: "fine-tune")
+  ```
+  
+  ## Example Response
+  ```elixir
+  {:ok,
+    %{
+      bytes: 923,
+      created_at: 1675373519,
+      filename: "file.jsonl",
+      id: "file-123",
+      object: "file",
+      purpose: "fine-tune",
+      status: "uploaded",
+      status_details: nil
+    }
+  }
+  ```
+  See: https://platform.openai.com/docs/api-reference/files/upload for the complete list of parameters you can pass to the image creation function
+  """
+  def upload_file(file_path, params) do
+    Files.upload(file_path, params)
+  end
+
+  @doc """
+  delete a file
+  
+  ## Example Request
+  ```elixir
+  OpenAI.delete_file("file-123")
+  ```
+  
+  ## Example Response
+  ```elixir
+  {:ok, %{deleted: true, id: "file-123", object: "file"}}
+  ```
+  See: https://platform.openai.com/docs/api-reference/files/delete for the complete list of parameters you can pass to the image creation function
+  """
+  def delete_file(file_id) do
+    Files.delete(file_id)
+  end
 end
