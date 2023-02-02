@@ -9,7 +9,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.2.3"}
+    {:openai, "~> 0.3.0-beta"}
   ]
 end
 ```
@@ -287,9 +287,9 @@ If needed, you can pass a second argument to the function to add specific http o
 
 #### Example Request
 ```elixir
-OpenAI.Images.Generations.fetch(
+OpenAI.image_generations(
     [prompt: "A developer writing a test", size: "256x256"],
-     recv_timeout: 10 * 60 * 1000
+    [recv_timeout: 10 * 60 * 1000]
  )
 ```
 
@@ -314,10 +314,10 @@ If needed, you can pass a second argument to the function to add specific http o
 
 #### Example Request
 ```elixir
-OpenAI.image_edits.fetch(
+OpenAI.image_edits(
      "/home/developer/myImg.png",
-    { "prompt", "A developer writing a test", "size": "256x256"},
-     recv_timeout: 10 * 60 * 1000
+     [prompt: "A developer writing a test", "size": "256x256"],
+    [recv_timeout: 10 * 60 * 1000]
  )
 ```
 
@@ -340,11 +340,11 @@ See: https://beta.openai.com/docs/api-reference/images/create-edits
 
 #### Example Request
 ```elixir
-OpenAI.image_variations.fetch(
-     "/home/developer/myImg.png",
-    { "n": "5"},
-     recv_timeout: 10 * 60 * 1000
- )
+OpenAI.image_variations(
+    "/home/developer/myImg.png",
+    [n: "5"],
+    [recv_timeout: 10 * 60 * 1000]
+)
 ```
 
 #### Example Response
@@ -363,8 +363,111 @@ OpenAI.image_variations.fetch(
 See: https://beta.openai.com/docs/api-reference/images/create-variation
 
 
+### files()
+Returns a list of files that belong to the user's organization.
+#### Example request
+```elixir
+OpenAI.files()
+```
+
+#### Example response
+```elixir
+  {:ok,
+    %{
+    data: [
+      %{
+        "bytes" => 123,
+        "created_at" => 213,
+        "filename" => "file.jsonl",
+        "id" => "file-123321",
+        "object" => "file",
+        "purpose" => "fine-tune",
+        "status" => "processed",
+        "status_details" => nil
+      }
+    ],
+    object: "list"
+    }
+  }
+```
+See: https://platform.openai.com/docs/api-reference/files 
+
+
+### files(file_id)
+Returns a file that belong to the user's organization, given a file id
+#### Example request
+```elixir
+OpenAI.files("file-123321")
+```
+
+#### Example response
+```elixir
+{:ok,
+    %{
+      bytes: 923,
+      created_at: 1675370979,
+      filename: "file.jsonl",
+      id: "file-123321",
+      object: "file",
+      purpose: "fine-tune",
+      status: "processed",
+      status_details: nil
+    }
+  }
+```
+See: https://platform.openai.com/docs/api-reference/files/retrieve 
+
+### upload_file(file_path, params)
+Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
+#### Example request
+```elixir
+OpenAI.upload_file("./file.jsonl", purpose: "fine-tune")
+```
+
+#### Example response
+```elixir
+{:ok,
+    %{
+      bytes: 923,
+      created_at: 1675373519,
+      filename: "file.jsonl",
+      id: "file-123",
+      object: "file",
+      purpose: "fine-tune",
+      status: "uploaded",
+      status_details: nil
+    }
+  }
+```
+See: https://platform.openai.com/docs/api-reference/files/upload 
+
+### delete_file(file_id)
+delete a file
+
+#### Example request
+```elixir
+OpenAI.delete_file("file-123")
+```
+
+#### Example response
+```elixir
+{:ok,
+    %{
+      bytes: 923,
+      created_at: 1675373519,
+      filename: "file.jsonl",
+      id: "file-123",
+      object: "file",
+      purpose: "fine-tune",
+      status: "uploaded",
+      status_details: nil
+    }
+  }
+```
+See: https://platform.openai.com/docs/api-reference/files/delete
+
 ## TODO:
-- [ ] introduce missing new apis (models, edits, embeddings, files, moderations)
+- [ ] introduce missing new apis (models, edits, embeddings, moderations)
 - [ ] deprecate old apis (answers, search)
 
 ## License

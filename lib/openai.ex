@@ -316,7 +316,7 @@ defmodule OpenAI do
   ```elixir
   OpenAI.image_variations(
      "/home/developer/myImg.png",
-     [size: "256x256"],
+     [n: "5"],
      [recv_timeout: 10 * 60 * 1000]
   )
   ```
@@ -368,7 +368,7 @@ defmodule OpenAI do
     }
   }
   ```
-  See: https://platform.openai.com/docs/api-reference/files for the complete list of parameters you can pass to the image creation function
+  See: https://platform.openai.com/docs/api-reference/files
   """
   def files do
     Files.fetch()
@@ -397,7 +397,7 @@ defmodule OpenAI do
     }
   }
   ```
-  See: https://platform.openai.com/docs/api-reference/files/retrieve for the complete list of parameters you can pass to the image creation function
+  See: https://platform.openai.com/docs/api-reference/files/retrieve
   """
   def files(file_id) do
     Files.fetch(file_id)
@@ -426,7 +426,7 @@ defmodule OpenAI do
     }
   }
   ```
-  See: https://platform.openai.com/docs/api-reference/files/upload for the complete list of parameters you can pass to the image creation function
+  See: https://platform.openai.com/docs/api-reference/files/upload
   """
   def upload_file(file_path, params) do
     Files.upload(file_path, params)
@@ -444,7 +444,7 @@ defmodule OpenAI do
   ```elixir
   {:ok, %{deleted: true, id: "file-123", object: "file"}}
   ```
-  See: https://platform.openai.com/docs/api-reference/files/delete for the complete list of parameters you can pass to the image creation function
+  See: https://platform.openai.com/docs/api-reference/files/delete
   """
   def delete_file(file_id) do
     Files.delete(file_id)
