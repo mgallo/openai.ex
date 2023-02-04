@@ -30,7 +30,7 @@ body:
     attributes:
       label: Code snippets
       description: If applicable, add code snippets to help explain your problem.
-      render: JavaScript
+      render: Elixir
     validations:
       required: false
   - type: input
