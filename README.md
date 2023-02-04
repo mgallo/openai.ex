@@ -21,8 +21,8 @@ You can configure openai in your mix config.exs (default $project_root/config/co
 import Config
 
 config :openai,
-  api_key: "your-api-key", # find it at https://beta.openai.com/account/api-keys
-  organization_key: "your-organization-key", # find it at https://beta.openai.com/account/api-keys
+  api_key: "your-api-key", # find it at https://platform.openai.com/account/api-keys
+  organization_key: "your-organization-key", # find it at https://platform.openai.com/account/api-keys
   http_options: [recv_timeout: 30_000] # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
 
 ```
