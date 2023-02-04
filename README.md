@@ -1,4 +1,7 @@
 # Openai.ex
+[![Hex.pm Version](https://img.shields.io/hexpm/v/openai)](https://hex.pm/packages/openai)
+[![Hex.pm Download Total](https://img.shields.io/hexpm/dt/openai)](https://hex.pm/packages/openai)
+
 Unofficial community-maintained wrapper for OpenAI REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
