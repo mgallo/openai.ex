@@ -26,6 +26,7 @@ config :openai,
   http_options: [recv_timeout: 30_000] # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
 
 ```
+Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
 
 ## Usage overview
 Get your API key from https://platform.openai.com/account/api-keys
