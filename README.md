@@ -1,6 +1,6 @@
 # Openai.ex
-Provides wrappers for OpenAI REST APIs
-See https://beta.openai.com/docs/api-reference/introduction for further info on REST endpoints
+Unofficial - community-maintained wrapper for OpenAI REST APIs
+See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
 
 ## Installation
