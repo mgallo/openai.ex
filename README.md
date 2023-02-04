@@ -9,7 +9,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.3.0-beta"}
+    {:openai, "~> 0.3.0"}
   ]
 end
 ```
@@ -233,7 +233,7 @@ If needed, you can pass a second argument to the function to add specific http o
 ```elixir
 OpenAI.images_edits(
      "/home/developer/myImg.png",
-     [prompt: "A developer writing a test", "size": "256x256"],
+     [prompt: "A developer writing a test", size: "256x256"],
     [recv_timeout: 10 * 60 * 1000]
  )
 ```
