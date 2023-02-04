@@ -59,7 +59,7 @@ OpenAI.models()
   object: "list"
 }}
 ```
-See: https://platform.openai.com/docs/api-reference/models/retrieve
+See: https://platform.openai.com/docs/api-reference/models/list
 
 ### models(model_id)
 Retrieve specific model info
@@ -838,11 +838,6 @@ OpenAI.answers(
 ```
 
 See: https://beta.openai.com/docs/api-reference/answers
-
-
-## TODO:
-- [x] introduce missing new apis (models, edits, embeddings, moderations)
-- [ ] deprecate old apis (answers, search)
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
