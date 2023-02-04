@@ -88,6 +88,76 @@ defmodule OpenAI do
   end
 
   @doc """
+  It returns one or more predicted completions given a prompt.
+  The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
+  
+  ## Example request
+      OpenAI.completions(
+        model: "finetuned-model",
+        prompt: "once upon a time",
+        max_tokens: 5,
+        temperature: 1,
+        ...
+      )
+  
+  ## Example response
+      {:ok, %{
+        choices: [
+          %{
+            "finish_reason" => "length",
+            "index" => 0,
+            "logprobs" => nil,
+            "text" => "\" thing we are given"
+          }
+        ],
+        created: 1617147958,
+        id: "...",
+        model: "...",
+        object: "text_completion"
+        }
+      }
+  See: https://platform.openai.com/docs/api-reference/completions/create
+  """
+  def completions(params) do
+    Completions.fetch(params)
+  end
+
+  @doc """
+  It returns one or more predicted completions given a prompt.
+  The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
+  
+  ## Example request
+      OpenAI.completions(
+        "davinci", # engine_id
+        prompt: "once upon a time",
+        max_tokens: 5,
+        temperature: 1,
+        ...
+      )
+  
+  ## Example response
+      {:ok, %{
+        choices: [
+          %{
+            "finish_reason" => "length",
+            "index" => 0,
+            "logprobs" => nil,
+            "text" => "\" thing we are given"
+          }
+        ],
+        created: 1617147958,
+        id: "...",
+        model: "...",
+        object: "text_completion"
+        }
+      }
+  See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
+  """
+  def completions(engine_id, params) do
+    Completions.fetch(engine_id, params)
+  end
+
+  @doc """
   Creates a new edit for the provided input, instruction, and parameters
   
   ## Example request
@@ -213,6 +283,7 @@ defmodule OpenAI do
   end
 
   @doc """
+  @deprecated: "use models instead"
   Get the list of available engines
   ## Example request
       OpenAI.engines()
@@ -274,76 +345,8 @@ defmodule OpenAI do
   end
 
   @doc """
-  It returns one or more predicted completions given a prompt.
-  The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
+  @deprecated: "DEPRECATED by OpenAI"
   
-  ## Example request
-      OpenAI.completions(
-        model: "finetuned-model",
-        prompt: "once upon a time",
-        max_tokens: 5,
-        temperature: 1,
-        ...
-      )
-  
-  ## Example response
-      {:ok, %{
-        choices: [
-          %{
-            "finish_reason" => "length",
-            "index" => 0,
-            "logprobs" => nil,
-            "text" => "\" thing we are given"
-          }
-        ],
-        created: 1617147958,
-        id: "...",
-        model: "...",
-        object: "text_completion"
-        }
-      }
-  See: https://platform.openai.com/docs/api-reference/completions/create
-  """
-  def completions(params) do
-    Completions.fetch(params)
-  end
-
-  @doc """
-  It returns one or more predicted completions given a prompt.
-  The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
-  
-  ## Example request
-      OpenAI.completions(
-        "davinci", # engine_id
-        prompt: "once upon a time",
-        max_tokens: 5,
-        temperature: 1,
-        ...
-      )
-  
-  ## Example response
-      {:ok, %{
-        choices: [
-          %{
-            "finish_reason" => "length",
-            "index" => 0,
-            "logprobs" => nil,
-            "text" => "\" thing we are given"
-          }
-        ],
-        created: 1617147958,
-        id: "...",
-        model: "...",
-        object: "text_completion"
-        }
-      }
-  See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
-  """
-  def completions(engine_id, params) do
-    Completions.fetch(engine_id, params)
-  end
-
-  @doc """
   It returns a rank of each document passed to the function, based on its semantic similarity to the passed query.
   The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAI api
   
@@ -372,6 +375,8 @@ defmodule OpenAI do
   end
 
   @doc """
+  @deprecated: "DEPRECATED by OpenAI"
+  
   It returns the most likely label for the query passed to the function.
   The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAI api
   
@@ -616,6 +621,9 @@ defmodule OpenAI do
     Images.Generations.fetch(params, request_options)
   end
 
+  @doc """
+  alias of images_generations(params, request_options) - will be deprecated in future releases
+  """
   def image_generations(params, request_options) do
     Images.Generations.fetch(params, request_options)
   end
@@ -650,6 +658,9 @@ defmodule OpenAI do
     Images.Edits.fetch(file_path, params, request_options)
   end
 
+  @doc """
+  alias of images_edits(file_path, params, request_options) - will be deprecated in future releases
+  """
   def image_edits(file_path, params, request_options \\ []) do
     Images.Edits.fetch(file_path, params, request_options)
   end
@@ -685,6 +696,9 @@ defmodule OpenAI do
     Images.Variations.fetch(file_path, params, request_options)
   end
 
+  @doc """
+  alias of images_variations(file_path, params, request_options) - will be deprecated in future releases
+  """
   def image_variations(file_path, params \\ [], request_options \\ []) do
     Images.Variations.fetch(file_path, params, request_options)
   end
