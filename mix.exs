@@ -26,7 +26,7 @@ defmodule Openai.MixProject do
 
   defp description do
     """
-    OpenAI API Wrapper written in Elixir.
+    community-maintained OpenAI API Wrapper written in Elixir.
     """
   end
 
