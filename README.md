@@ -1,5 +1,5 @@
 # Openai.ex
-Unofficial - community-maintained wrapper for OpenAI REST APIs
+Unofficial community-maintained wrapper for OpenAI REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
 
