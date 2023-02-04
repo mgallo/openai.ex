@@ -4,7 +4,7 @@ defmodule Openai.MixProject do
   def project do
     [
       app: :openai,
-      version: "0.2.3",
+      version: "0.3.0",
       elixir: "~> 1.11",
       description: description(),
       start_permanent: Mix.env() == :prod,
@@ -33,6 +33,7 @@ defmodule Openai.MixProject do
   defp package do
     [
       licenses: ["MIT"],
+      exclude_patterns: ["./config/*"],
       links: %{
         "GitHub" => "https://github.com/mgallo/openai.ex"
       },
