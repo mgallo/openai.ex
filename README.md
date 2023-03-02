@@ -172,6 +172,48 @@ this API has been deprecated by OpenAI, as `engines` are replaced by `models`. I
 See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
 
 
+### chat_completion()
+Creates a completion for the chat message
+
+#### Example request
+```elixir
+OpenAI.chat_completion(
+  model: "gpt-3.5-turbo",
+  messages: [
+        %{"role": "system", "content": "You are a helpful assistant."},
+        %{"role": "user", "content": "Who won the world series in 2020?"},
+        %{"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+        %{"role": "user", "content": "Where was it played?"}
+    ]
+)
+```
+
+### Example response
+```elixir
+{:ok,
+     %{
+       choices: [
+         %{
+           "finish_reason" => "stop",
+           "index" => 0,
+           "message" => %{
+             "content" =>
+               "The 2020 World Series was played at Globe Life Field in Arlington, Texas due to the COVID-19 pandemic.",
+             "role" => "assistant"
+           }
+         }
+       ],
+       created: 1_677_773_799,
+       id: "chatcmpl-6pftfA4NO9pOQIdxao6Z4McDlx90l",
+       model: "gpt-3.5-turbo-0301",
+       object: "chat.completion",
+       usage: %{
+         "completion_tokens" => 26,
+         "prompt_tokens" => 56,
+         "total_tokens" => 82
+       }
+     }}
+```
 ### edits()
 Creates a new edit for the provided input, instruction, and parameters
 
@@ -842,6 +884,9 @@ OpenAI.answers(
 ```
 
 See: https://beta.openai.com/docs/api-reference/answers
+
+## TODO
+- improve JSON decoding strategy and performance issues/13
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
