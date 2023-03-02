@@ -188,7 +188,7 @@ OpenAI.chat_completion(
 )
 ```
 
-### Example response
+#### Example response
 ```elixir
 {:ok,
      %{
