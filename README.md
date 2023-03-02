@@ -886,8 +886,8 @@ OpenAI.answers(
 See: https://beta.openai.com/docs/api-reference/answers
 
 ## TODO
-- improve JSON decoding strategy and performance #13
-- add support to API streaming (SSE)
+- [] improve JSON decoding strategy and performance #13
+- [] add support to API streaming (SSE)
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
