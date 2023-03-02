@@ -214,6 +214,10 @@ OpenAI.chat_completion(
        }
      }}
 ```
+Known issue: the stream param is not working properly in the current implementation
+
+See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
+
 ### edits()
 Creates a new edit for the provided input, instruction, and parameters
 
