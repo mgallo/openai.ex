@@ -19,6 +19,7 @@ defmodule OpenAI do
   alias OpenAI.Edits
   alias OpenAI.Embeddings
   alias OpenAI.Moderations
+  alias OpenAI.Chat
 
   def start(_type, _args) do
     children = [Config]
@@ -155,6 +156,53 @@ defmodule OpenAI do
   """
   def completions(engine_id, params) do
     Completions.fetch(engine_id, params)
+  end
+
+  @doc """
+  Creates a completion for the chat message
+  
+  ## Example request
+      OpenAI.chat_completion(
+        model: "gpt-3.5-turbo",
+        messages: [
+              %{role: "system", content: "You are a helpful assistant."},
+              %{role: "user", content: "Who won the world series in 2020?"},
+              %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+              %{role: "user", content: "Where was it played?"}
+          ]
+      )
+  
+  ## Example response
+      {:ok,
+        %{
+        choices: [
+          %{
+            "finish_reason" => "stop",
+            "index" => 0,
+            "message" => %{
+              "content" => "The 2020 World Series was played at Globe Life Field in Arlington, Texas due to the COVID-19 pandemic.",
+              "role" => "assistant"
+            }
+          }
+        ],
+        created: 1677773799,
+        id: "chatcmpl-6pftfA4NO9pOQIdxao6Z4McDlx90l",
+        model: "gpt-3.5-turbo-0301",
+        object: "chat.completion",
+        usage: %{
+          "completion_tokens" => 26,
+          "prompt_tokens" => 56,
+          "total_tokens" => 82
+        }
+        }
+      }
+  
+  Known issue: the stream param is not working properly in the current implementation
+  
+  See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
+  """
+  def chat_completion(params) do
+    Chat.fetch(params)
   end
 
   @doc """
