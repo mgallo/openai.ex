@@ -50,7 +50,7 @@ defmodule Openai.MixProject do
       {:httpoison, "~> 1.8"},
       {:mock, "~> 0.3.6"},
       {:mix_test_watch, "~> 1.0"},
-      {:ex_doc, ">= 0.19.2", only: :dev}
+      {:ex_doc, "~> 0.29.2", only: :dev}
     ]
   end
 end
