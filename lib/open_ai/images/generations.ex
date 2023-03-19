@@ -3,11 +3,7 @@ defmodule OpenAi.Images.Generations do
   alias OpenAi.Client
 
   @base_url "/v1/images/generations"
-
-  def url(), do: @base_url
-
   def fetch(params, request_options \\ []) do
-    url()
-    |> Client.api_post(params, request_options)
+    Client.api_post(@base_url, params, request_options)
   end
 end
