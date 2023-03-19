@@ -1,6 +1,6 @@
 defmodule OpenAiTest do
   use ExUnit.Case
-  doctest OpenAI
+  doctest OpenAi
 
   import Mock
 

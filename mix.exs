@@ -18,7 +18,7 @@ defmodule OpenAi.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {OpenAI, []},
+      mod: {OpenAi, []},
       applications: [:logger, :jason, :tesla],
       extra_applications: [:logger]
     ]
@@ -26,7 +26,7 @@ defmodule OpenAi.MixProject do
 
   defp description do
     """
-    community-maintained OpenAI API Wrapper written in Elixir.
+    community-maintained OpenAi API Wrapper written in Elixir.
     """
   end
 

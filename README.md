@@ -2,7 +2,7 @@
 [![Hex.pm Version](https://img.shields.io/hexpm/v/openai)](https://hex.pm/packages/openai)
 [![Hex.pm Download Total](https://img.shields.io/hexpm/dt/openai)](https://hex.pm/packages/openai)
 
-Unofficial community-maintained wrapper for OpenAI REST APIs
+Unofficial community-maintained wrapper for OpenAi REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
 
@@ -38,7 +38,7 @@ Get your API key from https://platform.openai.com/account/api-keys
 Retrieve the list of available models
 ### Example request
 ```elixir
-OpenAI.models()
+OpenAi.models()
 ```
 #### Example response
 ```elixir
@@ -69,7 +69,7 @@ See: https://platform.openai.com/docs/api-reference/models/list
 Retrieve specific model info
 
 ```elixir
-OpenAI.models("davinci-search-query")
+OpenAi.models("davinci-search-query")
 ```
 #### Example response
 ```elixir
@@ -103,11 +103,11 @@ See: https://platform.openai.com/docs/api-reference/models/retrieve
 
 ### completions(params)
 It returns one or more predicted completions given a prompt.
-The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
+The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAi api
 
 #### Example request
 ```elixir
-  OpenAI.completions(
+  OpenAi.completions(
     model: "finetuned-model",
     prompt: "once upon a time",
     max_tokens: 5,
@@ -137,11 +137,11 @@ The function accepts as arguments the "engine_id" and the set of parameters used
 See: https://platform.openai.com/docs/api-reference/completions/create
 
 ### completions(engine_id, params) (DEPRECATED)
-this API has been deprecated by OpenAI, as `engines` are replaced by `models`. If you are using it consider to switch to `completions(params)` ASAP!
+this API has been deprecated by OpenAi, as `engines` are replaced by `models`. If you are using it consider to switch to `completions(params)` ASAP!
 
 #### Example request
 ```elixir
-  OpenAI.completions(
+  OpenAi.completions(
     "davinci", # engine_id
     prompt: "once upon a time",
     max_tokens: 5,
@@ -177,7 +177,7 @@ Creates a completion for the chat message
 
 #### Example request
 ```elixir
-OpenAI.chat_completion(
+OpenAi.chat_completion(
   model: "gpt-3.5-turbo",
   messages: [
         %{role: "system", content: "You are a helpful assistant."},
@@ -223,7 +223,7 @@ Creates a new edit for the provided input, instruction, and parameters
 
 #### Example request
 ```elixir
-OpenAI.edits(
+OpenAi.edits(
   model: "text-davinci-edit-001",
   input: "What day of the wek is it?",
   instruction: "Fix the spelling mistakes"
@@ -251,7 +251,7 @@ If needed, you can pass a second argument to the function to add specific http o
 
 #### Example request
 ```elixir
-OpenAI.images_generations(
+OpenAi.images_generations(
     [prompt: "A developer writing a test", size: "256x256"],
     [recv_timeout: 10 * 60 * 1000]
  )
@@ -270,7 +270,7 @@ OpenAI.images_generations(
  }}
 ```
 
-Note: this api signature has changed in `v0.3.0` to be compliant with the conventions of other APIs, the alias `OpenAI.image_generations(params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_generations(params, request_options)` ASAP.
+Note: this api signature has changed in `v0.3.0` to be compliant with the conventions of other APIs, the alias `OpenAi.image_generations(params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAi.images_generations(params, request_options)` ASAP.
 
 See: https://platform.openai.com/docs/api-reference/images/create
 
@@ -280,7 +280,7 @@ If needed, you can pass a second argument to the function to add specific http o
 
 #### Example Request
 ```elixir
-OpenAI.images_edits(
+OpenAi.images_edits(
      "/home/developer/myImg.png",
      [prompt: "A developer writing a test", size: "256x256"],
     [recv_timeout: 10 * 60 * 1000]
@@ -299,7 +299,7 @@ OpenAI.images_edits(
    ]
  }}
 ```
-Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAI.image_edits(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_edits(params, request_options)` ASAP.
+Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAi.image_edits(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAi.images_edits(params, request_options)` ASAP.
 
 See: https://platform.openai.com/docs/api-reference/images/create-edit
 
@@ -307,7 +307,7 @@ See: https://platform.openai.com/docs/api-reference/images/create-edit
 
 #### Example Request
 ```elixir
-OpenAI.images_variations(
+OpenAi.images_variations(
     "/home/developer/myImg.png",
     [n: "5"],
     [recv_timeout: 10 * 60 * 1000]
@@ -327,7 +327,7 @@ OpenAI.images_variations(
  }}
 ```
 
-Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAI.image_variations(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_variations(params, request_options)` ASAP.
+Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAi.image_variations(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAi.images_variations(params, request_options)` ASAP.
 
 See: https://platform.openai.com/docs/api-reference/images/create-variation
 
@@ -335,7 +335,7 @@ See: https://platform.openai.com/docs/api-reference/images/create-variation
 
 #### Example request
 ```elixir
-OpenAI.embeddings(
+OpenAi.embeddings(
     model: "text-embedding-ada-002",
     input: "The food was delicious and the waiter..."
   )
@@ -377,7 +377,7 @@ Returns a list of files that belong to the user's organization.
 
 #### Example request
 ```elixir
-OpenAI.files()
+OpenAi.files()
 ```
 #### Example response
  ```elixir
@@ -406,7 +406,7 @@ Returns a file that belong to the user's organization, given a file id
   
 #### Example request
 ```elixir
-OpenAI.files("file-123321")
+OpenAi.files("file-123321")
 ```
   
 #### Example response
@@ -428,11 +428,11 @@ See: https://platform.openai.com/docs/api-reference/files/retrieve
 
 
 ### files_upload(file_path, params)
-Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
+Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAi if you need to increase the storage limit.
   
 #### Example request
 ```elixir
-OpenAI.files_upload("./file.jsonl", purpose: "fine-tune")
+OpenAi.files_upload("./file.jsonl", purpose: "fine-tune")
 ```
   
 #### Example response
@@ -457,7 +457,7 @@ delete a file
 
 #### Example request
 ```elixir
-OpenAI.files_delete("file-123")
+OpenAi.files_delete("file-123")
 ```
   
 #### Example response
@@ -472,7 +472,7 @@ List your organization's fine-tuning jobs.
 
 #### Example request
 ```elixir
-OpenAI.finetunes()
+OpenAi.finetunes()
 ```
 
 #### Example response
@@ -505,7 +505,7 @@ Gets info about a fine-tune job.
 
 #### Example request
 ```elixir
-OpenAI.finetunes("t-AF1WoRqd3aJAHsqc9NY7iL8F")
+OpenAi.finetunes("t-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 #### Example response
@@ -538,7 +538,7 @@ Creates a job that fine-tunes a specified model from a given dataset.
 
 #### Example request
 ```elixir
-OpenAI.finetunes_create(
+OpenAi.finetunes_create(
   training_file: "file-123213231",
   model: "curie",
 )
@@ -594,7 +594,7 @@ Get fine-grained status updates for a fine-tune job.
 
 #### Example request
 ```elixir
-OpenAI.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
+OpenAi.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 #### Example response
@@ -633,7 +633,7 @@ Immediately cancel a fine-tune job.
 
 #### Example request
 ```elixir
-OpenAI.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
+OpenAi.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 #### Example response
@@ -685,7 +685,7 @@ Immediately cancel a fine-tune job.
 
 #### Example request
 ```elixir
-OpenAI.finetunes_delete_model("model-id")
+OpenAi.finetunes_delete_model("model-id")
 ```
 
 #### Example response
@@ -702,11 +702,11 @@ See: https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
 
 
 ### moderations(params)
-Classifies if text violates OpenAI's Content Policy
+Classifies if text violates OpenAi's Content Policy
 
 #### Example request
 ```elixir
-OpenAI.moderations(input: "I want to kill everyone!")
+OpenAi.moderations(input: "I want to kill everyone!")
 ```
 
 #### Example response
@@ -750,7 +750,7 @@ The following APIs are deprecated, but currently supported by the library for re
 Get the list of available engines
 #### Example request
 ```elixir
-OpenAI.engines()
+OpenAi.engines()
 ```
 
 #### Example response
@@ -770,7 +770,7 @@ See: https://beta.openai.com/docs/api-reference/engines/list
 Retrieve specific engine info
 #### Example request
 ```elixir
-OpenAI.engines("davinci")
+OpenAi.engines("davinci")
 ```
 
 #### Example response
@@ -786,11 +786,11 @@ See: https://beta.openai.com/docs/api-reference/engines/retrieve
 
 ### search(engine_id, params) (DEPRECATED)
 It returns a rank of each document passed to the function, based on its semantic similarity to the passed query.
-The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAI api
+The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAi api
 
 #### Example request
 ```elixir
-OpenAI.search(
+OpenAi.search(
   "babbage", #engine_id
   documents: ["White House", "hospital", "school"],
   query: "the president"
@@ -816,13 +816,13 @@ OpenAI.search(
 
 ### classifications(params) (DEPRECATED)
 It returns the most likely label for the query passed to the function.
-The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAI api
+The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAi api
 
 Given a query and a set of labeled examples, the model will predict the most likely label for the query. Useful as a drop-in replacement for any ML classification or text-to-label task.
 
 #### Example request
 ```elixir
-OpenAI.classifications(
+OpenAi.classifications(
   examples: [
     ["A happy moment", "Positive"],
     ["I am sad.", "Negative"],
@@ -860,7 +860,7 @@ The endpoint first searches over provided documents or files to find relevant co
 
 #### Example request
 ```elixir
-OpenAI.answers(
+OpenAi.answers(
   model: "curie",
   documents: ["Puppy A is happy.", "Puppy B is sad."],
   question: "which puppy is happy?",

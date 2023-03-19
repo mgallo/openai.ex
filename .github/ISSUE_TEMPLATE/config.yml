@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
-  - name: OpenAI.ex issue report
+  - name: OpenAi.ex issue report
     about: |
-      Please only file issues here that you believe represent actual bugs or feature requests for the OpenAI.ex Elixir library.
-      Please note that is an unofficial community-maintained library, if you're having general trouble with the OpenAI API, please visit their help center to get support.
+      Please only file issues here that you believe represent actual bugs or feature requests for the OpenAi.ex Elixir library.
+      Please note that is an unofficial community-maintained library, if you're having general trouble with the OpenAi API, please visit their help center to get support.
 Footer

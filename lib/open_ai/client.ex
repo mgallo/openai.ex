@@ -1,6 +1,6 @@
 defmodule OpenAi.Client do
   @moduledoc """
-  Client module for OpenAI API
+  Client module for OpenAi API
   """
 
   use Tesla
