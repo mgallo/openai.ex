@@ -1,13 +1,14 @@
 # Openai.ex
+
 [![Hex.pm Version](https://img.shields.io/hexpm/v/openai)](https://hex.pm/packages/openai)
 [![Hex.pm Download Total](https://img.shields.io/hexpm/dt/openai)](https://hex.pm/packages/openai)
 
 Unofficial community-maintained wrapper for OpenAi REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
-
 ## Installation
-Add ***:openai*** as a dependency in your mix.exs file.
+
+Add **_:openai_** as a dependency in your mix.exs file.
 
 ```elixir
 def deps do
@@ -18,6 +19,7 @@ end
 ```
 
 ## Configuration
+
 You can configure openai in your mix config.exs (default $project_root/config/config.exs). If you're using Phoenix add the configuration in your config/dev.exs|test.exs|prod.exs files. An example config is:
 
 ```elixir
@@ -29,18 +31,25 @@ config :openai,
   http_options: [recv_timeout: 30_000] # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
 
 ```
+
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
 
 ## Usage overview
+
 Get your API key from https://platform.openai.com/account/api-keys
 
 ### models()
+
 Retrieve the list of available models
+
 ### Example request
+
 ```elixir
 OpenAi.models()
 ```
+
 #### Example response
+
 ```elixir
 {:ok, %{
   data: [%{
@@ -58,54 +67,61 @@ OpenAi.models()
       }
     ],
     "root" => "davinci-search-query"
-  }, 
+  },
   ....],
   object: "list"
 }}
 ```
+
 See: https://platform.openai.com/docs/api-reference/models/list
 
 ### models(model_id)
+
 Retrieve specific model info
 
 ```elixir
 OpenAi.models("davinci-search-query")
 ```
+
 #### Example response
+
 ```elixir
-{:ok,                                               
- %{                                                 
-   created: 1651172505,                             
-   id: "davinci-search-query",                      
-   object: "model",                                 
-   owned_by: "openai-dev",                          
-   parent: nil,                                     
-   permission: [                                    
-     %{                                             
-       "allow_create_engine" => false,              
-       "allow_fine_tuning" => false,                
-       "allow_logprobs" => true,                    
-       "allow_sampling" => true,                    
-       "allow_search_indices" => true,              
-       "allow_view" => true,                        
-       "created" => 1669066353,                     
-       "group" => nil,                              
+{:ok,
+ %{
+   created: 1651172505,
+   id: "davinci-search-query",
+   object: "model",
+   owned_by: "openai-dev",
+   parent: nil,
+   permission: [
+     %{
+       "allow_create_engine" => false,
+       "allow_fine_tuning" => false,
+       "allow_logprobs" => true,
+       "allow_sampling" => true,
+       "allow_search_indices" => true,
+       "allow_view" => true,
+       "created" => 1669066353,
+       "group" => nil,
        "id" => "modelperm-lYkiTZMmJMWm8jvkPx2duyHE",
-       "is_blocking" => false,                      
-       "object" => "model_permission",              
-       "organization" => "*"                        
-     }                                              
-   ],                                               
-   root: "davinci-search-query"                     
- }}                                                 
+       "is_blocking" => false,
+       "object" => "model_permission",
+       "organization" => "*"
+     }
+   ],
+   root: "davinci-search-query"
+ }}
 ```
+
 See: https://platform.openai.com/docs/api-reference/models/retrieve
 
 ### completions(params)
+
 It returns one or more predicted completions given a prompt.
 The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAi api
 
 #### Example request
+
 ```elixir
   OpenAi.completions(
     model: "finetuned-model",
@@ -115,7 +131,9 @@ The function accepts as arguments the "engine_id" and the set of parameters used
     ...
   )
 ```
+
 #### Example response
+
 ```elixir
 ## Example response
   {:ok, %{
@@ -134,12 +152,15 @@ The function accepts as arguments the "engine_id" and the set of parameters used
     }
   }
 ```
+
 See: https://platform.openai.com/docs/api-reference/completions/create
 
 ### completions(engine_id, params) (DEPRECATED)
+
 this API has been deprecated by OpenAi, as `engines` are replaced by `models`. If you are using it consider to switch to `completions(params)` ASAP!
 
 #### Example request
+
 ```elixir
   OpenAi.completions(
     "davinci", # engine_id
@@ -152,6 +173,7 @@ this API has been deprecated by OpenAi, as `engines` are replaced by `models`. I
 ```
 
 #### Example response
+
 ```elixir
 {:ok, %{
   choices: [
@@ -169,13 +191,15 @@ this API has been deprecated by OpenAi, as `engines` are replaced by `models`. I
   }
 }
 ```
+
 See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
 
-
 ### chat_completion()
+
 Creates a completion for the chat message
 
 #### Example request
+
 ```elixir
 OpenAi.chat_completion(
   model: "gpt-3.5-turbo",
@@ -189,6 +213,7 @@ OpenAi.chat_completion(
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
      %{
@@ -214,14 +239,17 @@ OpenAi.chat_completion(
        }
      }}
 ```
+
 Known issue: the stream param is not working properly in the current implementation
 
 See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
 
 ### edits()
+
 Creates a new edit for the provided input, instruction, and parameters
 
 #### Example request
+
 ```elixir
 OpenAi.edits(
   model: "text-davinci-edit-001",
@@ -229,7 +257,9 @@ OpenAi.edits(
   instruction: "Fix the spelling mistakes"
 )
 ```
+
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -243,13 +273,16 @@ OpenAi.edits(
   }
 }}
 ```
+
 See: https://platform.openai.com/docs/api-reference/edits/create
 
 ### images_generations(params, request_options)
+
 This generates an image based on the given prompt.
 If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
 
 #### Example request
+
 ```elixir
 OpenAi.images_generations(
     [prompt: "A developer writing a test", size: "256x256"],
@@ -258,6 +291,7 @@ OpenAi.images_generations(
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
  %{
@@ -275,10 +309,12 @@ Note: this api signature has changed in `v0.3.0` to be compliant with the conven
 See: https://platform.openai.com/docs/api-reference/images/create
 
 ### images_edits(params, request_options)
+
 Edit an existing image based on prompt
 If needed, you can pass a second argument to the function to add specific http options for this specific call (i.e. increasing the timeout)
 
 #### Example Request
+
 ```elixir
 OpenAi.images_edits(
      "/home/developer/myImg.png",
@@ -288,6 +324,7 @@ OpenAi.images_edits(
 ```
 
 #### Example Response
+
 ```elixir
 {:ok,
  %{
@@ -299,6 +336,7 @@ OpenAi.images_edits(
    ]
  }}
 ```
+
 Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAi.image_edits(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAi.images_edits(params, request_options)` ASAP.
 
 See: https://platform.openai.com/docs/api-reference/images/create-edit
@@ -306,6 +344,7 @@ See: https://platform.openai.com/docs/api-reference/images/create-edit
 ### images_variations(params, request_options)
 
 #### Example Request
+
 ```elixir
 OpenAi.images_variations(
     "/home/developer/myImg.png",
@@ -315,6 +354,7 @@ OpenAi.images_variations(
 ```
 
 #### Example Response
+
 ```elixir
 {:ok,
  %{
@@ -334,6 +374,7 @@ See: https://platform.openai.com/docs/api-reference/images/create-variation
 ### embeddings(params)
 
 #### Example request
+
 ```elixir
 OpenAi.embeddings(
     model: "text-embedding-ada-002",
@@ -342,6 +383,7 @@ OpenAi.embeddings(
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -370,72 +412,84 @@ OpenAi.embeddings(
    usage: %{"prompt_tokens" => 8, "total_tokens" => 8}
   }}
 ```
+
 See: https://platform.openai.com/docs/api-reference/embeddings/create
 
 ### files()
+
 Returns a list of files that belong to the user's organization.
 
 #### Example request
+
 ```elixir
 OpenAi.files()
 ```
+
 #### Example response
- ```elixir
+
+```elixir
 {:ok,
-  %{
-  data: [
-    %{
-      "bytes" => 123,
-      "created_at" => 213,
-      "filename" => "file.jsonl",
-      "id" => "file-123321",
-      "object" => "file",
-      "purpose" => "fine-tune",
-      "status" => "processed",
-      "status_details" => nil
-    }
-  ],
-  object: "list"
-  }
+ %{
+ data: [
+   %{
+     "bytes" => 123,
+     "created_at" => 213,
+     "filename" => "file.jsonl",
+     "id" => "file-123321",
+     "object" => "file",
+     "purpose" => "fine-tune",
+     "status" => "processed",
+     "status_details" => nil
+   }
+ ],
+ object: "list"
+ }
 }
 ```
+
 See: https://platform.openai.com/docs/api-reference/files
 
 ### files(file_id)
+
 Returns a file that belong to the user's organization, given a file id
-  
+
 #### Example request
+
 ```elixir
 OpenAi.files("file-123321")
 ```
-  
+
 #### Example response
-  ```elixir
+
+```elixir
 {:ok,
-  %{
-    bytes: 923,
-    created_at: 1675370979,
-    filename: "file.jsonl",
-    id: "file-123321",
-    object: "file",
-    purpose: "fine-tune",
-    status: "processed",
-    status_details: nil
-  }
+%{
+  bytes: 923,
+  created_at: 1675370979,
+  filename: "file.jsonl",
+  id: "file-123321",
+  object: "file",
+  purpose: "fine-tune",
+  status: "processed",
+  status_details: nil
+}
 }
 ```
+
 See: https://platform.openai.com/docs/api-reference/files/retrieve
 
-
 ### files_upload(file_path, params)
+
 Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAi if you need to increase the storage limit.
-  
+
 #### Example request
+
 ```elixir
 OpenAi.files_upload("./file.jsonl", purpose: "fine-tune")
 ```
-  
+
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -450,32 +504,39 @@ OpenAi.files_upload("./file.jsonl", purpose: "fine-tune")
   }
 }
 ```
+
 See: https://platform.openai.com/docs/api-reference/files/upload
 
 ### files_delete(file_id)
+
 delete a file
 
 #### Example request
+
 ```elixir
 OpenAi.files_delete("file-123")
 ```
-  
+
 #### Example response
+
 ```elixir
 {:ok, %{deleted: true, id: "file-123", object: "file"}}
 ```
+
 See: https://platform.openai.com/docs/api-reference/files/delete
 
-
 ### finetunes()
+
 List your organization's fine-tuning jobs.
 
 #### Example request
+
 ```elixir
 OpenAi.finetunes()
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -501,14 +562,17 @@ OpenAi.finetunes()
 See: https://platform.openai.com/docs/api-reference/fine-tunes/list
 
 ### finetunes(finetune_id)
+
 Gets info about a fine-tune job.
 
 #### Example request
+
 ```elixir
 OpenAi.finetunes("t-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -534,9 +598,11 @@ OpenAi.finetunes("t-AF1WoRqd3aJAHsqc9NY7iL8F")
 See: https://platform.openai.com/docs/api-reference/fine-tunes/retrieve
 
 ### finetunes_create(params)
+
 Creates a job that fine-tunes a specified model from a given dataset.
 
 #### Example request
+
 ```elixir
 OpenAi.finetunes_create(
   training_file: "file-123213231",
@@ -545,59 +611,63 @@ OpenAi.finetunes_create(
 ```
 
 #### Example response
+
 ```elixir
-{:ok,                                                                           
- %{                                                                             
-   created_at: 1675527767,                                                      
-   events: [                                                                    
-     %{                                                                         
-       "created_at" => 1675527767,                                              
-       "level" => "info",                                                       
-       "message" => "Created fine-tune: ft-IaBYfSSAK47UUCbebY5tBIEj",           
-       "object" => "fine-tune-event"                                            
-     }                                                                          
-   ],                                                                           
-   fine_tuned_model: nil,                                                       
-   hyperparams: %{                                                              
-     "batch_size" => nil,                                                       
-     "learning_rate_multiplier" => nil,                                         
-     "n_epochs" => 4,                                                           
-     "prompt_loss_weight" => 0.01                                               
-   },                                                                           
-   id: "ft-IaBYfSSAK47UUCbebY5tBIEj",                                           
-   model: "curie",                                                              
-   object: "fine-tune",                                                         
-   organization_id: "org-1iPTOIak4b5fpuIB697AYMmO",                             
-   result_files: [],                                                            
-   status: "pending",                                                           
-   training_files: [                                                            
-     %{                                                                         
-       "bytes" => 923,                                                          
-       "created_at" => 1675373519,                                              
-       "filename" => "file-12321323.jsonl",                                             
-       "id" => "file-12321323",                                 
-       "object" => "file",                                                      
-       "purpose" => "fine-tune",                                                
-       "status" => "processed",                                                 
-       "status_details" => nil                                                  
-     }                                                                          
-   ],                                                                           
-   updated_at: 1675527767,                                                      
-   validation_files: []                                                         
- }}                                                                             
+{:ok,
+ %{
+   created_at: 1675527767,
+   events: [
+     %{
+       "created_at" => 1675527767,
+       "level" => "info",
+       "message" => "Created fine-tune: ft-IaBYfSSAK47UUCbebY5tBIEj",
+       "object" => "fine-tune-event"
+     }
+   ],
+   fine_tuned_model: nil,
+   hyperparams: %{
+     "batch_size" => nil,
+     "learning_rate_multiplier" => nil,
+     "n_epochs" => 4,
+     "prompt_loss_weight" => 0.01
+   },
+   id: "ft-IaBYfSSAK47UUCbebY5tBIEj",
+   model: "curie",
+   object: "fine-tune",
+   organization_id: "org-1iPTOIak4b5fpuIB697AYMmO",
+   result_files: [],
+   status: "pending",
+   training_files: [
+     %{
+       "bytes" => 923,
+       "created_at" => 1675373519,
+       "filename" => "file-12321323.jsonl",
+       "id" => "file-12321323",
+       "object" => "file",
+       "purpose" => "fine-tune",
+       "status" => "processed",
+       "status_details" => nil
+     }
+   ],
+   updated_at: 1675527767,
+   validation_files: []
+ }}
 ```
+
 See: https://platform.openai.com/docs/api-reference/fine-tunes/create
 
-
 ### finetunes_list_events(finetune_id)
+
 Get fine-grained status updates for a fine-tune job.
 
 #### Example request
+
 ```elixir
 OpenAi.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -625,18 +695,21 @@ OpenAi.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
     }
   }
 ```
+
 See: https://platform.openai.com/docs/api-reference/fine-tunes/events
 
-
 ### finetunes_cancel(finetune_id)
+
 Immediately cancel a fine-tune job.
 
 #### Example request
+
 ```elixir
 OpenAi.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 #### Example response
+
 ```elixir
   {:ok,
   %{
@@ -681,14 +754,17 @@ OpenAi.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
 ```
 
 ### finetunes_delete_model(finetune_id)
+
 Immediately cancel a fine-tune job.
 
 #### Example request
+
 ```elixir
 OpenAi.finetunes_delete_model("model-id")
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -698,18 +774,21 @@ OpenAi.finetunes_delete_model("model-id")
   }
 }
 ```
+
 See: https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
 
-
 ### moderations(params)
+
 Classifies if text violates OpenAi's Content Policy
 
 #### Example request
+
 ```elixir
 OpenAi.moderations(input: "I want to kill everyone!")
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -740,20 +819,25 @@ OpenAi.moderations(input: "I want to kill everyone!")
    ]
   }}
 ```
+
 See: https://platform.openai.com/docs/api-reference/moderations/create
 
-
 ## Deprecated APIs
+
 The following APIs are deprecated, but currently supported by the library for retrocompatibility with older versions. If you are using the following APIs consider to remove it ASAP from your project!
 
 ### engines() (DEPRECATED: use models instead)
+
 Get the list of available engines
+
 #### Example request
+
 ```elixir
 OpenAi.engines()
 ```
 
 #### Example response
+
 ```elixir
 {:ok, %{
   "data" => [
@@ -763,17 +847,21 @@ OpenAi.engines()
   ]
 }
 ```
+
 See: https://beta.openai.com/docs/api-reference/engines/list
 
-
 ### engines(engine_id)
+
 Retrieve specific engine info
+
 #### Example request
+
 ```elixir
 OpenAi.engines("davinci")
 ```
 
 #### Example response
+
 ```elixir
 {:ok, %{
     "id" => "davinci",
@@ -782,13 +870,16 @@ OpenAi.engines("davinci")
   }
 }
 ```
+
 See: https://beta.openai.com/docs/api-reference/engines/retrieve
 
 ### search(engine_id, params) (DEPRECATED)
+
 It returns a rank of each document passed to the function, based on its semantic similarity to the passed query.
 The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAi api
 
 #### Example request
+
 ```elixir
 OpenAi.search(
   "babbage", #engine_id
@@ -798,6 +889,7 @@ OpenAi.search(
 ```
 
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -811,16 +903,18 @@ OpenAi.search(
   }
 }
 ```
-  See: https://beta.openai.com/docs/api-reference/searches for the complete list of parameters you can pass to the search function
 
+See: https://beta.openai.com/docs/api-reference/searches for the complete list of parameters you can pass to the search function
 
 ### classifications(params) (DEPRECATED)
+
 It returns the most likely label for the query passed to the function.
 The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAi api
 
 Given a query and a set of labeled examples, the model will predict the most likely label for the query. Useful as a drop-in replacement for any ML classification or text-to-label task.
 
 #### Example request
+
 ```elixir
 OpenAi.classifications(
   examples: [
@@ -836,7 +930,8 @@ OpenAi.classifications(
 ```
 
 #### Example response
-``` elixir
+
+```elixir
 {:ok,
   %{
     completion: "cmpl-2jIXZYg7Buyg1DDRYtozkre50TSMb",
@@ -852,13 +947,15 @@ OpenAi.classifications(
   }
 }
 ```
+
 See: https://beta.openai.com/docs/api-reference/classifications for the complete list of parameters you can pass to the classifications function
 
-
 ### answers(params) (DEPRECATED)
+
 The endpoint first searches over provided documents or files to find relevant context. The relevant context is combined with the provided examples and question to create the prompt for completion.
 
 #### Example request
+
 ```elixir
 OpenAi.answers(
   model: "curie",
@@ -870,7 +967,9 @@ OpenAi.answers(
   max_tokens: 5
 )
 ```
+
 #### Example response
+
 ```elixir
 {:ok,
   %{
@@ -890,12 +989,10 @@ OpenAi.answers(
 See: https://beta.openai.com/docs/api-reference/answers
 
 ## TODO
+
 - [ ] improve JSON decoding strategy and performance #13
 - [ ] add support to API streaming (SSE)
 
 ## License
+
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-
-
-
