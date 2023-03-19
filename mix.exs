@@ -18,7 +18,6 @@ defmodule OpenAi.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      mod: {OpenAi, []},
       applications: [:logger, :jason, :tesla],
       extra_applications: [:logger]
     ]
@@ -48,7 +47,6 @@ defmodule OpenAi.MixProject do
     [
       {:jason, "~> 1.4"},
       {:tesla, "~> 1.5"},
-      {:hackney, "~> 1.17"},
       {:mock, "~> 0.3.6"},
       {:mix_test_watch, "~> 1.0"},
       {:ex_doc, "~> 0.29.2", only: :dev},

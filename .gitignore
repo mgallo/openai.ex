@@ -26,4 +26,4 @@ openai-*.tar
 # Temporary files for e.g. tests
 /tmp
 
-/config/
+/config/*.secret.exs

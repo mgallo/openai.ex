@@ -6,13 +6,15 @@ defmodule OpenAi.Client do
   use Tesla
   alias Tesla.Multipart
 
+  @api_key Application.compile_env(:openai, :api_key)
+  @organization_key Application.compile_env(:openai, :organization_key)
+
   plug Tesla.Middleware.JSON
   plug Tesla.Middleware.BaseUrl, "https://api.openai.com"
-  plug Tesla.Middleware.BearerAuth, token: Application.get_env(:openai, :api_key)
-  plug Tesla.Middleware.Timeout, timeout: Application.get_env(:openai, :http_timeout)
+  plug Tesla.Middleware.BearerAuth, token: @api_key
 
   plug Tesla.Middleware.Headers, [
-    {"OpenAI-Organization", Application.get_env(:openai, :organization_key)}
+    {"OpenAI-Organization", @organization_key}
   ]
 
   def api_get(url, request_options \\ []) do
