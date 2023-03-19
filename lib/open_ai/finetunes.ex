@@ -8,14 +8,12 @@ defmodule OpenAi.Finetunes do
   def cancel_url(finetune_id), do: "#{@base_url}/#{finetune_id}/cancel"
   def events_url(finetune_id), do: "#{@base_url}/#{finetune_id}/events"
 
+  def fetch, do: Client.api_get(@base_url)
+
   def fetch(finetune_id) do
     finetune_id
     |> url()
     |> Client.api_get()
-  end
-
-  def fetch() do
-    Client.api_get(@base_url)
   end
 
   def create(params) do

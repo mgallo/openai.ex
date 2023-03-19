@@ -5,18 +5,18 @@ defmodule OpenAi do
   """
 
   alias OpenAi.Answers
+  alias OpenAi.Chat
   alias OpenAi.Classifications
   alias OpenAi.Completions
-  alias OpenAi.Engines
-  alias OpenAi.Search
-  alias OpenAi.Finetunes
-  alias OpenAi.Images
-  alias OpenAi.Files
-  alias OpenAi.Models
   alias OpenAi.Edits
   alias OpenAi.Embeddings
+  alias OpenAi.Engines
+  alias OpenAi.Files
+  alias OpenAi.Finetunes
+  alias OpenAi.Images
+  alias OpenAi.Models
   alias OpenAi.Moderations
-  alias OpenAi.Chat
+  alias OpenAi.Search
 
   @doc """
   Retrieve the list of available models
