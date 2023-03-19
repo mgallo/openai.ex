@@ -1,4 +1,4 @@
-defmodule OpenAI.ConfigTest do
+defmodule OpenAi.ConfigTest do
   use ExUnit.Case
   alias OpenAI.Config
 

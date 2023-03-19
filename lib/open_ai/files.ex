@@ -1,6 +1,6 @@
-defmodule OpenAI.Files do
+defmodule OpenAi.Files do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @files_base_url "/v1/files"
 

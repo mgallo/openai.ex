@@ -1,4 +1,4 @@
-defmodule OpenAI.Config do
+defmodule OpenAi.Config do
   @moduledoc """
   Reads configuration on application start, parses all environment variables (if any)
   and caches the final config in memory to avoid parsing on each read afterwards.

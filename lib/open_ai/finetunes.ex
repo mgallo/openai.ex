@@ -1,6 +1,6 @@
-defmodule OpenAI.Finetunes do
+defmodule OpenAi.Finetunes do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @finetuning_base_url "/v1/fine-tunes"
 

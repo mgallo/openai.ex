@@ -1,6 +1,6 @@
-defmodule OpenAI.Images.Generations do
+defmodule OpenAi.Images.Generations do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @base_url "/v1/images/generations"
 

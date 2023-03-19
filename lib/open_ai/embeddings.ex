@@ -1,6 +1,6 @@
-defmodule OpenAI.Embeddings do
+defmodule OpenAi.Embeddings do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @embeddings_base_url "/v1/embeddings"
 

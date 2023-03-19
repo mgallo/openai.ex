@@ -1,6 +1,6 @@
-defmodule OpenAI.Moderations do
+defmodule OpenAi.Moderations do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @moderations_base_url "/v1/moderations"
 

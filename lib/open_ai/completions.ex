@@ -1,6 +1,6 @@
-defmodule OpenAI.Completions do
+defmodule OpenAi.Completions do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @base_url "/v1/completions"
   @engines_base_url "/v1/engines"

@@ -1,8 +1,8 @@
-defmodule OpenAI.Classifications do
+defmodule OpenAi.Chat do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
-  @base_url "/v1/classifications"
+  @base_url "/v1/chat/completions"
 
   def url(), do: @base_url
 

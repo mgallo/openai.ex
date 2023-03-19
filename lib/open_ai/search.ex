@@ -1,6 +1,6 @@
-defmodule OpenAI.Search do
+defmodule OpenAi.Search do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @base_url "/v1/engines"
 

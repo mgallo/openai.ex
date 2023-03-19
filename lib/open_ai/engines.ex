@@ -1,6 +1,6 @@
-defmodule OpenAI.Engines do
+defmodule OpenAi.Engines do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @engines_base_url "/v1/engines"
 

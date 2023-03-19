@@ -1,4 +1,4 @@
-defmodule OpenAI do
+defmodule OpenAi do
   @moduledoc """
   Provides API wrappers for OpenAI API
   See https://beta.openai.com/docs/api-reference/introduction for further info on REST endpoints
@@ -32,7 +32,7 @@ defmodule OpenAI do
   Retrieve the list of available models
   ## Example request
       OpenAI.models()
-  
+
   ## Example response
        %{
        "created" => 1651172505,
@@ -60,7 +60,7 @@ defmodule OpenAI do
   Retrieve specific model info
   ## Example request
       OpenAI.models("davinci-search-query")
-  
+
   ## Example response
        {:ok, %{
   data: [%{
@@ -91,7 +91,7 @@ defmodule OpenAI do
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
-  
+
   ## Example request
       OpenAI.completions(
         model: "finetuned-model",
@@ -100,7 +100,7 @@ defmodule OpenAI do
         temperature: 1,
         ...
       )
-  
+
   ## Example response
       {:ok, %{
         choices: [
@@ -126,7 +126,7 @@ defmodule OpenAI do
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
-  
+
   ## Example request
       OpenAI.completions(
         "davinci", # engine_id
@@ -135,7 +135,7 @@ defmodule OpenAI do
         temperature: 1,
         ...
       )
-  
+
   ## Example response
       {:ok, %{
         choices: [
@@ -160,7 +160,7 @@ defmodule OpenAI do
 
   @doc """
   Creates a completion for the chat message
-  
+
   ## Example request
       OpenAI.chat_completion(
         model: "gpt-3.5-turbo",
@@ -171,7 +171,7 @@ defmodule OpenAI do
               %{role: "user", content: "Where was it played?"}
           ]
       )
-  
+
   ## Example response
       {:ok,
         %{
@@ -196,9 +196,9 @@ defmodule OpenAI do
         }
         }
       }
-  
+
   Known issue: the stream param is not working properly in the current implementation
-  
+
   See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
   """
   def chat_completion(params) do
@@ -207,14 +207,14 @@ defmodule OpenAI do
 
   @doc """
   Creates a new edit for the provided input, instruction, and parameters
-  
+
   ## Example request
   OpenAI.edits(
     model: "text-davinci-edit-001",
     input: "What day of the wek is it?",
     instruction: "Fix the spelling mistakes"
   )
-  
+
   ## Example response
   {:ok,
   %{
@@ -227,7 +227,7 @@ defmodule OpenAI do
      "total_tokens" => 53
    }
   }}
-  
+
   See: https://platform.openai.com/docs/api-reference/edits/create
   """
   def edits(params) do
@@ -236,13 +236,13 @@ defmodule OpenAI do
 
   @doc """
   Creates an embedding vector representing the input text.
-  
+
   ## Example request
   OpenAI.embeddings(
     model: "text-embedding-ada-002",
     input: "The food was delicious and the waiter..."
   )
-  
+
   ## Example response
   {:ok,
   %{
@@ -270,7 +270,7 @@ defmodule OpenAI do
    object: "list",
    usage: %{"prompt_tokens" => 8, "total_tokens" => 8}
   }}
-  
+
   See: https://platform.openai.com/docs/api-reference/embeddings/create
   """
   def embeddings(params) do
@@ -289,7 +289,7 @@ defmodule OpenAI do
         examples: [["What is human life expectancy in the United States?", "78 years."]],
         max_tokens: 5
       )
-  
+
   ## Example response
       {:ok,
         %{
@@ -304,9 +304,9 @@ defmodule OpenAI do
         ]
         }
       }
-  
+
     See: https://beta.openai.com/docs/api-reference/answers
-  
+
   """
   def answers(params) do
     Answers.fetch(params)
@@ -316,7 +316,7 @@ defmodule OpenAI do
   Retrieve specific engine info
   ## Example request
       OpenAI.engines("davinci")
-  
+
   ## Example response
       {:ok, %{
         "id" => "davinci",
@@ -335,7 +335,7 @@ defmodule OpenAI do
   Get the list of available engines
   ## Example request
       OpenAI.engines()
-  
+
   ## Example response
       {:ok, %{
         "data" => [
@@ -352,10 +352,10 @@ defmodule OpenAI do
 
   @doc """
   Classifies if text violates OpenAI's Content Policy
-  
+
   ## Example request
   OpenAI.moderations(input: "I want to kill everyone!")
-  
+
   ## Example response
   {:ok,
   %{
@@ -385,7 +385,7 @@ defmodule OpenAI do
      }
    ]
   }}
-  
+
   See: https://platform.openai.com/docs/api-reference/moderations/create
   """
   def moderations(params) do
@@ -394,17 +394,17 @@ defmodule OpenAI do
 
   @doc """
   @deprecated: "DEPRECATED by OpenAI"
-  
+
   It returns a rank of each document passed to the function, based on its semantic similarity to the passed query.
   The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAI api
-  
+
   ## Example request
       OpenAI.search(
         "babbage", #engine_id
         documents: ["White House", "hospital", "school"],
         query: "the president"
       )
-  
+
   ## Example response
       {:ok,
         %{
@@ -424,14 +424,14 @@ defmodule OpenAI do
 
   @doc """
   @deprecated: "DEPRECATED by OpenAI"
-  
+
   It returns the most likely label for the query passed to the function.
   The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAI api
-  
-  
+
+
   Given a query and a set of labeled examples, the model will predict the most likely label for the query. Useful as a drop-in replacement for any ML classification or text-to-label task.
-  
-  
+
+
   ## Example request
       OpenAI.classifications(
         examples: [
@@ -444,7 +444,7 @@ defmodule OpenAI do
         search_model: "ada",
         model: "curie"
       )
-  
+
   ## Example response
       {:ok,
         %{
@@ -460,7 +460,7 @@ defmodule OpenAI do
           ]
         }
       }
-  
+
   See: https://beta.openai.com/docs/api-reference/classifications for the complete list of parameters you can pass to the classifications function
   """
   def classifications(params) do
@@ -471,7 +471,7 @@ defmodule OpenAI do
   List your organization's fine-tuning jobs
   ## Example request
       OpenAI.finetunes()
-  
+
   ## Example response
       {:ok, %{
         "data" => [
@@ -490,7 +490,7 @@ defmodule OpenAI do
   Gets info about the fine-tune job.
   ## Example request
       OpenAI.finetunes("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
-  
+
   ## Example response
       {:ok, %{
         created_at: 1614807352,
@@ -518,12 +518,12 @@ defmodule OpenAI do
 
   @doc """
   Creates a job that fine-tunes a specified model from a given dataset.
-  
+
   ## Example request
       OpenAI.finetunes_create(training_file: "file-123", model: "curie", validation_file: "file-456")
-  
+
   ## Example response
-  
+
   See: https://platform.openai.com/docs/api-reference/fine-tunes/create
   """
   def finetunes_create(params) do
@@ -532,10 +532,10 @@ defmodule OpenAI do
 
   @doc """
   Immediately cancel a fine-tune job.
-  
+
   ## Example request
       OpenAI.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
-  
+
   ## Example response
   {:ok,
   %{
@@ -577,7 +577,7 @@ defmodule OpenAI do
    updated_at: 1675528080,
    validation_files: []
   }}
-  
+
   See: https://platform.openai.com/docs/api-reference/fine-tunes/cancel
   """
   def finetunes_cancel(finetune_id) do
@@ -586,10 +586,10 @@ defmodule OpenAI do
 
   @doc """
   Delete a fine-tuned model. You must have the Owner role in your organization.
-  
+
   ## Example request
       OpenAI.finetunes_delete_model("model-id")
-  
+
   ## Example response
   {:ok,
   %{
@@ -597,7 +597,7 @@ defmodule OpenAI do
    object: "model",
    deleted: true
   }}
-  
+
   See: https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
   """
   def finetunes_delete_model(model_id) do
@@ -606,10 +606,10 @@ defmodule OpenAI do
 
   @doc """
   Get fine-grained status updates for a fine-tune job.
-  
+
   ## Example request
       OpenAI.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
-  
+
   ## Example response
   {:ok,
   %{
@@ -636,7 +636,7 @@ defmodule OpenAI do
      ]
     }
   }
-  
+
   See: https://platform.openai.com/docs/api-reference/fine-tunes/events
   """
   def finetunes_list_events(finetune_id) do
@@ -646,13 +646,13 @@ defmodule OpenAI do
   @doc """
   This generates an image based on the given prompt.
   If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
-  
+
   ## Example Request
       OpenAI.images_generations(
         [prompt: "A developer writing a test", size: "256x256"],
         [recv_timeout: 10 * 60 * 1000]
       )
-  
+
   ## Example Response
     {:ok,
       %{
@@ -678,7 +678,7 @@ defmodule OpenAI do
 
   @doc """
   This edits an image based on the given prompt.
-  
+
   ## Example Request
   ```elixir
   OpenAI.images_edits(
@@ -687,7 +687,7 @@ defmodule OpenAI do
     [recv_timeout: 10 * 60 * 1000]
   )
   ```
-  
+
   ## Example Response
   ```elixir
   {:ok,
@@ -716,7 +716,7 @@ defmodule OpenAI do
   @doc """
   Creates a variation of a given image.
   If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
-  
+
   ## Example Request
   ```elixir
   OpenAI.images_variations(
@@ -725,7 +725,7 @@ defmodule OpenAI do
      [recv_timeout: 10 * 60 * 1000]
   )
   ```
-  
+
   ## Example Response
   ```elixir
   {:ok,
@@ -753,12 +753,12 @@ defmodule OpenAI do
 
   @doc """
   Returns a list of files that belong to the user's organization.
-  
+
   ## Example request
   ```elixir
   OpenAI.files()
   ```
-  
+
   ## Example response
   ```elixir
   {:ok,
@@ -787,12 +787,12 @@ defmodule OpenAI do
 
   @doc """
   Returns a file that belong to the user's organization, given a file id
-  
+
   ## Example Request
   ```elixir
   OpenAI.files("file-123321")
   ```
-  
+
   ## Example Response
   ```elixir
   {:ok,
@@ -816,12 +816,12 @@ defmodule OpenAI do
 
   @doc """
   Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
-  
+
   ## Example request
   ```elixir
   OpenAI.files_upload("./file.jsonl", purpose: "fine-tune")
   ```
-  
+
   ## Example response
   ```elixir
   {:ok,
@@ -845,12 +845,12 @@ defmodule OpenAI do
 
   @doc """
   delete a file
-  
+
   ## Example Request
   ```elixir
   OpenAI.files_delete("file-123")
   ```
-  
+
   ## Example Response
   ```elixir
   {:ok, %{deleted: true, id: "file-123", object: "file"}}

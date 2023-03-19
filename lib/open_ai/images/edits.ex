@@ -1,6 +1,6 @@
-defmodule OpenAI.Images.Edits do
+defmodule OpenAi.Images.Edits do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @base_url "/v1/images/edits"
 

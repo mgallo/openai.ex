@@ -1,8 +1,8 @@
-defmodule OpenAI.Answers do
+defmodule OpenAi.Classifications do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
-  @base_url "/v1/answers"
+  @base_url "/v1/classifications"
 
   def url(), do: @base_url
 

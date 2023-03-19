@@ -1,6 +1,6 @@
-defmodule OpenAI.Images.Variations do
+defmodule OpenAi.Images.Variations do
   @moduledoc false
-  alias OpenAI.Client
+  alias OpenAi.Client
 
   @base_url "/v1/images/variations"
 
