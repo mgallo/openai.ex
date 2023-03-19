@@ -1,4 +1,4 @@
-defmodule Openai.MixProject do
+defmodule OpenAi.MixProject do
   use Mix.Project
 
   def project do
@@ -19,7 +19,7 @@ defmodule Openai.MixProject do
   def application do
     [
       mod: {OpenAI, []},
-      applications: [:httpoison, :json, :logger],
+      applications: [:logger, :jason, :tesla],
       extra_applications: [:logger]
     ]
   end
@@ -46,11 +46,15 @@ defmodule Openai.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:json, "~> 1.4"},
-      {:httpoison, "~> 1.8"},
+      {:jason, "~> 1.4"},
+      {:tesla, "~> 1.5"},
+      {:hackney, "~> 1.17"},
       {:mock, "~> 0.3.6"},
       {:mix_test_watch, "~> 1.0"},
-      {:ex_doc, "~> 0.29.2", only: :dev}
+      {:ex_doc, "~> 0.29.2", only: :dev},
+      # * Code quality
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev], runtime: false}
     ]
   end
 end
