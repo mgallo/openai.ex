@@ -2,12 +2,9 @@ defmodule OpenAi.Edits do
   @moduledoc false
   alias OpenAi.Client
 
-  @edits_base_url "/v1/edits"
-
-  def url(), do: @edits_base_url
+  @base_url "/v1/edits"
 
   def fetch(params) do
-    url()
-    |> Client.api_post(params)
+    Client.api_post(@base_url, params)
   end
 end

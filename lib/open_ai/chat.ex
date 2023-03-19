@@ -4,10 +4,7 @@ defmodule OpenAi.Chat do
 
   @base_url "/v1/chat/completions"
 
-  def url(), do: @base_url
-
   def fetch(params) do
-    url()
-    |> Client.api_post(params)
+    Client.api_post(@base_url, params)
   end
 end

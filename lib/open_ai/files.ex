@@ -2,28 +2,27 @@ defmodule OpenAi.Files do
   @moduledoc false
   alias OpenAi.Client
 
-  @files_base_url "/v1/files"
+  @base_url "/v1/files"
 
-  def url(), do: @files_base_url
-  def url(file_id), do: "#{@files_base_url}/#{file_id}"
+  def url(file_id), do: "#{@base_url}/#{file_id}"
 
   def fetch() do
-    url()
-    |> Client.api_get()
+    Client.api_get(@base_url)
   end
 
   def fetch(file_id) do
-    url(file_id)
+    file_id
+    |> url()
     |> Client.api_get()
   end
 
   def delete(file_id) do
-    url(file_id)
+    file_id
+    |> url()
     |> Client.api_delete()
   end
 
   def upload(file_path, params) do
-    url()
-    |> Client.multipart_api_post(file_path, "file", params)
+    Client.multipart_api_post(@base_url, file_path, "file", params)
   end
 end

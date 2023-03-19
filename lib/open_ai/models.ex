@@ -2,23 +2,22 @@ defmodule OpenAi.Models do
   @moduledoc false
   alias OpenAi.Client
 
-  @models_base_url "/v1/models"
-
-  def url(), do: @models_base_url
-  def url(model_id), do: "#{@models_base_url}/#{model_id}"
+  @base "/v1/models"
+  def url(model_id), do: "#{@base}/#{model_id}"
 
   def fetch(model_id) do
-    url(model_id)
+    model_id
+    |> url()
     |> Client.api_get()
   end
 
   def fetch() do
-    url()
-    |> Client.api_get()
+    Client.api_get(@base)
   end
 
   def delete(model_id) do
-    url(model_id)
+    model_id
+    |> url()
     |> Client.api_delete()
   end
 end

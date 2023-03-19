@@ -2,35 +2,35 @@ defmodule OpenAi.Finetunes do
   @moduledoc false
   alias OpenAi.Client
 
-  @finetuning_base_url "/v1/fine-tunes"
+  @base_url "/v1/fine-tunes"
 
-  def url(), do: @finetuning_base_url
-  def url(finetune_id), do: "#{@finetuning_base_url}/#{finetune_id}"
-  def cancel_url(finetune_id), do: "#{@finetuning_base_url}/#{finetune_id}/cancel"
-  def events_url(finetune_id), do: "#{@finetuning_base_url}/#{finetune_id}/events"
+  def url(finetune_id), do: "#{@base_url}/#{finetune_id}"
+  def cancel_url(finetune_id), do: "#{@base_url}/#{finetune_id}/cancel"
+  def events_url(finetune_id), do: "#{@base_url}/#{finetune_id}/events"
 
   def fetch(finetune_id) do
-    url(finetune_id)
+    finetune_id
+    |> url()
     |> Client.api_get()
   end
 
   def fetch() do
-    url()
-    |> Client.api_get()
+    Client.api_get(@base_url)
   end
 
   def create(params) do
-    url()
-    |> Client.api_post(params)
+    Client.api_post(@base_url, params)
   end
 
   def cancel(finetune_id) do
-    cancel_url(finetune_id)
+    finetune_id
+    |> cancel_url()
     |> Client.api_post()
   end
 
   def list_events(finetune_id) do
-    events_url(finetune_id)
+    finetune_id
+    |> events_url()
     |> Client.api_get()
   end
 end

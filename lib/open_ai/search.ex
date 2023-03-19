@@ -4,10 +4,11 @@ defmodule OpenAi.Search do
 
   @base_url "/v1/engines"
 
-  def url(engine_id), do: "#{@base_url}/#{engine_id}/search"
+  def engine_url(engine_id), do: "#{@base_url}/#{engine_id}/search"
 
   def fetch(engine_id, params) do
-    url(engine_id)
+    engine_id
+    |> engine_url()
     |> Client.api_post(params)
   end
 end
