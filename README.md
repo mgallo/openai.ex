@@ -12,7 +12,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.3.1"}
+    {:openai, "~> 0.4.0"}
   ]
 end
 ```
@@ -27,6 +27,7 @@ config :openai,
   api_key: "your-api-key", # find it at https://platform.openai.com/account/api-keys
   organization_key: "your-organization-key", # find it at https://platform.openai.com/account/api-keys
   http_options: [recv_timeout: 30_000] # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
+  api_url: "http://localhost/", # optional, useful if you want to do local integration tests using Bypass or similar (https://github.com/PSPDFKit-labs/bypass), do not use it for production code, but only in your test config!
 
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
@@ -371,6 +372,49 @@ OpenAI.embeddings(
   }}
 ```
 See: https://platform.openai.com/docs/api-reference/embeddings/create
+
+
+### audio_transcription(file_path, params)
+Transcribes audio into the input language.
+
+#### Example request
+```elixir
+OpenAI.audio_transcription(
+  "./path_to_file/blade_runner.mp3", # file path
+  model: "whisper-1"
+)
+```
+
+#### Example response
+```elixir
+ {:ok,
+  %{
+   text: "I've seen things you people wouldn't believe.."
+  }}
+```
+See: https://platform.openai.com/docs/api-reference/audio/create to get info on the params accepted by the api
+
+### audio_translation(file_path, params)
+Translates audio into into English.
+
+#### Example request
+```elixir
+OpenAI.audio_translation(
+  "./path_to_file/werner_herzog_interview.mp3", # file path
+  model: "whisper-1"
+)
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    text:  "I thought if I walked, I would be saved. It was almost like a pilgrimage. I will definitely continue to walk long distances. It is a very unique form of life and existence that we have lost almost entirely from our normal life."
+  }
+}
+```
+See: https://platform.openai.com/docs/api-reference/audio/create to get info on the params accepted by the api
+
 
 ### files()
 Returns a list of files that belong to the user's organization.

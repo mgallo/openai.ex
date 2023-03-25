@@ -20,6 +20,7 @@ defmodule OpenAI do
   alias OpenAI.Embeddings
   alias OpenAI.Moderations
   alias OpenAI.Chat
+  alias OpenAI.Audio
 
   def start(_type, _args) do
     children = [Config]
@@ -275,6 +276,48 @@ defmodule OpenAI do
   """
   def embeddings(params) do
     Embeddings.fetch(params)
+  end
+
+  @doc """
+  Transcribes audio into the input language.
+  
+  ## Example request
+  OpenAI.audio_transcription(
+    "./path_to_file/blade_runner.mp3", # file path
+    model: "whisper-1"
+  )
+  
+  ## Example response
+  {:ok,
+  %{
+   text: "I've seen things you people wouldn't believe.."
+  }}
+  
+  See: https://platform.openai.com/docs/api-reference/audio/create
+  """
+  def audio_transcription(file_path, params) do
+    Audio.transcription(file_path, params)
+  end
+
+  @doc """
+  Translates audio into into English.
+  
+  ## Example request
+  OpenAI.audio_translation(
+    "./path_to_file/werner_herzog_interview.mp3", # file path
+    model: "whisper-1"
+  )
+  
+  ## Example response
+  {:ok,
+  %{
+    text:  "I thought if I walked, I would be saved. It was almost like a pilgrimage. I will definitely continue to walk long distances. It is a very unique form of life and existence that we have lost almost entirely from our normal life."
+  }}
+  
+  See: https://platform.openai.com/docs/api-reference/audio/create
+  """
+  def audio_translation(file_path, params) do
+    Audio.translation(file_path, params)
   end
 
   @doc """
