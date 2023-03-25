@@ -372,6 +372,49 @@ OpenAI.embeddings(
 ```
 See: https://platform.openai.com/docs/api-reference/embeddings/create
 
+
+### audio_transcription(file_path, params)
+Transcribes audio into the input language.
+
+#### Example request
+```elixir
+OpenAI.audio_transcription(
+  "./path_to_file/blade_runner.mp3", # file path
+  model: "whisper-1"
+)
+```
+
+#### Example response
+```elixir
+ {:ok,
+  %{
+   text: "I've seen things you people wouldn't believe.."
+  }}
+```
+See: https://platform.openai.com/docs/api-reference/audio/create to get info on the params accepted by the api
+
+### audio_translation(file_path, params)
+Translates audio into into English.
+
+#### Example request
+```elixir
+OpenAI.audio_translation(
+  "./path_to_file/werner_herzog_interview.mp3", # file path
+  model: "whisper-1"
+)
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    text:  "I thought if I walked, I would be saved. It was almost like a pilgrimage. I will definitely continue to walk long distances. It is a very unique form of life and existence that we have lost almost entirely from our normal life."
+  }
+}
+```
+See: https://platform.openai.com/docs/api-reference/audio/create to get info on the params accepted by the api
+
+
 ### files()
 Returns a list of files that belong to the user's organization.
 
