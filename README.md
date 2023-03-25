@@ -24,10 +24,16 @@ You can configure openai in your mix config.exs (default $project_root/config/co
 import Config
 
 config :openai,
-  api_key: "your-api-key", # find it at https://platform.openai.com/account/api-keys
-  organization_key: "your-organization-key", # find it at https://platform.openai.com/account/api-keys
-  http_options: [recv_timeout: 30_000] # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
-  api_url: "http://localhost/", # optional, useful if you want to do local integration tests using Bypass or similar (https://github.com/PSPDFKit-labs/bypass), do not use it for production code, but only in your test config!
+  # find it at https://platform.openai.com/account/api-keys
+  api_key: "your-api-key",
+  # find it at https://platform.openai.com/account/org-settings under "Organization ID"
+  organization_key: "your-organization-key",
+  # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
+  http_options: [recv_timeout: 30_000],
+  # optional, useful if you want to do local integration tests using Bypass or similar
+  # (https://github.com/PSPDFKit-labs/bypass), do not use it for production code,
+  # but only in your test config!
+  api_url: "http://localhost/"
 
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
