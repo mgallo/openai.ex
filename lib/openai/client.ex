@@ -5,7 +5,7 @@ defmodule OpenAI.Client do
 
   def process_url(url), do: Config.api_url() <> url
 
-  def process_response_body(body), do: JSON.decode(body)
+  def process_response_body(body), do: Jason.decode(body)
 
   def handle_response(httpoison_response) do
     case httpoison_response do
@@ -57,7 +57,7 @@ defmodule OpenAI.Client do
     body =
       params
       |> Enum.into(%{})
-      |> JSON.Encoder.encode()
+      |> Jason.encode()
       |> elem(1)
 
     request_options = Keyword.merge(request_options(), request_options)

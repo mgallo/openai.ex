@@ -19,7 +19,7 @@ defmodule Openai.MixProject do
   def application do
     [
       mod: {OpenAI, []},
-      applications: [:httpoison, :json, :logger],
+      applications: [:httpoison, :jason, :logger],
       extra_applications: [:logger]
     ]
   end
@@ -46,7 +46,7 @@ defmodule Openai.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:json, "~> 1.4"},
+      {:jason, "~> 1.4"},
       {:httpoison, "~> 1.8"},
       {:mock, "~> 0.3.6"},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
