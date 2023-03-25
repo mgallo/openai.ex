@@ -49,7 +49,7 @@ defmodule Openai.MixProject do
       {:json, "~> 1.4"},
       {:httpoison, "~> 1.8"},
       {:mock, "~> 0.3.6"},
-      {:mix_test_watch, "~> 1.0"},
+      {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.29.3", only: :dev}
     ]
   end
