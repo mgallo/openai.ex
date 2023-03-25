@@ -279,7 +279,7 @@ defmodule OpenAI do
   end
 
   @doc """
-  Creates an embedding vector representing the input text.
+  Transcribes audio into the input language.
   
   ## Example request
   OpenAI.audio_transcription(
@@ -300,6 +300,8 @@ defmodule OpenAI do
   end
 
   @doc """
+  Translates audio into into English.
+  
   ## Example request
   OpenAI.audio_translation(
     "./path_to_file/werner_herzog_interview.mp3", # file path
