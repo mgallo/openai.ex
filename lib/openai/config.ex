@@ -31,7 +31,7 @@ defmodule OpenAI.Config do
   def org_key, do: get_config_value(:organization_key)
 
   # API Url
-  def api_url, do: @openai_url
+  def api_url, do: get_config_value(:api_url, @openai_url)
 
   # HTTP Options
   def http_options, do: get_config_value(:http_options, [])
