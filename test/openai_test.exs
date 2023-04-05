@@ -11,8 +11,5 @@ defmodule OpenaiTest do
   end
 
   describe "engines" do
-    test "success", %{api_key: api_key} do
-      with_mock(:hackney)
-    end
   end
 end
