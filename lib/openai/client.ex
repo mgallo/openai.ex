@@ -57,8 +57,7 @@ defmodule OpenAI.Client do
     body =
       params
       |> Enum.into(%{})
-      |> Jason.encode()
-      |> elem(1)
+      |> Jason.encode!()
 
     request_options = Keyword.merge(request_options(), request_options)
 
