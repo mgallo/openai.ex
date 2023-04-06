@@ -108,19 +108,22 @@ OpenAI.models("davinci-search-query")
 ```
 See: https://platform.openai.com/docs/api-reference/models/retrieve
 
-### completions(params)
+### completions(params, [additional_headers: ...] \\ [])
 It returns one or more predicted completions given a prompt.
-The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
+The function accepts as arguments the set of parameters used by the Completions OpenAI api
+and optionally additional headers (e.g. an API key to use for just this request).
 
 #### Example request
 ```elixir
-  OpenAI.completions(
+  OpenAI.completions(%{
     model: "finetuned-model",
     prompt: "once upon a time",
     max_tokens: 5,
     temperature: 1,
     ...
-  )
+  }, additional_headers: [
+    {"Authorization", "Bearer PER_REQUEST_API_KEY"}
+  ])
 ```
 #### Example response
 ```elixir
