@@ -8,6 +8,11 @@ defmodule OpenAI.Completions do
   def deprecated_url(engine_id), do: "#{@engines_base_url}/#{engine_id}/completions"
   def url(), do: @base_url
 
+  def fetch(params, additional_headers: additional_headers) do
+    url()
+    |> Client.api_post(params, [], additional_headers)
+  end
+
   def fetch(engine_id, params) do
     deprecated_url(engine_id)
     |> Client.api_post(params)

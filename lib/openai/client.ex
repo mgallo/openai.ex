@@ -33,12 +33,18 @@ defmodule OpenAI.Client do
     end
   end
 
-  def request_headers do
+  def request_headers(additional_headers \\ []) do
     [
       bearer(),
       {"Content-type", "application/json"}
     ]
     |> add_organization_header()
+    |> then(fn headers ->
+      headers
+      |> Enum.into(%{})
+      |> Map.merge(Enum.into(additional_headers, %{}))
+      |> Enum.into([])
+    end)
   end
 
   def bearer(), do: {"Authorization", "Bearer #{Config.api_key()}"}
@@ -53,7 +59,7 @@ defmodule OpenAI.Client do
     |> handle_response()
   end
 
-  def api_post(url, params \\ [], request_options \\ []) do
+  def api_post(url, params \\ [], request_options \\ [], additional_headers \\ []) do
     body =
       params
       |> Enum.into(%{})
@@ -62,7 +68,7 @@ defmodule OpenAI.Client do
     request_options = Keyword.merge(request_options(), request_options)
 
     url
-    |> post(body, request_headers(), request_options)
+    |> post(body, request_headers(additional_headers), request_options)
     |> handle_response()
   end
 
