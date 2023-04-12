@@ -47,7 +47,7 @@ defmodule Openai.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:httpoison, "~> 1.8"},
+      {:httpoison, "~> 2.0"},
       {:mock, "~> 0.3.6", only: [:test]},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.29.3", only: :dev}
