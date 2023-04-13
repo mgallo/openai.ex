@@ -5,7 +5,22 @@ defmodule OpenAI.Client do
 
   def process_url(url), do: Config.api_url() <> url
 
-  def process_response_body(body), do: Jason.decode(body)
+  def process_response_body(body) do
+    try do
+      {status, res} = Jason.decode(body)
+
+      case status do
+        :ok ->
+          {:ok, res}
+
+        :error ->
+          body
+      end
+    rescue
+      _ ->
+        body
+    end
+  end
 
   def handle_response(httpoison_response) do
     case httpoison_response do
@@ -16,6 +31,9 @@ defmodule OpenAI.Client do
           |> Map.new()
 
         {:ok, res}
+        
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        {:ok, body}        
 
       {:ok, %HTTPoison.Response{body: {:ok, body}}} ->
         {:error, body}
