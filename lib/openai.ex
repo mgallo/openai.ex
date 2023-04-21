@@ -7,11 +7,7 @@ defmodule OpenAI do
   use Application
 
   alias OpenAI.Config
-  alias OpenAI.Answers
-  alias OpenAI.Classifications
   alias OpenAI.Completions
-  alias OpenAI.Engines
-  alias OpenAI.Search
   alias OpenAI.Finetunes
   alias OpenAI.Images
   alias OpenAI.Files
@@ -52,12 +48,7 @@ defmodule OpenAI do
        "root" => "davinci-search-query"
      }
   See: https://platform.openai.com/docs/api-reference/models/retrieve
-  """
-  def models do
-    Models.fetch()
-  end
-
-  @doc """
+  
   Retrieve specific model info
   ## Example request
       OpenAI.models("davinci-search-query")
@@ -85,79 +76,50 @@ defmodule OpenAI do
   }}
   See: https://platform.openai.com/docs/api-reference/models/retrieve
   """
-  def models(model_id) do
-    Models.fetch(model_id)
-  end
+  def models(config) when is_struct(config), do: Models.fetch(config)
+  def models(model_id) when is_bitstring(model_id), do: Models.fetch_by_id(model_id)
+  def models(), do: Models.fetch()
+  def models(model_id, config), do: Models.fetch_by_id(model_id, config)
+
+  # def static_translate(key, opts \\ []) do
+  # end
+
+  # def static_translate(module, key, opts \\ []) do
+  # end
 
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
   
   ## Example request
-      OpenAI.completions(
-        model: "finetuned-model",
-        prompt: "once upon a time",
-        max_tokens: 5,
-        temperature: 1,
-        ...
-      )
+    OpenAI.completions(
+      model: "finetuned-model",
+      prompt: "once upon a time",
+      max_tokens: 5,
+      temperature: 1,
+      ...
+    )
   
   ## Example response
-      {:ok, %{
-        choices: [
-          %{
-            "finish_reason" => "length",
-            "index" => 0,
-            "logprobs" => nil,
-            "text" => "\" thing we are given"
-          }
-        ],
-        created: 1617147958,
-        id: "...",
-        model: "...",
-        object: "text_completion"
+    {:ok, %{
+      choices: [
+        %{
+          "finish_reason" => "length",
+          "index" => 0,
+          "logprobs" => nil,
+          "text" => "\" thing we are given"
         }
+      ],
+      created: 1617147958,
+      id: "...",
+      model: "...",
+      object: "text_completion"
       }
+    }
   See: https://platform.openai.com/docs/api-reference/completions/create
   """
-  def completions(params) do
-    Completions.fetch(params)
-  end
-
-  @doc """
-  It returns one or more predicted completions given a prompt.
-  The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
-  
-  ## Example request
-      OpenAI.completions(
-        "davinci", # engine_id
-        prompt: "once upon a time",
-        max_tokens: 5,
-        temperature: 1,
-        ...
-      )
-  
-  ## Example response
-      {:ok, %{
-        choices: [
-          %{
-            "finish_reason" => "length",
-            "index" => 0,
-            "logprobs" => nil,
-            "text" => "\" thing we are given"
-          }
-        ],
-        created: 1617147958,
-        id: "...",
-        model: "...",
-        object: "text_completion"
-        }
-      }
-  See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
-  """
-  def completions(engine_id, params) do
-    Completions.fetch(engine_id, params)
-  end
+  def completions(params, config \\ %Config{}) when is_list(params),
+    do: Completions.fetch(params, config)
 
   @doc """
   Creates a completion for the chat message
@@ -202,8 +164,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
   """
-  def chat_completion(params) do
-    Chat.fetch(params)
+  def chat_completion(params, config \\ %Config{}) do
+    Chat.fetch(params, config)
   end
 
   @doc """
@@ -231,8 +193,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/edits/create
   """
-  def edits(params) do
-    Edits.fetch(params)
+  def edits(params, config \\ %Config{}) do
+    Edits.fetch(params, config)
   end
 
   @doc """
@@ -274,8 +236,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/embeddings/create
   """
-  def embeddings(params) do
-    Embeddings.fetch(params)
+  def embeddings(params, config \\ %Config{}) do
+    Embeddings.fetch(params, config)
   end
 
   @doc """
@@ -295,8 +257,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/audio/create
   """
-  def audio_transcription(file_path, params) do
-    Audio.transcription(file_path, params)
+  def audio_transcription(file_path, params, config \\ %Config{}) do
+    Audio.transcription(file_path, params, config)
   end
 
   @doc """
@@ -316,81 +278,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/audio/create
   """
-  def audio_translation(file_path, params) do
-    Audio.translation(file_path, params)
-  end
-
-  @doc """
-  The endpoint first searches over provided documents or files to find relevant context. The relevant context is combined with the provided examples and question to create the prompt for completion.
-  ## Example request
-      OpenAI.answers(
-        model: "curie",
-        documents: ["Puppy A is happy.", "Puppy B is sad."],
-        question: "which puppy is happy?",
-        search_model: "ada",
-        examples_context: "In 2017, U.S. life expectancy was 78.6 years.",
-        examples: [["What is human life expectancy in the United States?", "78 years."]],
-        max_tokens: 5
-      )
-  
-  ## Example response
-      {:ok,
-        %{
-        answers: ["puppy A."],
-        completion: "cmpl-2kdRgXcoUfaAXxlPjmZXBT8AlKWfB",
-        model: "curie:2020-05-03",
-        object: "answer",
-        search_model: "ada",
-        selected_documents: [
-          %{"document" => 0, "text" => "Puppy A is happy. "},
-          %{"document" => 1, "text" => "Puppy B is sad. "}
-        ]
-        }
-      }
-  
-    See: https://beta.openai.com/docs/api-reference/answers
-  
-  """
-  def answers(params) do
-    Answers.fetch(params)
-  end
-
-  @doc """
-  Retrieve specific engine info
-  ## Example request
-      OpenAI.engines("davinci")
-  
-  ## Example response
-      {:ok, %{
-        "id" => "davinci",
-        "object" => "engine",
-        "max_replicas": ...
-      }
-      }
-  See: https://beta.openai.com/docs/api-reference/engines/retrieve
-  """
-  def engines(engine_id) do
-    Engines.fetch(engine_id)
-  end
-
-  @doc """
-  @deprecated: "use models instead"
-  Get the list of available engines
-  ## Example request
-      OpenAI.engines()
-  
-  ## Example response
-      {:ok, %{
-        "data" => [
-          %{"id" => "davinci", "object" => "engine", "max_replicas": ...},
-          ...,
-          ...
-        ]
-      }
-  See: https://beta.openai.com/docs/api-reference/engines/list
-  """
-  def engines do
-    Engines.fetch()
+  def audio_translation(file_path, params, config \\ %Config{}) do
+    Audio.translation(file_path, params, config)
   end
 
   @doc """
@@ -431,83 +320,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/moderations/create
   """
-  def moderations(params) do
-    Moderations.fetch(params)
-  end
-
-  @doc """
-  @deprecated: "DEPRECATED by OpenAI"
-  
-  It returns a rank of each document passed to the function, based on its semantic similarity to the passed query.
-  The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAI api
-  
-  ## Example request
-      OpenAI.search(
-        "babbage", #engine_id
-        documents: ["White House", "hospital", "school"],
-        query: "the president"
-      )
-  
-  ## Example response
-      {:ok,
-        %{
-          data: [
-            %{"document" => 0, "object" => "search_result", "score" => 218.676},
-            %{"document" => 1, "object" => "search_result", "score" => 17.797},
-            %{"document" => 2, "object" => "search_result", "score" => 29.65}
-          ],
-          model: "...",
-          object: "list"
-        }}
-  See: https://beta.openai.com/docs/api-reference/searches for the complete list of parameters you can pass to the search function
-  """
-  def search(engine_id, params) do
-    Search.fetch(engine_id, params)
-  end
-
-  @doc """
-  @deprecated: "DEPRECATED by OpenAI"
-  
-  It returns the most likely label for the query passed to the function.
-  The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAI api
-  
-  
-  Given a query and a set of labeled examples, the model will predict the most likely label for the query. Useful as a drop-in replacement for any ML classification or text-to-label task.
-  
-  
-  ## Example request
-      OpenAI.classifications(
-        examples: [
-          ["A happy moment", "Positive"],
-          ["I am sad.", "Negative"],
-          ["I am feeling awesome", "Positive"]
-        ],
-        labels: ["Positive", "Negative", "Neutral"],
-        query: "It is a raining day :(",
-        search_model: "ada",
-        model: "curie"
-      )
-  
-  ## Example response
-      {:ok,
-        %{
-          completion: "cmpl-2jIXZYg7Buyg1DDRYtozkre50TSMb",
-          label: "Negative",
-          model: "curie:2020-05-03",
-          object: "classification",
-          search_model: "ada",
-          selected_examples: [
-            %{"document" => 1, "label" => "Negative", "text" => "I am sad."},
-            %{"document" => 0, "label" => "Positive", "text" => "A happy moment"},
-            %{"document" => 2, "label" => "Positive", "text" => "I am feeling awesome"}
-          ]
-        }
-      }
-  
-  See: https://beta.openai.com/docs/api-reference/classifications for the complete list of parameters you can pass to the classifications function
-  """
-  def classifications(params) do
-    Classifications.fetch(params)
+  def moderations(params, config \\ %Config{}) do
+    Moderations.fetch(params, config)
   end
 
   @doc """
@@ -524,12 +338,7 @@ defmodule OpenAI do
         ]
       }
   See: https://beta.openai.com/docs/api-reference/fine-tunes/list
-  """
-  def finetunes do
-    Finetunes.fetch()
-  end
-
-  @doc """
+  
   Gets info about the fine-tune job.
   ## Example request
       OpenAI.finetunes("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
@@ -555,9 +364,13 @@ defmodule OpenAI do
       }
   See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
   """
-  def finetunes(finetune_id) do
-    Finetunes.fetch(finetune_id)
-  end
+  def finetunes(config) when is_struct(config), do: Finetunes.fetch(config)
+
+  def finetunes(finetunes_id) when is_bitstring(finetunes_id),
+    do: Finetunes.fetch_by_id(finetunes_id)
+
+  def finetunes(), do: Finetunes.fetch()
+  def finetunes(finetune_id, config \\ %Config{}), do: Finetunes.fetch_by_id(finetune_id, config)
 
   @doc """
   Creates a job that fine-tunes a specified model from a given dataset.
@@ -569,8 +382,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/fine-tunes/create
   """
-  def finetunes_create(params) do
-    Finetunes.create(params)
+  def finetunes_create(params, config \\ %Config{}) do
+    Finetunes.create(params, config)
   end
 
   @doc """
@@ -623,8 +436,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/fine-tunes/cancel
   """
-  def finetunes_cancel(finetune_id) do
-    Finetunes.cancel(finetune_id)
+  def finetunes_cancel(finetune_id, config \\ %Config{}) do
+    Finetunes.cancel(finetune_id, config)
   end
 
   @doc """
@@ -643,8 +456,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
   """
-  def finetunes_delete_model(model_id) do
-    Models.delete(model_id)
+  def finetunes_delete_model(model_id, config \\ %Config{}) do
+    Models.delete(model_id, config)
   end
 
   @doc """
@@ -682,8 +495,8 @@ defmodule OpenAI do
   
   See: https://platform.openai.com/docs/api-reference/fine-tunes/events
   """
-  def finetunes_list_events(finetune_id) do
-    Finetunes.list_events(finetune_id)
+  def finetunes_list_events(finetune_id, config \\ %Config{}) do
+    Finetunes.list_events(finetune_id, config)
   end
 
   @doc """
@@ -708,15 +521,8 @@ defmodule OpenAI do
     }}
   See: https://beta.openai.com/docs/api-reference/images/create for the complete list of parameters you can pass to the image creation function
   """
-  def images_generations(params, request_options) do
-    Images.Generations.fetch(params, request_options)
-  end
-
-  @doc """
-  alias of images_generations(params, request_options) - will be deprecated in future releases
-  """
-  def image_generations(params, request_options) do
-    Images.Generations.fetch(params, request_options)
+  def images_generations(params, config \\ %Config{}) do
+    Images.Generations.fetch(params, config)
   end
 
   @doc """
@@ -745,15 +551,8 @@ defmodule OpenAI do
   ```
   See: https://beta.openai.com/docs/api-reference/images/create-edit for the complete list of parameters you can pass to the image creation function
   """
-  def images_edits(file_path, params, request_options \\ []) do
-    Images.Edits.fetch(file_path, params, request_options)
-  end
-
-  @doc """
-  alias of images_edits(file_path, params, request_options) - will be deprecated in future releases
-  """
-  def image_edits(file_path, params, request_options \\ []) do
-    Images.Edits.fetch(file_path, params, request_options)
+  def images_edits(file_path, params, config \\ %Config{}) do
+    Images.Edits.fetch(file_path, params, config)
   end
 
   @doc """
@@ -783,15 +582,8 @@ defmodule OpenAI do
   ```
   See: https://beta.openai.com/docs/api-reference/images/create-variation for the complete list of parameters you can pass to the image creation function
   """
-  def images_variations(file_path, params \\ [], request_options \\ []) do
-    Images.Variations.fetch(file_path, params, request_options)
-  end
-
-  @doc """
-  alias of images_variations(file_path, params, request_options) - will be deprecated in future releases
-  """
-  def image_variations(file_path, params \\ [], request_options \\ []) do
-    Images.Variations.fetch(file_path, params, request_options)
+  def images_variations(file_path, params \\ [], config \\ %Config{}) do
+    Images.Variations.fetch(file_path, params, config)
   end
 
   @doc """
@@ -823,12 +615,7 @@ defmodule OpenAI do
   }
   ```
   See: https://platform.openai.com/docs/api-reference/files
-  """
-  def files do
-    Files.fetch()
-  end
-
-  @doc """
+  
   Returns a file that belong to the user's organization, given a file id
   
   ## Example Request
@@ -853,9 +640,13 @@ defmodule OpenAI do
   ```
   See: https://platform.openai.com/docs/api-reference/files/retrieve
   """
-  def files(file_id) do
-    Files.fetch(file_id)
-  end
+  def files(config) when is_struct(config), do: Files.fetch(config)
+
+  def files(file_id) when is_bitstring(file_id),
+    do: Files.fetch_by_id(file_id)
+
+  def files(), do: Files.fetch()
+  def files(file_id, config \\ %Config{}), do: Files.fetch_by_id(file_id, config)
 
   @doc """
   Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
@@ -882,8 +673,8 @@ defmodule OpenAI do
   ```
   See: https://platform.openai.com/docs/api-reference/files/upload
   """
-  def files_upload(file_path, params) do
-    Files.upload(file_path, params)
+  def files_upload(file_path, params, config \\ %Config{}) do
+    Files.upload(file_path, params, config)
   end
 
   @doc """
@@ -900,7 +691,7 @@ defmodule OpenAI do
   ```
   See: https://platform.openai.com/docs/api-reference/files/delete
   """
-  def files_delete(file_id) do
-    Files.delete(file_id)
+  def files_delete(file_id, config \\ %Config{}) do
+    Files.delete(file_id, config)
   end
 end

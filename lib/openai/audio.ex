@@ -6,13 +6,13 @@ defmodule OpenAI.Audio do
   def transcriptions_url(), do: "#{@base_url}/transcriptions"
   def translations_url(), do: "#{@base_url}/translations"
 
-  def transcription(file_path, params, request_options \\ []) do
+  def transcription(file_path, params, config) do
     transcriptions_url()
-    |> Client.multipart_api_post(file_path, "file", params, request_options)
+    |> Client.multipart_api_post(file_path, "file", params, config)
   end
 
-  def translation(file_path, params, request_options \\ []) do
+  def translation(file_path, params, config) do
     translations_url()
-    |> Client.multipart_api_post(file_path, "file", params, request_options)
+    |> Client.multipart_api_post(file_path, "file", params, config)
   end
 end

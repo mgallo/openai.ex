@@ -4,6 +4,19 @@ defmodule OpenAI.Config do
   and caches the final config in memory to avoid parsing on each read afterwards.
   """
 
+  defstruct api_key:
+              :openai
+              |> Application.get_env(:api_key),
+            organization_key:
+              :openai
+              |> Application.get_env(:organization_key),
+            http_options:
+              :openai
+              |> Application.get_env(:http_options) || [],
+            api_url:
+              :openai
+              |> Application.get_env(:api_url)
+
   use GenServer
 
   @openai_url "https://api.openai.com"

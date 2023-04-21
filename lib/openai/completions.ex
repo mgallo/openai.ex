@@ -1,20 +1,14 @@
 defmodule OpenAI.Completions do
   @moduledoc false
   alias OpenAI.Client
+  alias OpenAI.Config
 
   @base_url "/v1/completions"
-  @engines_base_url "/v1/engines"
 
-  def deprecated_url(engine_id), do: "#{@engines_base_url}/#{engine_id}/completions"
   def url(), do: @base_url
 
-  def fetch(engine_id, params) do
-    deprecated_url(engine_id)
-    |> Client.api_post(params)
-  end
-
-  def fetch(params) do
+  def fetch(params, config \\ %Config{}) do
     url()
-    |> Client.api_post(params)
+    |> Client.api_post(params, config)
   end
 end
