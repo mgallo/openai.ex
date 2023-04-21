@@ -31,9 +31,9 @@ defmodule OpenAI.Client do
           |> Map.new()
 
         {:ok, res}
-        
+
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, body}        
+        {:ok, body}
 
       {:ok, %HTTPoison.Response{body: {:ok, body}}} ->
         {:error, body}
@@ -43,48 +43,44 @@ defmodule OpenAI.Client do
     end
   end
 
-  def add_organization_header(headers) do
+  def add_organization_header(headers, config) do
     if Config.org_key() do
-      [{"OpenAI-Organization", Config.org_key()} | headers]
+      [{"OpenAI-Organization", config.organization_key} | headers]
     else
       headers
     end
   end
 
-  def request_headers do
+  def request_headers(config) do
     [
-      bearer(),
+      bearer(config),
       {"Content-type", "application/json"}
     ]
-    |> add_organization_header()
+    |> add_organization_header(config)
   end
 
-  def bearer(), do: {"Authorization", "Bearer #{Config.api_key()}"}
+  def bearer(config), do: {"Authorization", "Bearer #{config.api_key}"}
 
-  def request_options(), do: Config.http_options()
+  def request_options(config), do: config.http_options
 
-  def api_get(url, request_options \\ []) do
-    request_options = Keyword.merge(request_options(), request_options)
-
+  def api_get(url, config) do
     url
-    |> get(request_headers(), request_options)
+    |> get(request_headers(config), config.http_options)
     |> handle_response()
   end
 
-  def api_post(url, params \\ [], request_options \\ []) do
+  def api_post(url, params \\ [], config) do
     body =
       params
       |> Enum.into(%{})
       |> Jason.encode!()
 
-    request_options = Keyword.merge(request_options(), request_options)
-
     url
-    |> post(body, request_headers(), request_options)
+    |> post(body, request_headers(config), config.http_options)
     |> handle_response()
   end
 
-  def multipart_api_post(url, file_path, file_param, params, request_options \\ []) do
+  def multipart_api_post(url, file_path, file_param, params, config) do
     body_params = params |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
 
     body = {
@@ -95,18 +91,14 @@ defmodule OpenAI.Client do
       ] ++ body_params
     }
 
-    request_options = Keyword.merge(request_options(), request_options)
-
     url
-    |> post(body, request_headers(), request_options)
+    |> post(body, request_headers(config), config.http_options)
     |> handle_response()
   end
 
-  def api_delete(url, request_options \\ []) do
-    request_options = Keyword.merge(request_options(), request_options)
-
+  def api_delete(url, config) do
     url
-    |> delete(request_headers(), request_options)
+    |> delete(request_headers(config), config.http_options)
     |> handle_response()
   end
 end
