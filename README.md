@@ -12,7 +12,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.4.2"}
+    {:openai, "~> 0.5.0-beta.0"}
   ]
 end
 ```
@@ -37,6 +37,37 @@ config :openai,
 
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
+
+Note: Config is overridable by passing a custom `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
+
+```elixir
+config_override = %OpenAI.Config{ api_key: "test-api-key" } # this will return a config struct with "test-api-key" as api_key, and all the other config values taken from config.exs
+
+# chat_completion with overriden config
+OpenAI.chat_completion([
+  model: "gpt-3.5-turbo",
+  messages: [
+        %{role: "system", content: "You are a helpful assistant."},
+        %{role: "user", content: "Who won the world series in 2020?"},
+        %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+        %{role: "user", content: "Where was it played?"}
+    ]
+  ],
+  config_override 
+)
+
+
+# chat_completion with standard config
+OpenAI.chat_completion(
+  model: "gpt-3.5-turbo",
+  messages: [
+      %{role: "system", content: "You are a helpful assistant."},
+      %{role: "user", content: "Who won the world series in 2020?"},
+      %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+      %{role: "user", content: "Where was it played?"}
+  ]
+)
+```
 
 ## Usage overview
 Get your API key from https://platform.openai.com/account/api-keys
