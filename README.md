@@ -12,7 +12,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.4.2"}
+    {:openai, "~> 0.5.0"}
   ]
 end
 ```
@@ -37,6 +37,40 @@ config :openai,
 
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
+
+## Configuration override
+Client library configuration can be overwritten in runtime by passing a `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
+
+```elixir
+config_override = %OpenAI.Config{ api_key: "test-api-key" } # this will return a config struct with "test-api-key" as api_key, and all the other config values taken from config.exs, so you don't need to set the defaults manually
+
+# chat_completion with overriden config
+OpenAI.chat_completion([
+  model: "gpt-3.5-turbo",
+  messages: [
+        %{role: "system", content: "You are a helpful assistant."},
+        %{role: "user", content: "Who won the world series in 2020?"},
+        %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+        %{role: "user", content: "Where was it played?"}
+    ]
+  ],
+  config_override # <--- pass the overriden configuration as last argument of the function
+)
+
+
+# chat_completion with standard config
+OpenAI.chat_completion(
+  model: "gpt-3.5-turbo",
+  messages: [
+      %{role: "system", content: "You are a helpful assistant."},
+      %{role: "user", content: "Who won the world series in 2020?"},
+      %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+      %{role: "user", content: "Where was it played?"}
+  ]
+)
+```
+
+you can perform a config override in all the functions, note that `params` argument must be passed explicitly as a list in square brackets if the configuration is to be overwritten, as in the example above.
 
 ## Usage overview
 Get your API key from https://platform.openai.com/account/api-keys
@@ -252,15 +286,15 @@ OpenAI.edits(
 ```
 See: https://platform.openai.com/docs/api-reference/edits/create
 
-### images_generations(params, request_options)
+### images_generations(params)
 This generates an image based on the given prompt.
-If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
+Image functions require some times to execute, and API may return a timeout error, if needed you can pass an optional configuration struct with HTTPoison http_options as second argument of the function to increase the timeout.
 
 #### Example request
 ```elixir
 OpenAI.images_generations(
     [prompt: "A developer writing a test", size: "256x256"],
-    [recv_timeout: 10 * 60 * 1000]
+    %OpenAI.Config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
  )
 ```
 
@@ -279,18 +313,21 @@ OpenAI.images_generations(
 
 Note: this api signature has changed in `v0.3.0` to be compliant with the conventions of other APIs, the alias `OpenAI.image_generations(params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_generations(params, request_options)` ASAP.
 
+Note2: the official way of passing http_options changed in `v0.5.0` to be compliant with the conventions of other APIs, the alias `OpenAI.images_generations(file_path, params, request_options)`, but is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_variations(params, config)`
+
+
 See: https://platform.openai.com/docs/api-reference/images/create
 
-### images_edits(params, request_options)
+### images_edits(file_path, params)
 Edit an existing image based on prompt
-If needed, you can pass a second argument to the function to add specific http options for this specific call (i.e. increasing the timeout)
+Image functions require some times to execute, and API may return a timeout error, if needed you can pass an optional configuration struct with HTTPoison http_options as second argument of the function to increase the timeout.
 
 #### Example Request
 ```elixir
 OpenAI.images_edits(
      "/home/developer/myImg.png",
      [prompt: "A developer writing a test", size: "256x256"],
-    [recv_timeout: 10 * 60 * 1000]
+    %OpenAI.Config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
  )
 ```
 
@@ -306,18 +343,19 @@ OpenAI.images_edits(
    ]
  }}
 ```
-Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAI.image_edits(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_edits(params, request_options)` ASAP.
+Note: the official way of passing http_options changed in `v0.5.0` to be compliant with the conventions of other APIs, the alias `OpenAI.images_edits(file_path, params, request_options)`, but is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_edits(file_path, params, config)`
 
 See: https://platform.openai.com/docs/api-reference/images/create-edit
 
-### images_variations(params, request_options)
+### images_variations(file_path, params)
+Image functions require some times to execute, and API may return a timeout error, if needed you can pass an optional configuration struct with HTTPoison http_options as second argument of the function to increase the timeout.
 
 #### Example Request
 ```elixir
 OpenAI.images_variations(
     "/home/developer/myImg.png",
     [n: "5"],
-    [recv_timeout: 10 * 60 * 1000]
+    %OpenAI.Config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
 )
 ```
 
@@ -334,7 +372,7 @@ OpenAI.images_variations(
  }}
 ```
 
-Note: this api signature as changed in v0.3.0 to be compliant with the conventions of other APIs, the alias `OpenAI.image_variations(file_path, params, request_options)` is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_variations(params, request_options)` ASAP.
+Note: the official way of passing http_options changed in `v0.5.0` to be compliant with the conventions of other APIs, the alias `OpenAI.images_variations(file_path, params, request_options)`, but is still available for retrocompatibility. If you are using it consider to switch to `OpenAI.images_edits(file_path, params, config)`
 
 See: https://platform.openai.com/docs/api-reference/images/create-variation
 
@@ -796,6 +834,8 @@ See: https://platform.openai.com/docs/api-reference/moderations/create
 ## Deprecated APIs
 The following APIs are deprecated, but currently supported by the library for retrocompatibility with older versions. If you are using the following APIs consider to remove it ASAP from your project!
 
+Note: from version 0.5.0 search, answers, classifications API are not supported (since they has been removed by OpenAI), if you still need them consider to use [v0.4.2](https://hex.pm/packages/openai/0.4.2)
+
 ### engines() (DEPRECATED: use models instead)
 Get the list of available engines
 #### Example request
@@ -834,118 +874,10 @@ OpenAI.engines("davinci")
 ```
 See: https://beta.openai.com/docs/api-reference/engines/retrieve
 
-### search(engine_id, params) (DEPRECATED)
-It returns a rank of each document passed to the function, based on its semantic similarity to the passed query.
-The function accepts as arguments the engine_id and theset of parameters used by the Search OpenAI api
-
-#### Example request
-```elixir
-OpenAI.search(
-  "babbage", #engine_id
-  documents: ["White House", "hospital", "school"],
-  query: "the president"
-)
-```
-
-#### Example response
-```elixir
-{:ok,
-  %{
-    data: [
-      %{"document" => 0, "object" => "search_result", "score" => 218.676},
-      %{"document" => 1, "object" => "search_result", "score" => 17.797},
-      %{"document" => 2, "object" => "search_result", "score" => 29.65}
-    ],
-    model: "...",
-    object: "list"
-  }
-}
-```
-  See: https://beta.openai.com/docs/api-reference/searches for the complete list of parameters you can pass to the search function
-
-
-### classifications(params) (DEPRECATED)
-It returns the most likely label for the query passed to the function.
-The function accepts as arguments a set of parameters that will be passed to the Classifications OpenAI api
-
-Given a query and a set of labeled examples, the model will predict the most likely label for the query. Useful as a drop-in replacement for any ML classification or text-to-label task.
-
-#### Example request
-```elixir
-OpenAI.classifications(
-  examples: [
-    ["A happy moment", "Positive"],
-    ["I am sad.", "Negative"],
-    ["I am feeling awesome", "Positive"]
-  ],
-  labels: ["Positive", "Negative", "Neutral"],
-  query: "It is a raining day :(",
-  search_model: "ada",
-  model: "curie"
-)
-```
-
-#### Example response
-``` elixir
-{:ok,
-  %{
-    completion: "cmpl-2jIXZYg7Buyg1DDRYtozkre50TSMb",
-    label: "Negative",
-    model: "curie:2020-05-03",
-    object: "classification",
-    search_model: "ada",
-    selected_examples: [
-      %{"document" => 1, "label" => "Negative", "text" => "I am sad."},
-      %{"document" => 0, "label" => "Positive", "text" => "A happy moment"},
-      %{"document" => 2, "label" => "Positive", "text" => "I am feeling awesome"}
-    ]
-  }
-}
-```
-See: https://beta.openai.com/docs/api-reference/classifications for the complete list of parameters you can pass to the classifications function
-
-
-### answers(params) (DEPRECATED)
-The endpoint first searches over provided documents or files to find relevant context. The relevant context is combined with the provided examples and question to create the prompt for completion.
-
-#### Example request
-```elixir
-OpenAI.answers(
-  model: "curie",
-  documents: ["Puppy A is happy.", "Puppy B is sad."],
-  question: "which puppy is happy?",
-  search_model: "ada",
-  examples_context: "In 2017, U.S. life expectancy was 78.6 years.",
-  examples: [["What is human life expectancy in the United States?", "78 years."]],
-  max_tokens: 5
-)
-```
-#### Example response
-```elixir
-{:ok,
-  %{
-    answers: ["puppy A."],
-    completion: "cmpl-2kdRgXcoUfaAXxlPjmZXBT8AlKWfB",
-    model: "curie:2020-05-03",
-    object: "answer",
-    search_model: "ada",
-    selected_documents: [
-      %{"document" => 0, "text" => "Puppy A is happy. "},
-      %{"document" => 1, "text" => "Puppy B is sad. "}
-    ]
-  }
-}
-```
-
-See: https://beta.openai.com/docs/api-reference/answers
-
 ## TODO
 - [ ] improve JSON decoding strategy and performance #13
 - [ ] add support to API streaming (SSE)
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-
-
 
