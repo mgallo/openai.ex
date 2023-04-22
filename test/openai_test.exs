@@ -2,8 +2,6 @@ defmodule OpenaiTest do
   use ExUnit.Case
   doctest OpenAI
 
-  import Mock
-
   setup do
     [
       api_key: "123456789"
