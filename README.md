@@ -42,7 +42,7 @@ Note: you can load your os ENV variables in the configuration file, if you set a
 Client library configuration can be overwritten in runtime by passing a `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
 
 ```elixir
-config_override = %OpenAI.Config{ api_key: "test-api-key" } # this will return a config struct with "test-api-key" as api_key, and all the other config values taken from config.exs, so you don't need to set the defaults manually
+config_override = %OpenAI.Config{ api_key: "test-api-key" } # this will return a config struct with "test-api-key" as api_key, all the other config are defaulted by the client by using values taken from config.exs, so you don't need to set the defaults manually
 
 # chat_completion with overriden config
 OpenAI.chat_completion([
