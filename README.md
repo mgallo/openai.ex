@@ -348,6 +348,7 @@ Note: the official way of passing http_options changed in `v0.5.0` to be complia
 See: https://platform.openai.com/docs/api-reference/images/create-edit
 
 ### images_variations(file_path, params)
+Image functions require some times to execute, and API may return a timeout error, if needed you can pass an optional configuration struct with HTTPoison http_options as second argument of the function to increase the timeout.
 
 #### Example Request
 ```elixir
