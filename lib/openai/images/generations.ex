@@ -11,4 +11,11 @@ defmodule OpenAI.Images.Generations do
     url()
     |> Client.api_post(params, config)
   end
+
+  def fetch_legacy(params, request_options) do
+    config = %Config{http_options: request_options}
+
+    url()
+    |> Client.api_post(params, config)
+  end
 end

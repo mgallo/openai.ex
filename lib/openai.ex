@@ -17,6 +17,7 @@ defmodule OpenAI do
   alias OpenAI.Moderations
   alias OpenAI.Chat
   alias OpenAI.Audio
+  alias OpenAI.Engines
 
   def start(_type, _args) do
     children = [Config]
@@ -118,8 +119,48 @@ defmodule OpenAI do
     }
   See: https://platform.openai.com/docs/api-reference/completions/create
   """
-  def completions(params, config \\ %Config{}) when is_list(params),
+  def completions(params) when is_list(params),
+    do: Completions.fetch(params)
+
+  def completions(params, config) when is_list(params) and is_struct(config),
     do: Completions.fetch(params, config)
+
+  @doc """
+  It returns one or more predicted completions given a prompt.
+  The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
+  
+  ## Example request
+      OpenAI.completions(
+        "davinci", # engine_id
+        prompt: "once upon a time",
+        max_tokens: 5,
+        temperature: 1,
+        ...
+      )
+  
+  ## Example response
+      {:ok, %{
+        choices: [
+          %{
+            "finish_reason" => "length",
+            "index" => 0,
+            "logprobs" => nil,
+            "text" => "\" thing we are given"
+          }
+        ],
+        created: 1617147958,
+        id: "...",
+        model: "...",
+        object: "text_completion"
+        }
+      }
+  See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
+  """
+  def completions(engine_id, params) when is_bitstring(engine_id) and is_list(params),
+    do: Completions.fetch_by_engine(engine_id, params)
+
+  def completions(engine_id, params, config) when is_bitstring(engine_id),
+    do: Completions.fetch_by_engine(engine_id, params, config)
 
   @doc """
   Creates a completion for the chat message
@@ -501,12 +542,12 @@ defmodule OpenAI do
 
   @doc """
   This generates an image based on the given prompt.
-  If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
+  Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
   
   ## Example Request
       OpenAI.images_generations(
         [prompt: "A developer writing a test", size: "256x256"],
-        [recv_timeout: 10 * 60 * 1000]
+        %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
       )
   
   ## Example Response
@@ -520,20 +561,46 @@ defmodule OpenAI do
       ]
     }}
   See: https://beta.openai.com/docs/api-reference/images/create for the complete list of parameters you can pass to the image creation function
+  
+  note: the official way of passing http_options changed in v0.5.0 to be compliant with the conventions of other APIs, the alias OpenAI.images_generations(file_path, params, request_options), but is still available for retrocompatibility. If you are using it consider to switch to OpenAI.images_variations(params, config)
   """
-  def images_generations(params, config \\ %Config{}) do
+  def images_generations(params) do
+    Images.Generations.fetch(params)
+  end
+
+  def images_generations(params, config) when is_struct(config) do
     Images.Generations.fetch(params, config)
+  end
+
+  def images_generations(params, request_options) when is_list(request_options) do
+    Images.Generations.fetch_legacy(params, request_options)
+  end
+
+  @doc """
+  alias of images_generations(params, request_options) - will be deprecated in future releases
+  """
+  def image_generations(params) do
+    Images.Generations.fetch(params)
+  end
+
+  def image_generations(params, config) when is_struct(config) do
+    Images.Generations.fetch(params, config)
+  end
+
+  def image_generations(params, request_options) do
+    Images.Generations.fetch(params, request_options)
   end
 
   @doc """
   This edits an image based on the given prompt.
+  Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
   
   ## Example Request
   ```elixir
   OpenAI.images_edits(
     "/home/developer/myImg.png",
     [prompt: "A developer writing a test", "size": "256x256"],
-    [recv_timeout: 10 * 60 * 1000]
+    %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
   )
   ```
   
@@ -550,21 +617,45 @@ defmodule OpenAI do
   }}
   ```
   See: https://beta.openai.com/docs/api-reference/images/create-edit for the complete list of parameters you can pass to the image creation function
+    note: the official way of passing http_options changed in v0.5.0 to be compliant with the conventions of other APIs, the alias OpenAI.images_edits(file_path, params, request_options), but is still available for retrocompatibility. If you are using it consider to switch to OpenAI.images_edits(file_path, params, config)
   """
-  def images_edits(file_path, params, config \\ %Config{}) do
-    Images.Edits.fetch(file_path, params, config)
+  def images_edits(file_path, params) do
+    Images.Edits.fetch(file_path, params)
+  end
+
+  def images_edits(file_path, params, config) when is_struct(config) do
+    Images.Edits.fetch(file_path, params)
+  end
+
+  def images_edits(file_path, params, request_options) when is_list(request_options) do
+    Images.Edits.fetch_legacy(file_path, params, request_options)
+  end
+
+  @doc """
+  alias of images_edits(file_path, params, request_options) - will be deprecated in future releases
+  """
+  def image_edits(file_path, params) do
+    Images.Edits.fetch(file_path, params)
+  end
+
+  def image_edits(file_path, params, config) when is_struct(config) do
+    Images.Edits.fetch(file_path, params)
+  end
+
+  def image_edits(file_path, params, request_options) when is_list(request_options) do
+    Images.Edits.fetch_legacy(file_path, params, request_options)
   end
 
   @doc """
   Creates a variation of a given image.
-  If needed, you can pass a second argument to the function to add specific http options to this specific call (i.e. increasing the timeout)
+  Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
   
   ## Example Request
   ```elixir
   OpenAI.images_variations(
      "/home/developer/myImg.png",
      [n: "5"],
-     [recv_timeout: 10 * 60 * 1000]
+    %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
   )
   ```
   
@@ -581,9 +672,33 @@ defmodule OpenAI do
   }}
   ```
   See: https://beta.openai.com/docs/api-reference/images/create-variation for the complete list of parameters you can pass to the image creation function
+    note: the official way of passing http_options changed in v0.5.0 to be compliant with the conventions of other APIs, the alias OpenAI.images_variations(file_path, params, request_options), but is still available for retrocompatibility. If you are using it consider to switch to OpenAI.images_edits(file_path, params, config)
   """
-  def images_variations(file_path, params \\ [], config \\ %Config{}) do
+  def images_variations(file_path, params \\ []) do
+    Images.Variations.fetch(file_path, params)
+  end
+
+  def images_variations(file_path, params, config) when is_struct(config) do
     Images.Variations.fetch(file_path, params, config)
+  end
+
+  def images_variations(file_path, params, request_options) when is_list(request_options) do
+    Images.Variations.fetch_legacy(file_path, params, request_options)
+  end
+
+  @doc """
+  alias of images_variations(file_path, params, request_options) - will be deprecated in future releases
+  """
+  def image_variations(file_path, params \\ []) do
+    Images.Variations.fetch(file_path, params)
+  end
+
+  def image_variations(file_path, params, config) when is_struct(config) do
+    Images.Variations.fetch(file_path, params, config)
+  end
+
+  def image_variations(file_path, params, request_options) when is_list(request_options) do
+    Images.Variations.fetch_legacy(file_path, params, request_options)
   end
 
   @doc """
@@ -694,4 +809,38 @@ defmodule OpenAI do
   def files_delete(file_id, config \\ %Config{}) do
     Files.delete(file_id, config)
   end
+
+  @doc """
+   @deprecated: "use models instead"
+  Get the list of available engines
+  ## Example request
+      OpenAI.engines()
+  
+  ## Example response
+      {:ok, %{
+        "data" => [
+          %{"id" => "davinci", "object" => "engine", "max_replicas": ...},
+          ...,
+          ...
+        ]
+      }
+  See: https://beta.openai.com/docs/api-reference/engines/list
+  
+  Retrieve specific engine info
+  ## Example request
+      OpenAI.engines("davinci")
+  
+  ## Example response
+      {:ok, %{
+        "id" => "davinci",
+        "object" => "engine",
+        "max_replicas": ...
+      }
+      }
+  See: https://beta.openai.com/docs/api-reference/engines/retrieve
+  """
+  def engines(config) when is_struct(config), do: Engines.fetch(config)
+  def engines(engine_id) when is_bitstring(engine_id), do: Engines.fetch_by_id(engine_id)
+  def engines(), do: Engines.fetch()
+  def engines(engine_id, config), do: Engines.fetch_by_id(engine_id, config)
 end
