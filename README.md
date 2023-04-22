@@ -38,8 +38,8 @@ config :openai,
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
 
-## Configuration override (useful for multi api_key/organization_key solutions, or if you want to pass custom http_options)
-Client library configuration can be overwritten by passing a `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
+## Configuration override
+Client library configuration can be overwritten in runtime by passing a `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
 
 ```elixir
 config_override = %OpenAI.Config{ api_key: "test-api-key" } # this will return a config struct with "test-api-key" as api_key, and all the other config values taken from config.exs, so you don't need to set the defaults manually
@@ -348,6 +348,7 @@ Note: the official way of passing http_options changed in `v0.5.0` to be complia
 See: https://platform.openai.com/docs/api-reference/images/create-edit
 
 ### images_variations(file_path, params)
+Image functions require some times to execute, and API may return a timeout error, if needed you can pass an optional configuration struct with HTTPoison http_options as second argument of the function to increase the timeout.
 
 #### Example Request
 ```elixir
