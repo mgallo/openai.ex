@@ -44,8 +44,9 @@ defmodule OpenAI.Client do
   end
 
   def add_organization_header(headers, config) do
-    if Config.org_key() do
-      [{"OpenAI-Organization", config.organization_key} | headers]
+    org_key = config.organization_key || Config.org_key()
+    if org_key do
+      [{"OpenAI-Organization", org_key} | headers]
     else
       headers
     end
@@ -59,13 +60,13 @@ defmodule OpenAI.Client do
     |> add_organization_header(config)
   end
 
-  def bearer(config), do: {"Authorization", "Bearer #{config.api_key}"}
+  def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
 
-  def request_options(config), do: config.http_options
+  def request_options(config), do: config.http_options || Config.http_options
 
   def api_get(url, config) do
     url
-    |> get(request_headers(config), config.http_options)
+    |> get(request_headers(config), request_options(config))
     |> handle_response()
   end
 
@@ -76,7 +77,7 @@ defmodule OpenAI.Client do
       |> Jason.encode!()
 
     url
-    |> post(body, request_headers(config), config.http_options)
+    |> post(body, request_headers(config), request_options(config))
     |> handle_response()
   end
 
@@ -92,13 +93,13 @@ defmodule OpenAI.Client do
     }
 
     url
-    |> post(body, request_headers(config), config.http_options)
+    |> post(body, request_headers(config), request_options(config))
     |> handle_response()
   end
 
   def api_delete(url, config) do
     url
-    |> delete(request_headers(config), config.http_options)
+    |> delete(request_headers(config), request_options(config))
     |> handle_response()
   end
 end
