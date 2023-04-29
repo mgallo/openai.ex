@@ -8,9 +8,7 @@ defmodule OpenAI.Chat do
   def url(), do: @base_url
 
   def fetch(params, config \\ %Config{}) do
-    case params |> Keyword.get(:stream, false) do
-      true -> url() |> Client.api_stream(params, config)
-      false -> url() |> Client.api_post(params, config)
-    end
+    url()
+    |> Client.api_post(params, config)
   end
 end

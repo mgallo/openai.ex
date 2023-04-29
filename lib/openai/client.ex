@@ -76,21 +76,17 @@ defmodule OpenAI.Client do
       |> Enum.into(%{})
       |> Jason.encode!()
 
-    url
-    |> post(body, request_headers(config), request_options(config))
-    |> handle_response()
-  end
-
-  def api_stream(url, params \\ [], config) do
-    body =
-      params
-      |> Enum.into(%{})
-      |> Jason.encode!()
-
-    Stream.new(fn ->
-      url
-      |> post(body, request_headers(config), request_options(config))
-    end)
+    case params |> Keyword.get(:stream, false) do
+      true ->
+        Stream.new(fn ->
+          url
+          |> post(body, request_headers(config), request_options(config))
+        end)
+      false ->
+        url
+        |> post(body, request_headers(config), request_options(config))
+        |> handle_response()
+    end
   end
 
   def multipart_api_post(url, file_path, file_param, params, config) do
