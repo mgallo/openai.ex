@@ -11,9 +11,23 @@ defmodule OpenAI.Stream do
         end
 
         receive do
-          %HTTPoison.AsyncStatus{id: ^id, code: _code}->
+          %HTTPoison.AsyncStatus{id: ^id, code: code} ->
             HTTPoison.stream_next(res)
-            {[], res}
+            case code do
+              200 ->
+                {[], res}
+              _ ->
+                {
+                  [
+                    %{
+                      "status" => :error,
+                      "code" => code,
+                      "choices" => []
+                    }
+                  ],
+                  res
+                }
+            end
           %HTTPoison.AsyncHeaders{id: ^id, headers: _headers}->
             HTTPoison.stream_next(res)
             {[], res}
