@@ -1,6 +1,6 @@
 defmodule OpenAI.Client do
   @moduledoc false
-  alias OpenAI.Config
+  alias OpenAI.{Config, Stream}
   use HTTPoison.Base
 
   def process_url(url), do: Config.api_url() <> url
@@ -76,9 +76,17 @@ defmodule OpenAI.Client do
       |> Enum.into(%{})
       |> Jason.encode!()
 
-    url
-    |> post(body, request_headers(config), request_options(config))
-    |> handle_response()
+    case params |> Keyword.get(:stream, false) do
+      true ->
+        Stream.new(fn ->
+          url
+          |> post(body, request_headers(config), request_options(config))
+        end)
+      false ->
+        url
+        |> post(body, request_headers(config), request_options(config))
+        |> handle_response()
+    end
   end
 
   def multipart_api_post(url, file_path, file_param, params, config) do

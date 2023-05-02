@@ -99,7 +99,7 @@ OpenAI.models()
       }
     ],
     "root" => "davinci-search-query"
-  }, 
+  },
   ....],
   object: "list"
 }}
@@ -114,31 +114,31 @@ OpenAI.models("davinci-search-query")
 ```
 #### Example response
 ```elixir
-{:ok,                                               
- %{                                                 
-   created: 1651172505,                             
-   id: "davinci-search-query",                      
-   object: "model",                                 
-   owned_by: "openai-dev",                          
-   parent: nil,                                     
-   permission: [                                    
-     %{                                             
-       "allow_create_engine" => false,              
-       "allow_fine_tuning" => false,                
-       "allow_logprobs" => true,                    
-       "allow_sampling" => true,                    
-       "allow_search_indices" => true,              
-       "allow_view" => true,                        
-       "created" => 1669066353,                     
-       "group" => nil,                              
+{:ok,
+ %{
+   created: 1651172505,
+   id: "davinci-search-query",
+   object: "model",
+   owned_by: "openai-dev",
+   parent: nil,
+   permission: [
+     %{
+       "allow_create_engine" => false,
+       "allow_fine_tuning" => false,
+       "allow_logprobs" => true,
+       "allow_sampling" => true,
+       "allow_search_indices" => true,
+       "allow_view" => true,
+       "created" => 1669066353,
+       "group" => nil,
        "id" => "modelperm-lYkiTZMmJMWm8jvkPx2duyHE",
-       "is_blocking" => false,                      
-       "object" => "model_permission",              
-       "organization" => "*"                        
-     }                                              
-   ],                                               
-   root: "davinci-search-query"                     
- }}                                                 
+       "is_blocking" => false,
+       "object" => "model_permission",
+       "organization" => "*"
+     }
+   ],
+   root: "davinci-search-query"
+ }}
 ```
 See: https://platform.openai.com/docs/api-reference/models/retrieve
 
@@ -255,9 +255,95 @@ OpenAI.chat_completion(
        }
      }}
 ```
-Known issue: the stream param is not working properly in the current implementation
 
 See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
+
+### chat_completion() with stream
+Creates a completion for the chat message
+
+#### Example request
+```elixir
+import Config
+
+config :openai,
+  api_key: "your-api-key",
+  http_options: [recv_timeout: :infinity, stream_to: self(), async: :once],
+  ...
+```
+
+`http_options` must be set as above when you want to treat the chat completion as a stream.
+
+```elixir
+OpenAI.chat_completion([
+    model: "gpt-3.5-turbo",
+    messages: [
+      %{role: "system", content: "You are a helpful assistant."},
+      %{role: "user", content: "Who won the world series in 2020?"},
+      %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+      %{role: "user", content: "Where was it played?"}
+    ],
+    stream: true, # set this param to true
+  ]
+)
+|> Stream.each(fn res ->
+  IO.inspect(res)
+end)
+|> Stream.run()
+```
+
+#### Example response
+```elixir
+%{
+  "choices" => [
+    %{"delta" => %{"role" => "assistant"}, "finish_reason" => nil, "index" => 0}
+  ],
+  "created" => 1682700668,
+  "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+  "model" => "gpt-3.5-turbo-0301",
+  "object" => "chat.completion.chunk"
+}
+%{
+  "choices" => [
+    %{"delta" => %{"content" => "The"}, "finish_reason" => nil, "index" => 0}
+  ],
+  "created" => 1682700668,
+  "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+  "model" => "gpt-3.5-turbo-0301",
+  "object" => "chat.completion.chunk"
+}
+%{
+  "choices" => [
+    %{"delta" => %{"content" => " World"}, "finish_reason" => nil, "index" => 0}
+  ],
+  "created" => 1682700668,
+  "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+  "model" => "gpt-3.5-turbo-0301",
+  "object" => "chat.completion.chunk"
+}
+%{
+  "choices" => [
+    %{
+      "delta" => %{"content" => " Series"},
+      "finish_reason" => nil,
+      "index" => 0
+    }
+  ],
+  "created" => 1682700668,
+  "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+  "model" => "gpt-3.5-turbo-0301",
+  "object" => "chat.completion.chunk"
+}
+%{
+  "choices" => [
+    %{"delta" => %{"content" => " in"}, "finish_reason" => nil, "index" => 0}
+  ],
+  "created" => 1682700668,
+  "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+  "model" => "gpt-3.5-turbo-0301",
+  "object" => "chat.completion.chunk"
+}
+...
+```
 
 ### edits()
 Creates a new edit for the provided input, instruction, and parameters
@@ -491,12 +577,12 @@ See: https://platform.openai.com/docs/api-reference/files
 
 ### files(file_id)
 Returns a file that belong to the user's organization, given a file id
-  
+
 #### Example request
 ```elixir
 OpenAI.files("file-123321")
 ```
-  
+
 #### Example response
   ```elixir
 {:ok,
@@ -517,12 +603,12 @@ See: https://platform.openai.com/docs/api-reference/files/retrieve
 
 ### files_upload(file_path, params)
 Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
-  
+
 #### Example request
 ```elixir
 OpenAI.files_upload("./file.jsonl", purpose: "fine-tune")
 ```
-  
+
 #### Example response
 ```elixir
 {:ok,
@@ -547,7 +633,7 @@ delete a file
 ```elixir
 OpenAI.files_delete("file-123")
 ```
-  
+
 #### Example response
 ```elixir
 {:ok, %{deleted: true, id: "file-123", object: "file"}}
@@ -634,45 +720,45 @@ OpenAI.finetunes_create(
 
 #### Example response
 ```elixir
-{:ok,                                                                           
- %{                                                                             
-   created_at: 1675527767,                                                      
-   events: [                                                                    
-     %{                                                                         
-       "created_at" => 1675527767,                                              
-       "level" => "info",                                                       
-       "message" => "Created fine-tune: ft-IaBYfSSAK47UUCbebY5tBIEj",           
-       "object" => "fine-tune-event"                                            
-     }                                                                          
-   ],                                                                           
-   fine_tuned_model: nil,                                                       
-   hyperparams: %{                                                              
-     "batch_size" => nil,                                                       
-     "learning_rate_multiplier" => nil,                                         
-     "n_epochs" => 4,                                                           
-     "prompt_loss_weight" => 0.01                                               
-   },                                                                           
-   id: "ft-IaBYfSSAK47UUCbebY5tBIEj",                                           
-   model: "curie",                                                              
-   object: "fine-tune",                                                         
-   organization_id: "org-1iPTOIak4b5fpuIB697AYMmO",                             
-   result_files: [],                                                            
-   status: "pending",                                                           
-   training_files: [                                                            
-     %{                                                                         
-       "bytes" => 923,                                                          
-       "created_at" => 1675373519,                                              
-       "filename" => "file-12321323.jsonl",                                             
-       "id" => "file-12321323",                                 
-       "object" => "file",                                                      
-       "purpose" => "fine-tune",                                                
-       "status" => "processed",                                                 
-       "status_details" => nil                                                  
-     }                                                                          
-   ],                                                                           
-   updated_at: 1675527767,                                                      
-   validation_files: []                                                         
- }}                                                                             
+{:ok,
+ %{
+   created_at: 1675527767,
+   events: [
+     %{
+       "created_at" => 1675527767,
+       "level" => "info",
+       "message" => "Created fine-tune: ft-IaBYfSSAK47UUCbebY5tBIEj",
+       "object" => "fine-tune-event"
+     }
+   ],
+   fine_tuned_model: nil,
+   hyperparams: %{
+     "batch_size" => nil,
+     "learning_rate_multiplier" => nil,
+     "n_epochs" => 4,
+     "prompt_loss_weight" => 0.01
+   },
+   id: "ft-IaBYfSSAK47UUCbebY5tBIEj",
+   model: "curie",
+   object: "fine-tune",
+   organization_id: "org-1iPTOIak4b5fpuIB697AYMmO",
+   result_files: [],
+   status: "pending",
+   training_files: [
+     %{
+       "bytes" => 923,
+       "created_at" => 1675373519,
+       "filename" => "file-12321323.jsonl",
+       "id" => "file-12321323",
+       "object" => "file",
+       "purpose" => "fine-tune",
+       "status" => "processed",
+       "status_details" => nil
+     }
+   ],
+   updated_at: 1675527767,
+   validation_files: []
+ }}
 ```
 See: https://platform.openai.com/docs/api-reference/fine-tunes/create
 
@@ -876,8 +962,7 @@ See: https://beta.openai.com/docs/api-reference/engines/retrieve
 
 ## TODO
 - [ ] improve JSON decoding strategy and performance #13
-- [ ] add support to API streaming (SSE)
+- [x] add support to API streaming (SSE)
 
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
