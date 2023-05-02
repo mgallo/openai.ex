@@ -201,7 +201,84 @@ defmodule OpenAI do
         }
       }
   
-  Known issue: the stream param is not working properly in the current implementation
+  
+  N.B. to use "stream" mode you must be set http_options as below when you want to treat the chat completion as a stream:
+  
+  config :openai,
+    api_key: "your-api-key",
+    http_options: [recv_timeout: :infinity, stream_to: self(), async: :once]
+  
+  ## Example request (stream)
+  ```
+    OpenAI.chat_completion([
+      model: "gpt-3.5-turbo",
+      messages: [
+        %{role: "system", content: "You are a helpful assistant."},
+        %{role: "user", content: "Who won the world series in 2020?"},
+        %{role: "assistant", content: "The Los Angeles Dodgers won the World Series in 2020."},
+        %{role: "user", content: "Where was it played?"}
+      ],
+      stream: true, # set this param to true
+      ]
+    )
+    |> Stream.each(fn res ->
+      IO.inspect(res)
+    end)
+    |> Stream.run()
+  ```
+  ## Example response (stream)
+  ```
+    %{
+      "choices" => [
+        %{"delta" => %{"role" => "assistant"}, "finish_reason" => nil, "index" => 0}
+      ],
+      "created" => 1682700668,
+      "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+      "model" => "gpt-3.5-turbo-0301",
+      "object" => "chat.completion.chunk"
+    }
+  
+    %{
+      "choices" => [
+        %{"delta" => %{"content" => "The"}, "finish_reason" => nil, "index" => 0}
+      ],
+      "created" => 1682700668,
+      "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+      "model" => "gpt-3.5-turbo-0301",
+      "object" => "chat.completion.chunk"
+    }
+    %{
+      "choices" => [
+        %{"delta" => %{"content" => " World"}, "finish_reason" => nil, "index" => 0}
+      ],
+      "created" => 1682700668,
+      "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+      "model" => "gpt-3.5-turbo-0301",
+      "object" => "chat.completion.chunk"
+    }
+    %{
+      "choices" => [
+        %{
+          "delta" => %{"content" => " Series"},
+          "finish_reason" => nil,
+          "index" => 0
+        }
+      ],
+      "created" => 1682700668,
+      "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+      "model" => "gpt-3.5-turbo-0301",
+      "object" => "chat.completion.chunk"
+    }
+    %{
+      "choices" => [
+        %{"delta" => %{"content" => " in"}, "finish_reason" => nil, "index" => 0}
+      ],
+      "created" => 1682700668,
+      "id" => "chatcmpl-7ALbIuLju70hXy3jPa3o5VVlrxR6a",
+      "model" => "gpt-3.5-turbo-0301",
+      "object" => "chat.completion.chunk"
+    }
+  ```
   
   See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
   """
