@@ -960,9 +960,5 @@ OpenAI.engines("davinci")
 ```
 See: https://beta.openai.com/docs/api-reference/engines/retrieve
 
-## TODO
-- [ ] improve JSON decoding strategy and performance #13
-- [x] add support to API streaming (SSE)
-
 ## License
 The package is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
