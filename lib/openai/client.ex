@@ -38,6 +38,9 @@ defmodule OpenAI.Client do
       {:ok, %HTTPoison.Response{body: {:ok, body}}} ->
         {:error, body}
 
+      {:ok, %HTTPoison.Response{body: {:error, body}}} ->
+        {:error, body}
+
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
     end
