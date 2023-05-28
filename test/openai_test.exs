@@ -1,4 +1,4 @@
-defmodule OpenaiTest do
+defmodule OpenAITest do
   use ExUnit.Case
   doctest OpenAI
 
