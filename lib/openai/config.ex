@@ -16,7 +16,8 @@ defmodule OpenAI.Config do
   @config_keys [
     :api_key,
     :organization_key,
-    :http_options
+    :http_options,
+    :api_url,
   ]
 
   def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
