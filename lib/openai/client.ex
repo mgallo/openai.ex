@@ -48,6 +48,7 @@ defmodule OpenAI.Client do
 
   def add_organization_header(headers, config) do
     org_key = config.organization_key || Config.org_key()
+
     if org_key do
       [{"OpenAI-Organization", org_key} | headers]
     else
@@ -65,7 +66,7 @@ defmodule OpenAI.Client do
 
   def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
 
-  def request_options(config), do: config.http_options || Config.http_options
+  def request_options(config), do: config.http_options || Config.http_options()
 
   def api_get(url, config) do
     url
@@ -85,6 +86,7 @@ defmodule OpenAI.Client do
           url
           |> post(body, request_headers(config), request_options(config))
         end)
+
       false ->
         url
         |> post(body, request_headers(config), request_options(config))

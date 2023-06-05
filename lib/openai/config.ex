@@ -7,13 +7,20 @@ defmodule OpenAI.Config do
   defstruct api_key: nil,
             organization_key: nil,
             http_options: nil,
-            api_url: nil
+            api_url: nil,
+            api_type: nil,
+            # if api_type is azure, this is required
+            azure_deployment_id: nil
 
   use GenServer
 
   @openai_url "https://api.openai.com"
+  # @allowed_api_types [:openai, :azure]
+  @default_api_type :openai
 
   @config_keys [
+    :api_type,
+    :azure_deployment_id,
     :api_key,
     :organization_key,
     :http_options
@@ -33,10 +40,18 @@ defmodule OpenAI.Config do
 
   # API Key
   def api_key, do: get_config_value(:api_key)
+  def api_type, do: get_config_value(:api_type, @default_api_type)
   def org_key, do: get_config_value(:organization_key)
 
   # API Url
-  def api_url, do: get_config_value(:api_url, @openai_url)
+  def api_url do
+    basic_url = get_config_value(:api_url, @openai_url)
+
+    case api_type() do
+      :azure -> "#{basic_url}/deployments/#{get_config_value(:azure_deployment_id)}"
+      _ -> basic_url
+    end
+  end
 
   # HTTP Options
   def http_options, do: get_config_value(:http_options, [])
