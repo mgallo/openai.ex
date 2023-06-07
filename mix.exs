@@ -1,4 +1,4 @@
-defmodule Openai.MixProject do
+defmodule OpenAI.MixProject do
   use Mix.Project
 
   def project do
