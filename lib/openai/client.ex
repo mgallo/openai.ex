@@ -35,14 +35,15 @@ defmodule OpenAI.Client do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, body}
 
-      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        {:error, status_code}
-
       {:ok, %HTTPoison.Response{body: {:ok, body}}} ->
         {:error, body}
 
       {:ok, %HTTPoison.Response{body: {:error, body}}} ->
         {:error, body}
+
+      # html error responses
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        {:error, %{status_code: status_code, body: body}}
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
