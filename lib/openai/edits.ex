@@ -3,9 +3,9 @@ defmodule OpenAI.Edits do
   alias OpenAI.Client
   alias OpenAI.Config
 
-  @edits_base_url "/v1/edits"
+  @endpoint "/edits"
 
-  def url(), do: @edits_base_url
+  def url(), do: Config.base_url() <> @endpoint
 
   def fetch(params, config \\ %Config{}) do
     url()

@@ -3,9 +3,9 @@ defmodule OpenAI.Audio do
   alias OpenAI.Client
   alias OpenAI.Config
 
-  @base_url "/v1/audio"
-  def transcriptions_url(), do: "#{@base_url}/transcriptions"
-  def translations_url(), do: "#{@base_url}/translations"
+  @endpoint "/audio"
+  def transcriptions_url(), do: Config.base_url() <> "#{@endpoint}/transcriptions"
+  def translations_url(), do: Config.base_url() <> "#{@endpoint}/translations"
 
   def transcription(file_path, params, config \\ %Config{}) do
     transcriptions_url()

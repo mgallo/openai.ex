@@ -3,10 +3,10 @@ defmodule OpenAI.Files do
   alias OpenAI.Client
   alias OpenAI.Config
 
-  @files_base_url "/v1/files"
+  @endpoint "/files"
 
-  def url(), do: @files_base_url
-  def url(file_id), do: "#{@files_base_url}/#{file_id}"
+  def url(), do: Config.base_url() <> @endpoint
+  def url(file_id), do: Config.base_url() <> "#{@endpoint}/#{file_id}"
 
   def fetch(config \\ %Config{}) do
     url()

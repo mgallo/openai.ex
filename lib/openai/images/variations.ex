@@ -3,9 +3,9 @@ defmodule OpenAI.Images.Variations do
   alias OpenAI.Client
   alias OpenAI.Config
 
-  @base_url "/v1/images/variations"
+  @endpoint "/images/variations"
 
-  def url(), do: @base_url
+  def url(), do: Config.base_url() <> @endpoint
 
   def fetch(file_path, params \\ [], config \\ %Config{}) do
     url()
