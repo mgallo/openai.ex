@@ -38,6 +38,30 @@ config :openai,
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
 
+## Azure OpenAI Service
+If you are using the Azure OpenAI services you can update your config.exs as described below.
+
+```elixir
+import Config
+
+config :openai,
+  # Type of the API
+  api_type: "azure",
+
+  # Version of the OpenAI API currently used
+  api_version: "2023-05-15",
+
+  # URL of your Azure service
+  api_url: "https://YOUR_RESOURCE_NAME.openai.azure.com",
+
+  # Azure API key
+  api_key: "...",
+
+  # This will correspond to the custom name you chose for your deployment when you deployed a model
+  api_deployment_name: "...",
+
+```
+
 ## Configuration override
 Client library configuration can be overwritten in runtime by passing a `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
 
