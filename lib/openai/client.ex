@@ -43,6 +43,17 @@ defmodule OpenAI.Client do
     end
   end
 
+  def request_headers(config) do
+    [
+      {"Content-type", "application/json"}
+    ]
+    |> add_authorization_header(config)
+    |> add_organization_header(config)
+  end
+
+  def add_authorization_header(headers, config),
+    do: [{"Authorization", "Bearer #{config.api_key || Config.api_key()}"} | headers]
+
   def add_organization_header(headers, config) do
     org_key = config.organization_key || Config.org_key()
 
@@ -52,16 +63,6 @@ defmodule OpenAI.Client do
       headers
     end
   end
-
-  def request_headers(config) do
-    [
-      bearer(config),
-      {"Content-type", "application/json"}
-    ]
-    |> add_organization_header(config)
-  end
-
-  def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
 
   def request_options(config), do: config.http_options || Config.http_options()
 
