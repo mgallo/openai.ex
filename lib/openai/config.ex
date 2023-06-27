@@ -7,7 +7,10 @@ defmodule OpenAI.Config do
   defstruct api_key: nil,
             organization_key: nil,
             http_options: nil,
-            api_url: nil
+            api_url: nil,
+            api_deployment_name: nil,
+            api_type: nil,
+            api_version: nil
 
   use GenServer
 
@@ -16,7 +19,10 @@ defmodule OpenAI.Config do
   @config_keys [
     :api_key,
     :organization_key,
-    :http_options
+    :http_options,
+    :api_deployment_name,
+    :api_type,
+    :api_version
   ]
 
   def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -33,15 +39,31 @@ defmodule OpenAI.Config do
 
   # API Key
   def api_key, do: get_config_value(:api_key)
-  def org_key, do: get_config_value(:organization_key)
+  def organization_key, do: get_config_value(:organization_key)
+  def api_type, do: get_config_value(:api_type)
+  def api_version, do: get_config_value(:api_version)
+  def api_deployment_name, do: get_config_value(:api_deployment_name)
+  def api_url, do: get_config_value(:api_url)
+  def http_options, do: get_config_value(:http_options)
 
-  # API Url
-  def api_url, do: get_config_value(:api_url, @openai_url)
+  defp get_config_value(:http_options), do: get_local_env(:http_options, [])
+  defp get_config_value(:api_url), do: get_local_env(:api_url, @openai_url)
+  defp get_config_value(:api_version), do: get_local_env(:api_version)
+  defp get_config_value(:organization_key), do: get_local_env(:organization_key)
+  defp get_config_value(:api_key), do: get_local_env(:api_key)
+  defp get_config_value(:api_type), do: get_local_env(:api_type)
 
-  # HTTP Options
-  def http_options, do: get_config_value(:http_options, [])
+  defp get_config_value(:api_deployment_name) do
+    api_deployment_name = get_local_env(:api_deployment_name)
 
-  defp get_config_value(key, default \\ nil) do
+    if api_deployment_name != nil do
+      "/openai/deployments/#{api_deployment_name}"
+    end
+  end
+
+  def get_local_env(key), do: get_local_env(key, nil)
+
+  def get_local_env(key, default) do
     value =
       :openai
       |> Application.get_env(key)
@@ -74,6 +96,10 @@ defmodule OpenAI.Config do
 
   def get(key), do: GenServer.call(__MODULE__, {:get, key})
 
+  def put(key, value), do: GenServer.call(__MODULE__, {:put, key, value})
+
+  def list(), do: GenServer.call(__MODULE__, {:list})
+
   @impl true
   def handle_call({:get, key}, _from, state) do
     {:reply, Map.get(state, key), state}
@@ -82,5 +108,10 @@ defmodule OpenAI.Config do
   @impl true
   def handle_call({:put, key, value}, _from, state) do
     {:reply, value, Map.put(state, key, value)}
+  end
+
+  @impl true
+  def handle_call({:list}, _from, state) do
+    {:reply, state, state}
   end
 end
