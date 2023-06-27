@@ -15,6 +15,7 @@ defmodule OpenAI.Config do
   use GenServer
 
   @openai_url "https://api.openai.com"
+  @openai_endpoint_version "/v1"
 
   @config_keys [
     :api_key,
@@ -36,6 +37,8 @@ defmodule OpenAI.Config do
 
     {:ok, config}
   end
+
+  def base_url, do: api_deployment_name() || @openai_endpoint_version
 
   # API Key
   def api_key, do: get_config_value(:api_key)
