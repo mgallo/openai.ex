@@ -3,7 +3,7 @@ defmodule OpenAI.Client do
   alias OpenAI.{Config, Stream}
   use HTTPoison.Base
 
-  def process_url(url), do: Config.api_url() <> url
+  def process_request_url(url), do: Config.api_url() <> url
 
   def process_response_body(body) do
     try do
