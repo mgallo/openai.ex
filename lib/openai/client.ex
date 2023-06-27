@@ -3,7 +3,14 @@ defmodule OpenAI.Client do
   alias OpenAI.{Config, Stream}
   use HTTPoison.Base
 
-  def process_request_url(url), do: Config.api_url() <> url
+  def process_request_url(url) do
+    base_url = Config.api_url() <> url
+
+    case Config.api_type() do
+      "azure" -> base_url <> "?api-version=#{Config.api_version()}"
+      _ -> base_url
+    end
+  end
 
   def process_response_body(body) do
     case Jason.decode(body) do
@@ -55,10 +62,10 @@ defmodule OpenAI.Client do
     do: [{"Authorization", "Bearer #{config.api_key || Config.api_key()}"} | headers]
 
   def add_organization_header(headers, config) do
-    org_key = config.organization_key || Config.org_key()
+    organization_key = config.organization_key || Config.organization_key() || nil
 
-    if org_key do
-      [{"OpenAI-Organization", org_key} | headers]
+    if organization_key do
+      [{"OpenAI-Organization", organization_key} | headers]
     else
       headers
     end
