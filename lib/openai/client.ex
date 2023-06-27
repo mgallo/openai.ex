@@ -7,13 +7,11 @@ defmodule OpenAI.Client do
 
   def process_response_body(body) do
     try do
-      {status, res} = Jason.decode(body)
-
-      case status do
-        :ok ->
+      case Jason.decode(body) do
+        {:ok, res} ->
           {:ok, res}
 
-        :error ->
+        {:error, _res} ->
           body
       end
     rescue
