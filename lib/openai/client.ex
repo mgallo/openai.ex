@@ -6,16 +6,11 @@ defmodule OpenAI.Client do
   def process_request_url(url), do: Config.api_url() <> url
 
   def process_response_body(body) do
-    try do
-      case Jason.decode(body) do
-        {:ok, res} ->
-          {:ok, res}
+    case Jason.decode(body) do
+      {:ok, res} ->
+        {:ok, res}
 
-        {:error, _res} ->
-          body
-      end
-    rescue
-      _ ->
+      {:error, _res} ->
         body
     end
   end
