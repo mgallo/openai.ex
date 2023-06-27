@@ -58,8 +58,14 @@ defmodule OpenAI.Client do
     |> add_organization_header(config)
   end
 
-  def add_authorization_header(headers, config),
-    do: [{"Authorization", "Bearer #{config.api_key || Config.api_key()}"} | headers]
+  def add_authorization_header(headers, config) do
+    token = config.api_key || Config.api_key()
+
+    case Config.api_type() do
+      "azure" -> [{"api-key", token} | headers]
+      _ -> [{"Authorization", "Bearer #{token}"} | headers]
+    end
+  end
 
   def add_organization_header(headers, config) do
     organization_key = config.organization_key || Config.organization_key() || nil
