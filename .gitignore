@@ -27,3 +27,4 @@ openai-*.tar
 /tmp
 
 /config/
+.lexical
