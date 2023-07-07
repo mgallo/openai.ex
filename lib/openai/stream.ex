@@ -5,17 +5,20 @@ defmodule OpenAI.Stream do
     Stream.resource(
       start_fun,
       fn res ->
-        {res, id} = case res do
-          {:ok, res = %HTTPoison.AsyncResponse{id: id}} -> {res, id}
-          res = %HTTPoison.AsyncResponse{id: id} -> {res, id}
-        end
+        {res, id} =
+          case res do
+            {:ok, res = %HTTPoison.AsyncResponse{id: id}} -> {res, id}
+            res = %HTTPoison.AsyncResponse{id: id} -> {res, id}
+          end
 
         receive do
           %HTTPoison.AsyncStatus{id: ^id, code: code} ->
             HTTPoison.stream_next(res)
+
             case code do
               200 ->
                 {[], res}
+
               _ ->
                 {
                   [
@@ -28,10 +31,12 @@ defmodule OpenAI.Stream do
                   res
                 }
             end
-          %HTTPoison.AsyncHeaders{id: ^id, headers: _headers}->
+
+          %HTTPoison.AsyncHeaders{id: ^id, headers: _headers} ->
             HTTPoison.stream_next(res)
             {[], res}
-          %HTTPoison.AsyncChunk{chunk: chunk}->
+
+          %HTTPoison.AsyncChunk{chunk: chunk} ->
             data =
               chunk
               |> String.split("\n")
@@ -46,7 +51,8 @@ defmodule OpenAI.Stream do
 
             HTTPoison.stream_next(res)
             {data, res}
-          %HTTPoison.AsyncEnd{}->
+
+          %HTTPoison.AsyncEnd{} ->
             {:halt, res}
         end
       end,

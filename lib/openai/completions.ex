@@ -6,11 +6,19 @@ defmodule OpenAI.Completions do
   @base_url "/v1/completions"
   @engines_base_url "/v1/engines"
 
-  def url(), do: @base_url
+  def url(config) do
+    api_type = config.api_type || Config.api_type()
+
+    case api_type do
+      :azure -> "/completions"
+      _ -> @base_url
+    end
+  end
+
   def deprecated_url(engine_id), do: "#{@engines_base_url}/#{engine_id}/completions"
 
   def fetch(params, config \\ %Config{}) do
-    url()
+    url(config)
     |> Client.api_post(params, config)
   end
 

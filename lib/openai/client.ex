@@ -1,5 +1,6 @@
 defmodule OpenAI.Client do
   @moduledoc false
+
   alias OpenAI.{Config, Stream}
   use HTTPoison.Base
 
@@ -61,15 +62,28 @@ defmodule OpenAI.Client do
       bearer(config),
       {"Content-type", "application/json"}
     ]
+    |> List.flatten()
     |> add_organization_header(config)
   end
 
-  def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
+  def bearer(config) do
+    case Config.api_type() do
+      :azure ->
+        [
+          {"api-key", Config.api_key()},
+          {"subscription-key", Config.azure_subscription_key()}
+        ]
+
+      _ ->
+        {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
+    end
+  end
 
   def request_options(config), do: config.http_options || Config.http_options()
 
   def api_get(url, config) do
     url
+    |> add_params_to_url()
     |> get(request_headers(config), request_options(config))
     |> handle_response()
   end
@@ -84,11 +98,13 @@ defmodule OpenAI.Client do
       true ->
         Stream.new(fn ->
           url
+          |> add_params_to_url()
           |> post(body, request_headers(config), request_options(config))
         end)
 
       false ->
         url
+        |> add_params_to_url()
         |> post(body, request_headers(config), request_options(config))
         |> handle_response()
     end
@@ -114,5 +130,43 @@ defmodule OpenAI.Client do
     url
     |> delete(request_headers(config), request_options(config))
     |> handle_response()
+  end
+
+  defp add_params_to_url(url) do
+    case Config.api_type() do
+      :azure ->
+        azure_params = %{"api-version" => Config.azure_api_version()}
+
+        url
+        |> URI.parse()
+        |> merge_uri_params(azure_params)
+        |> URI.to_string()
+
+      _ ->
+        url
+    end
+  end
+
+  defp merge_uri_params(uri, []), do: uri
+
+  defp merge_uri_params(%URI{query: nil} = uri, params) when is_list(params) or is_map(params) do
+    uri
+    |> Map.put(:query, URI.encode_query(params))
+  end
+
+  defp merge_uri_params(%URI{} = uri, params) when is_list(params) or is_map(params) do
+    uri
+    |> Map.update!(:query, fn q ->
+      q
+      |> URI.decode_query()
+      |> Map.merge(param_list_to_map_with_string_keys(params))
+      |> URI.encode_query()
+    end)
+  end
+
+  defp param_list_to_map_with_string_keys(list) when is_list(list) or is_map(list) do
+    for {key, value} <- list, into: Map.new() do
+      {"#{key}", value}
+    end
   end
 end

@@ -20,8 +20,10 @@ defmodule OpenAI.Config do
 
   @config_keys [
     :api_type,
-    :azure_deployment_id,
     :api_key,
+    :azure_deployment_id,
+    :azure_subscription_key,
+    :azure_api_version,
     :organization_key,
     :http_options
   ]
@@ -42,6 +44,8 @@ defmodule OpenAI.Config do
   def api_key, do: get_config_value(:api_key)
   def api_type, do: get_config_value(:api_type, @default_api_type)
   def org_key, do: get_config_value(:organization_key)
+  def azure_api_version, do: get_config_value(:azure_api_version)
+  def azure_subscription_key, do: get_config_value(:azure_subscription_key)
 
   # API Url
   def api_url do
