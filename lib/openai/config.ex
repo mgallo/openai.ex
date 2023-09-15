@@ -7,7 +7,8 @@ defmodule OpenAI.Config do
   defstruct api_key: nil,
             organization_key: nil,
             http_options: nil,
-            api_url: nil
+            api_url: nil,
+            custom_headers: nil
 
   use GenServer
 
@@ -40,6 +41,8 @@ defmodule OpenAI.Config do
 
   # HTTP Options
   def http_options, do: get_config_value(:http_options, [])
+
+  def custom_headers, do: get_config_value(:custom_headers, [])
 
   defp get_config_value(key, default \\ nil) do
     value =
