@@ -17,7 +17,8 @@ defmodule OpenAI.Config do
   @config_keys [
     :api_key,
     :organization_key,
-    :http_options
+    :http_options,
+    :api_url
   ]
 
   def start_link(opts), do: GenServer.start_link(__MODULE__, opts, name: __MODULE__)
@@ -38,6 +39,14 @@ defmodule OpenAI.Config do
 
   # API Url
   def api_url, do: get_config_value(:api_url, @openai_url)
+
+  def api_url(url) do
+    uri = URI.parse(url)
+    case uri.host do
+      nil -> api_url() <> url
+      _ -> url
+    end
+  end
 
   # HTTP Options
   def http_options, do: get_config_value(:http_options, [])

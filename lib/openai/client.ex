@@ -3,7 +3,7 @@ defmodule OpenAI.Client do
   alias OpenAI.{Config, Stream}
   use HTTPoison.Base
 
-  def process_url(url), do: Config.api_url() <> url
+  def process_url(url), do: Config.api_url(url)
 
   def process_response_body(body) do
     try do
@@ -85,6 +85,16 @@ defmodule OpenAI.Client do
   end
 
   def api_post(url, params \\ [], config) do
+    IO.inspect config, label: "API_POST_CONFIG"
+
+    url = case config.api_url do
+      nil ->
+        url
+
+      _ ->
+        config.api_url <> url
+    end
+
     body =
       params
       |> Enum.into(%{})
