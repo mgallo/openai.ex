@@ -3,7 +3,7 @@ defmodule OpenAI.Client do
   alias OpenAI.{Config, Stream}
   use HTTPoison.Base
 
-  def process_url(url), do: Config.api_url() <> url
+  def process_url(url), do: Config.api_url(url)
 
   def process_response_body(body) do
     try do
@@ -60,12 +60,18 @@ defmodule OpenAI.Client do
     end
   end
 
+  def add_custom_headers(headers, config) do
+    custom_headers = config.custom_headers || Config.custom_headers()
+    headers ++ custom_headers
+  end
+
   def request_headers(config) do
     [
       bearer(config),
       {"Content-type", "application/json"}
     ]
     |> add_organization_header(config)
+    |> add_custom_headers(config)
   end
 
   def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
@@ -79,6 +85,16 @@ defmodule OpenAI.Client do
   end
 
   def api_post(url, params \\ [], config) do
+    IO.inspect config, label: "API_POST_CONFIG"
+
+    url = case config.api_url do
+      nil ->
+        url
+
+      _ ->
+        config.api_url <> url
+    end
+
     body =
       params
       |> Enum.into(%{})
