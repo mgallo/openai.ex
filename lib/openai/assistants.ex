@@ -19,6 +19,21 @@ defmodule OpenAI.Assistants do
     |> Client.api_get(config)
   end
 
+  def create(params, config \\ %Config{}) do
+    assistants_url()
+    |> Client.api_post(params, config)
+  end
+
+  def update(assistant_id, params, config \\ %Config{}) do
+    assistants_url(assistant_id)
+    |> Client.api_post(params, config)
+  end
+
+  def delete(assistant_id, config \\ %Config{}) do
+    assistants_url(assistant_id)
+    |> Client.api_delete(config)
+  end
+
   def fetch_files(assistant_id, params \\ [], config \\ %Config{}) do
     assistant_files_url(assistant_id)
     |> Client.api_get(params, config)

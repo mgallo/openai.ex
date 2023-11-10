@@ -191,6 +191,104 @@ defmodule OpenAI do
   def assistants(assistant_id, config) when is_bitstring(assistant_id) and is_struct(config),
     do: Assistants.fetch_by_id(assistant_id, config)
 
+  @doc"""
+  Creates a new assistant.
+
+  ## Example request
+  ```elixir
+      OpenAI.assistants_create(
+        model: "gpt-3.5-turbo-1106",
+        name: "My assistant",
+        instructions: "You are a research assistant.",
+        tools: [
+          %{type: "retrieval"}
+        ],
+        file_ids: ["file-..."]
+      )
+  ```
+
+  ## Example response
+  ```elixir
+    {:ok,
+    %{
+      created_at: 1699640038,
+      description: nil,
+      file_ids: ["file-..."],
+      id: "asst_...",
+      instructions: "You are a research assistant.",
+      metadata: %{},
+      model: "gpt-3.5-turbo-1106",
+      name: "My assistant",
+      object: "assistant",
+      tools: [%{"type" => "retrieval"}]
+    }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/assistants/createAssistant
+  """
+  def assistants_create(params, config \\ %Config{}) do
+    Assistants.create(params, config)
+  end
+
+  @doc """
+  Updates an existing assistant.
+
+  ## Example request
+  ```elixir
+    OpenAI.assistants_modify(
+      "asst_...",
+      model: "gpt-4-1106-preview",
+      name: "My upgraded assistant"
+    )
+  ```
+
+  ## Example response
+  ```elixir
+    {:ok,
+    %{
+      created_at: 1699640038,
+      description: nil,
+      file_ids: ["file-..."],
+      id: "asst_...",
+      instructions: "You are a research assistant.",
+      metadata: %{},
+      model: "gpt-4-1106-preview",
+      name: "My upgraded assistant"
+      object: "assistant",
+      tools: [%{"type" => "retrieval"}]
+    }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/assistants/modifyAssistant
+  """
+  def assistants_modify(assistant_id, params, config \\ %Config{}) do
+    Assistants.update(assistant_id, params, config)
+  end
+
+  @doc """
+  Deletes an existing assistant.
+
+  ## Example request
+  ```elixir
+     OpenAI.assistants_delete("asst_...")
+  ```
+
+  ## Example response
+  ```elixir
+    {:ok,
+    %{
+      deleted: true,
+      id: "asst_...",
+      object: "assistant.deleted"
+    }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
+  """
+  def assistants_delete(assistant_id, config \\ %Config{}) do
+    Assistants.delete(assistant_id, config)
+  end
+
   @doc """
   Retrieves the list of files associated with a particular assistant.
 
