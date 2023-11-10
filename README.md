@@ -505,6 +505,24 @@ OpenAI.embeddings(
 ```
 See: https://platform.openai.com/docs/api-reference/embeddings/create
 
+### audio_speech(params)
+Generates audio from the input text.
+
+#### Example request
+```elixir
+OpenAI.audio_speech(
+  model: "tts-1",
+  input: "You know that Voight-Kampf test of yours. Did you ever take that test yourself?",
+  voice: "alloy"
+)
+```
+
+#### Example response
+```elixir
+  {:ok, <<255, 255, ...>>}
+```
+
+See: https://platform.openai.com/docs/api-reference/audio/create to get info on the params accepted by the api
 
 ### audio_transcription(file_path, params)
 Transcribes audio into the input language.
