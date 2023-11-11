@@ -209,19 +209,19 @@ defmodule OpenAI do
 
   ## Example response
   ```elixir
-    {:ok,
-    %{
-      created_at: 1699640038,
-      description: nil,
-      file_ids: ["file-..."],
-      id: "asst_...",
-      instructions: "You are a research assistant.",
-      metadata: %{},
-      model: "gpt-3.5-turbo-1106",
-      name: "My assistant",
-      object: "assistant",
-      tools: [%{"type" => "retrieval"}]
-    }}
+      {:ok,
+      %{
+        created_at: 1699640038,
+        description: nil,
+        file_ids: ["file-..."],
+        id: "asst_...",
+        instructions: "You are a research assistant.",
+        metadata: %{},
+        model: "gpt-3.5-turbo-1106",
+        name: "My assistant",
+        object: "assistant",
+        tools: [%{"type" => "retrieval"}]
+      }}
   ```
 
   See: https://platform.openai.com/docs/api-reference/assistants/createAssistant
@@ -235,28 +235,28 @@ defmodule OpenAI do
 
   ## Example request
   ```elixir
-    OpenAI.assistants_modify(
-      "asst_...",
-      model: "gpt-4-1106-preview",
-      name: "My upgraded assistant"
-    )
+      OpenAI.assistants_modify(
+        "asst_...",
+        model: "gpt-4-1106-preview",
+        name: "My upgraded assistant"
+      )
   ```
 
   ## Example response
   ```elixir
-    {:ok,
-    %{
-      created_at: 1699640038,
-      description: nil,
-      file_ids: ["file-..."],
-      id: "asst_...",
-      instructions: "You are a research assistant.",
-      metadata: %{},
-      model: "gpt-4-1106-preview",
-      name: "My upgraded assistant"
-      object: "assistant",
-      tools: [%{"type" => "retrieval"}]
-    }}
+      {:ok,
+      %{
+        created_at: 1699640038,
+        description: nil,
+        file_ids: ["file-..."],
+        id: "asst_...",
+        instructions: "You are a research assistant.",
+        metadata: %{},
+        model: "gpt-4-1106-preview",
+        name: "My upgraded assistant"
+        object: "assistant",
+        tools: [%{"type" => "retrieval"}]
+      }}
   ```
 
   See: https://platform.openai.com/docs/api-reference/assistants/modifyAssistant
@@ -275,12 +275,12 @@ defmodule OpenAI do
 
   ## Example response
   ```elixir
-    {:ok,
-    %{
-      deleted: true,
-      id: "asst_...",
-      object: "assistant.deleted"
-    }}
+      {:ok,
+      %{
+        deleted: true,
+        id: "asst_...",
+        object: "assistant.deleted"
+      }}
   ```
 
   See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
@@ -346,9 +346,90 @@ defmodule OpenAI do
   See: https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles
   """
   def assistant_files(assistant_id, params \\ [], config \\ %Config{})
-    when is_bitstring(assistant_id) and is_struct(config)
+    when is_bitstring(assistant_id) and is_list(params) and is_struct(config)
   do
-    Assistants.fetch_files(assistant_id, params, config)
+    Assistants.Files.fetch(assistant_id, params, config)
+  end
+
+  @doc """
+  Retrieves an assistant file by id.
+
+  ## Example request
+  ```elixir
+      OpenAI.assistant_file("asst_...", "file-...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: "asst_...",
+        created_at: 1699472933,
+        id: "file-...",
+        object: "assistant.file"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
+  """
+  def assistant_file(assistant_id, file_id, config \\ %Config{})
+    when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config)
+  do
+    Assistants.Files.fetch_by_id(assistant_id, file_id, config)
+  end
+
+  @doc """
+  Attaches a previously uploaded file to the assistant.
+
+  ## Example request
+  ```elixir
+      OpenAI.assistant_file_create("asst_...", [file_id: "file-..."])
+  ```
+
+  ## Example response
+  ```elixir
+    {:ok,
+    %{
+      assistant_id: "asst_...",
+      created_at: 1699472933,
+      id: "file-...",
+      object: "assistant.file"
+    }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
+  """
+  def assistant_file_create(assistant_id, params, config \\ %Config{})
+    when is_bitstring(assistant_id) and is_list(params) and is_struct(config)
+  do
+    Assistants.Files.create(assistant_id, params, config)
+  end
+
+  @doc """
+  Detaches a file from the assistant. The file does not get deleted and can
+  still be used.
+
+  ## Example request
+  ```elixir
+      OpenAI.assistant_file_delete("asst_...", "file-...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        deleted: true,
+        id: "file-...",
+        object: "assistant.file.deleted"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
+  """
+  def assistant_file_delete(assistant_id, file_id, config \\ %Config{})
+    when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config)
+  do
+    Assistants.Files.delete(assistant_id, file_id, config)
   end
 
   @doc """
