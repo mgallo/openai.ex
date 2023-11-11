@@ -84,8 +84,9 @@ defmodule OpenAI.Client do
   def request_options(config), do: config.http_options || Config.http_options()
 
   def query_params(request_options, [_|_] = params) do
-    # `request_options` may or may not be present, but since the `params` are,
-    # we can guarantee to return a non-empty keyword list.
+    # The `request_options` may or may not be present, but the `params` are.
+    # Therefore we can guarantee to return a non-empty keyword list, so we cam
+    # modify the `request_options` unconditionnaly.
     request_options
     |> List.wrap()
     |> Keyword.merge([params: params], fn :params, old_params, new_params ->

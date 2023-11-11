@@ -19,6 +19,7 @@ defmodule OpenAI do
   alias OpenAI.Audio
   alias OpenAI.Engines
   alias OpenAI.Assistants
+  alias OpenAI.Threads
 
   def start(_type, _args) do
     children = [Config]
@@ -226,12 +227,14 @@ defmodule OpenAI do
 
   See: https://platform.openai.com/docs/api-reference/assistants/createAssistant
   """
-  def assistants_create(params, config \\ %Config{}) do
+  def assistants_create(params, config \\ %Config{})
+    when is_list(params) and is_struct(config)
+  do
     Assistants.create(params, config)
   end
 
   @doc """
-  Updates an existing assistant.
+  Modifies an existing assistant.
 
   ## Example request
   ```elixir
@@ -261,12 +264,14 @@ defmodule OpenAI do
 
   See: https://platform.openai.com/docs/api-reference/assistants/modifyAssistant
   """
-  def assistants_modify(assistant_id, params, config \\ %Config{}) do
+  def assistants_modify(assistant_id, params, config \\ %Config{})
+    when is_bitstring(assistant_id) and is_list(params) and is_struct(config)
+  do
     Assistants.update(assistant_id, params, config)
   end
 
   @doc """
-  Deletes an existing assistant.
+  Deletes an assistant.
 
   ## Example request
   ```elixir
@@ -285,7 +290,9 @@ defmodule OpenAI do
 
   See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
   """
-  def assistants_delete(assistant_id, config \\ %Config{}) do
+  def assistants_delete(assistant_id, config \\ %Config{})
+    when is_bitstring(assistant_id) and is_struct(config)
+  do
     Assistants.delete(assistant_id, config)
   end
 
@@ -383,7 +390,7 @@ defmodule OpenAI do
 
   ## Example request
   ```elixir
-      OpenAI.assistant_file_create("asst_...", [file_id: "file-..."])
+      OpenAI.assistant_file_create("asst_...", file_id: "file-...")
   ```
 
   ## Example response
@@ -406,8 +413,7 @@ defmodule OpenAI do
   end
 
   @doc """
-  Detaches a file from the assistant. The file does not get deleted and can
-  still be used.
+  Detaches a file from the assistant. The file itself is not automatically deleted.
 
   ## Example request
   ```elixir
@@ -430,6 +436,149 @@ defmodule OpenAI do
     when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config)
   do
     Assistants.Files.delete(assistant_id, file_id, config)
+  end
+
+  @doc """
+  Retrieves a thread by its id.
+
+  ## Example request
+  ```elixir
+      OpenAI.threads("thread_..."")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        created_at: 1699703890,
+        id: "thread_...",
+        metadata: %{"key_1" => "value 1", "key_2" => "value 2"},
+        object: "thread"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/threads/getThread
+  """
+  def threads(thread_id, config \\ %Config{}) when is_bitstring(thread_id) and is_struct(config),
+    do: Threads.fetch_by_id(thread_id, config)
+
+  @doc """
+  Creates a new thread.
+
+  ## Example request
+  ```elixir
+      OpenAI.threads_create()
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        created_at: 1699703548,
+        id: "thread_...",
+        metadata: %{},
+        object: "thread"
+      }}
+  ```
+
+  Creates a new thread with some messages and metadata.
+
+  ## Example request
+  ```elixir
+      messages = [
+        %{
+          role: "user",
+          content: "Hello, what is AI?",
+          file_ids: ["file-9Riyo515uf9KVfwdSrIQiqtC"]
+        },
+        %{
+          role: "user",
+          content: "How does AI work? Explain it in simple terms."
+        },
+      ]
+
+      metadata = %{
+        key_1: "value 1",
+        key_2: "value 2"
+      }
+
+      OpenAI.threads_create(messages: messages, metadata: metadata)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        created_at: 1699703890,
+        id: "thread_...",
+        metadata: %{"key_1" => "value 1", "key_2" => "value 2"},
+        object: "thread"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/threads/createThread
+  """
+  def threads_create(params \\ [], config \\ %Config{})
+    when is_list(params) and is_struct(config)
+  do
+    Threads.create(params, config)
+  end
+
+  @doc """
+  Modifies an existing thread.
+
+  ## Example request
+  ```elixir
+      metadata = %{
+        key_3: "value 3"
+      }
+
+      OpenAI.threads_modify("thread_...", metadata: metadata)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        created_at: 1699704406,
+        id: "thread_...",
+        metadata: %{"key_1" => "value 1", "key_2" => "value 2", "key_3" => "value 3"},
+        object: "thread"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/threads/modifyThread
+  """
+  def threads_modify(thread_id, params, config \\ %Config{})
+    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
+  do
+    Threads.update(thread_id, params, config)
+  end
+
+  @doc """
+  Deletes a thread.
+
+  ## Example request
+  ```elixir
+      OpenAI.threads_delete("thread_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        deleted: true,
+        id: "thread_...",
+        object: "thread.deleted"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/threads/deleteThread
+  """
+  def threads_delete(thread_id, config \\ %Config{})
+    when is_bitstring(thread_id) and is_struct(config)
+  do
+    Threads.delete(thread_id, config)
   end
 
   @doc """
