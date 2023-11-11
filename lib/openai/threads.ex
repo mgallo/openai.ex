@@ -8,6 +8,11 @@ defmodule OpenAI.Threads do
   def url(), do: @base_url
   def url(thread_id), do: "#{@base_url}/#{thread_id}"
 
+  def fetch(params, config \\ %Config{}) do
+    url()
+    |> Client.api_get(params, config)
+  end
+
   def fetch_by_id(thread_id, config \\ %Config{}) do
     url(thread_id)
     |> Client.api_get(config)

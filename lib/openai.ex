@@ -91,7 +91,7 @@ defmodule OpenAI do
   # end
 
   @doc """
-  Retrieve the list of assistants.
+  Retrieves the list of assistants.
 
   ## Example request
   ```elixir
@@ -123,7 +123,7 @@ defmodule OpenAI do
       }}
   ```
 
-  Retrieve the list of assistants filtered by query params.
+  Retrieves the list of assistants filtered by query params.
 
   ## Example request
   ```elixir
@@ -439,6 +439,69 @@ defmodule OpenAI do
   end
 
   @doc """
+  Retrieves the list of threads.
+
+  **NOTE:** At the time of this writing this functionality remains undocumented by OpenAI.
+
+  ## Example request
+  ```elixir
+      OpenAI.threads()
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "created_at" => 1699705727,
+            "id" => "thread_...",
+            "metadata" => %{"key_1" => "value 1", "key_2" => "value 2"},
+            "object" => "thread"
+          },
+          ...
+        ],
+        first_id: "thread_...",
+        has_more: false,
+        last_id: "thread_...",
+        object: "list"
+      }}
+  ```
+
+  Retrieves a filtered list of threads.
+
+  **NOTE:** At the time of this writing this functionality remains undocumented by OpenAI.
+
+  ## Example request
+  ```elixir
+      OpenAI.threads(limit: 2)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "created_at" => 1699705727,
+            "id" => "thread_...",
+            "metadata" => %{"key_1" => "value 1", "key_2" => "value 2"},
+            "object" => "thread"
+          },
+          %{
+            "created_at" => 1699704406,
+            "id" => "thread_...",
+            "metadata" => %{"key_1" => "value 1", "key_2" => "value 2", "key_3" => "value 3"},
+            "object" => "thread"
+          }
+        ],
+        first_id: "thread_...",
+        has_more: true,
+        last_id: "thread_...",
+        object: "list"
+      }}
+  ```
+
   Retrieves a thread by its id.
 
   ## Example request
@@ -459,7 +522,12 @@ defmodule OpenAI do
 
   See: https://platform.openai.com/docs/api-reference/threads/getThread
   """
-  def threads(thread_id, config \\ %Config{}) when is_bitstring(thread_id) and is_struct(config),
+  def threads(params \\ [], config \\ %Config{})
+
+  def threads(params, config) when is_list(params) and is_struct(config),
+    do: Threads.fetch(params, config)
+
+  def threads(thread_id, config) when is_bitstring(thread_id) and is_struct(config),
     do: Threads.fetch_by_id(thread_id, config)
 
   @doc """
@@ -875,6 +943,110 @@ defmodule OpenAI do
   do
     Threads.Messages.Files.fetch_by_id(thread_id, message_id, file_id, config)
   end
+
+  @doc """
+  Retrieves the list of runs associated with a particular thread.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_runs("thread_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
+  ```
+
+  Retrieves the list of runs associated with a particular thread, filtered
+  by query params.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_runs("thread_...", limit: 10)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/listRuns
+  """
+  def thread_runs(thread_id, params \\ [], config \\ %Config{})
+    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
+  do
+    Threads.Runs.fetch(thread_id, params, config)
+  end
+
+  @doc """
+  Retrieves a particular thread run by its id.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_run("thread_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/getRun
+  """
+  def thread_run(thread_id, run_id, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(run_id) and is_struct(config)
+  do
+    Threads.Runs.fetch_by_id(thread_id, run_id, config)
+  end
+
+  @doc """
+  Creates a run for a thread using a particular assistant.
+
+  ## Example request
+  ```elixir
+      params = [
+        assistant_id: "asst_...",
+        model: "gpt-4-1106-preview",
+        tools: [%{
+          "type" => "retrieval"
+        }]
+      ]
+
+      OpenAI.thread_run_create("thread_...", params)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: "asst_...",
+        cancelled_at: nil,
+        completed_at: nil,
+        created_at: 1699711115,
+        expires_at: 1699711715,
+        failed_at: nil,
+        file_ids: ["file-..."],
+        id: "run_...",
+        instructions: "...",
+        last_error: nil,
+        metadata: %{},
+        model: "gpt-4-1106-preview",
+        object: "thread.run",
+        started_at: nil,
+        status: "queued",
+        thread_id: "thread_...",
+        tools: [%{"type" => "retrieval"}]
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/createRun
+  """
+  def thread_run_create(thread_id, params, config \\ %Config{})
+    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
+  do
+    Threads.Runs.create(thread_id, params, config)
+  end
+
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
