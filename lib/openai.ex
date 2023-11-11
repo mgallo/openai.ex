@@ -489,7 +489,7 @@ defmodule OpenAI do
         %{
           role: "user",
           content: "Hello, what is AI?",
-          file_ids: ["file-9Riyo515uf9KVfwdSrIQiqtC"]
+          file_ids: ["file-..."]
         },
         %{
           role: "user",
@@ -581,6 +581,300 @@ defmodule OpenAI do
     Threads.delete(thread_id, config)
   end
 
+  @doc """
+  Retrieves the list of messages associated with a particular thread.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_messages("thread_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "assistant_id" => nil,
+            "content" => [
+              %{
+                "text" => %{
+                  "annotations" => [],
+                  "value" => "How does AI work? Explain it in simple terms."
+                },
+                "type" => "text"
+              }
+            ],
+            "created_at" => 1699705727,
+            "file_ids" => [],
+            "id" => "msg_...",
+            "metadata" => %{},
+            "object" => "thread.message",
+            "role" => "user",
+            "run_id" => nil,
+            "thread_id" => "thread_..."
+          },
+          ...
+        ],
+        first_id: "msg_...",
+        has_more: false,
+        last_id: "msg_...",
+        object: "list"
+      }}
+  ```
+
+  Retrieves the list of messages associated with a particular thread, filtered
+  by query params.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_messages("thread_...", after: "msg_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "assistant_id" => nil,
+            "content" => [
+              %{
+                "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+                "type" => "text"
+              }
+            ],
+            "created_at" => 1699705727,
+            "file_ids" => ["file-..."],
+            "id" => "msg_...",
+            "metadata" => %{},
+            "object" => "thread.message",
+            "role" => "user",
+            "run_id" => nil,
+            "thread_id" => "thread_..."
+          }
+        ],
+        first_id: "msg_...",
+        has_more: false,
+        last_id: "msg_...",
+        object: "list"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/messages/listMessages
+  """
+  def thread_messages(thread_id, params \\ [], config \\ %Config{})
+    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
+  do
+    Threads.Messages.fetch(thread_id, params, config)
+  end
+
+  @doc """
+  Retrieves a thread message by id.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_message("thread_...", "msg_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: nil,
+        content: [
+          %{
+            "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+            "type" => "text"
+          }
+        ],
+        created_at: 1699705727,
+        file_ids: ["file-..."],
+        id: "msg_...",
+        metadata: %{},
+        object: "thread.message",
+        role: "user",
+        run_id: nil,
+        thread_id: "thread_..."
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/threads/getThread
+  """
+  def thread_message(thread_id, message_id, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(message_id) and is_struct(config)
+  do
+    Threads.Messages.fetch_by_id(thread_id, message_id, config)
+  end
+
+  @doc """
+  Creates a message within a thread.
+
+  ## Example request
+  ```elixir
+      params = [
+        role: "user",
+        content: "Hello, what is AI?",
+        file_ids: ["file-9Riyo515uf9KVfwdSrIQiqtC"],
+        metadata: %{
+          key_1: "value 1",
+          key_2: "value 2"
+        }
+      ]
+
+      OpenAI.thread_message_create("thread_...", params)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: nil,
+        content: [
+          %{
+            "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+            "type" => "text"
+          }
+        ],
+        created_at: 1699706818,
+        file_ids: ["file-..."],
+        id: "msg_...",
+        metadata: %{"key_1" => "value 1", "key_2" => "value 2"},
+        object: "thread.message",
+        role: "user",
+        run_id: nil,
+        thread_id: "thread_..."
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/messages/createMessage
+  """
+  def thread_message_create(thread_id, params, config \\ %Config{})
+    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
+  do
+    Threads.Messages.create(thread_id, params, config)
+  end
+
+  @doc """
+  Modifies an existing thread message.
+
+  ## Example request
+  ```elixir
+      params = [
+        metadata: %{
+          key_3: "value 3"
+        }
+      ]
+
+      OpenAI.thread_message_modify("thread_...", "msg_...", params)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: nil,
+        content: [
+          %{
+            "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+            "type" => "text"
+          }
+        ],
+        created_at: 1699706818,
+        file_ids: ["file-..."],
+        id: "msg_...",
+        metadata: %{"key_1" => "value 1", "key_2" => "value 2", "key_3" => "value 3"},
+        object: "thread.message",
+        role: "user",
+        run_id: nil,
+        thread_id: "thread_..."
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/messages/modifyMessage
+  """
+  def thread_message_modify(thread_id, message_id, params, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(message_id) and is_list(params) and is_struct(config)
+  do
+    Threads.Messages.update(thread_id, message_id, params, config)
+  end
+
+  @doc """
+  Retrieves the list of files associated with a particular message of a thread.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_message_files("thread_...", "msg_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "created_at" => 1699706818,
+            "id" => "file-...",
+            "message_id" => "msg_...",
+            "object" => "thread.message.file"
+          }
+        ],
+        first_id: "file-...",
+        has_more: false,
+        last_id: "file-...",
+        object: "list"
+      }}
+  ```
+
+  Retrieves the list of files associated with a particular message of a thread,
+  filtered by query params.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_message_files("thread_...", "msg_...", after: "file-...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/messages/listMessageFiles
+  """
+  def thread_message_files(thread_id, message_id, params \\ [], config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(message_id) and is_list(params)
+     and is_struct(config)
+  do
+    Threads.Messages.Files.fetch(thread_id, message_id, params, config)
+  end
+
+  @doc """
+  Retrieves the message file object.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_message_file("thread_...", "msg_...", "file-...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        created_at: 1699706818,
+        id: "file-...",
+        message_id: "msg_...",
+        object: "thread.message.file"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/messages/getMessageFile
+  """
+  def thread_message_file(thread_id, message_id, file_id, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(message_id) and is_bitstring(file_id)
+     and is_struct(config)
+  do
+    Threads.Messages.Files.fetch_by_id(thread_id, message_id, file_id, config)
+  end
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
