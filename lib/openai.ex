@@ -31,9 +31,12 @@ defmodule OpenAI do
   @doc """
   Retrieve the list of available models
   ## Example request
+  ```elixir
       OpenAI.models()
+  ```
 
   ## Example response
+  ```elixir
        %{
        "created" => 1651172505,
        "id" => "davinci-search-query",
@@ -50,33 +53,40 @@ defmodule OpenAI do
        ],
        "root" => "davinci-search-query"
      }
+  ```
+
   See: https://platform.openai.com/docs/api-reference/models/retrieve
 
   Retrieve specific model info
   ## Example request
+  ```elixir
       OpenAI.models("davinci-search-query")
+  ```
 
   ## Example response
-       {:ok, %{
-  data: [%{
-    "created" => 1651172505,
-    "id" => "davinci-search-query",
-    "object" => "model",
-    "owned_by" => "openai-dev",
-    "parent" => nil,
-    "permission" => [
-      %{
-        "allow_create_engine" => false,
-        "allow_fine_tuning" => false,
-        "allow_logprobs" => true,
-        ...
-      }
-    ],
-    "root" => "davinci-search-query"
-  },
-  ....],
-  object: "list"
-  }}
+  ```elixir
+      {:ok, %{
+        data: [%{
+          "created" => 1651172505,
+          "id" => "davinci-search-query",
+          "object" => "model",
+          "owned_by" => "openai-dev",
+          "parent" => nil,
+          "permission" => [
+            %{
+              "allow_create_engine" => false,
+              "allow_fine_tuning" => false,
+              "allow_logprobs" => true,
+              ...
+            }
+          ],
+          "root" => "davinci-search-query"
+        },
+        ....],
+        object: "list"
+      }}
+  ```
+
   See: https://platform.openai.com/docs/api-reference/models/retrieve
   """
   def models(config) when is_struct(config), do: Models.fetch(config)
@@ -1345,6 +1355,7 @@ defmodule OpenAI do
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
 
   ## Example request
+  ```elixir
     OpenAI.completions(
       model: "finetuned-model",
       prompt: "once upon a time",
@@ -1352,8 +1363,10 @@ defmodule OpenAI do
       temperature: 1,
       ...
     )
+  ```
 
   ## Example response
+  ```elixir
     {:ok, %{
       choices: [
         %{
@@ -1369,6 +1382,8 @@ defmodule OpenAI do
       object: "text_completion"
       }
     }
+  ```
+
   See: https://platform.openai.com/docs/api-reference/completions/create
   """
   def completions(params) when is_list(params),
@@ -1382,6 +1397,7 @@ defmodule OpenAI do
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
 
   ## Example request
+  ```elixir
       OpenAI.completions(
         "davinci", # engine_id
         prompt: "once upon a time",
@@ -1389,8 +1405,10 @@ defmodule OpenAI do
         temperature: 1,
         ...
       )
+  ```
 
   ## Example response
+  ```elixir
       {:ok, %{
         choices: [
           %{
@@ -1406,6 +1424,8 @@ defmodule OpenAI do
         object: "text_completion"
         }
       }
+  ```
+
   See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
   """
   def completions(engine_id, params) when is_bitstring(engine_id) and is_list(params),
@@ -1418,6 +1438,7 @@ defmodule OpenAI do
   Creates a completion for the chat message
 
   ## Example request
+  ```elixir
       OpenAI.chat_completion(
         model: "gpt-3.5-turbo",
         messages: [
@@ -1427,8 +1448,10 @@ defmodule OpenAI do
               %{role: "user", content: "Where was it played?"}
           ]
       )
+  ```
 
   ## Example response
+  ```elixir
       {:ok,
         %{
         choices: [
@@ -1452,16 +1475,18 @@ defmodule OpenAI do
         }
         }
       }
-
+  ```
 
   N.B. to use "stream" mode you must be set http_options as below when you want to treat the chat completion as a stream:
 
-  config :openai,
-    api_key: "your-api-key",
-    http_options: [recv_timeout: :infinity, stream_to: self(), async: :once]
+  ```elixir
+    config :openai,
+      api_key: "your-api-key",
+      http_options: [recv_timeout: :infinity, stream_to: self(), async: :once]
+  ```
 
   ## Example request (stream)
-  ```
+  ```elixir
     OpenAI.chat_completion([
       model: "gpt-3.5-turbo",
       messages: [
@@ -1478,8 +1503,9 @@ defmodule OpenAI do
     end)
     |> Stream.run()
   ```
+
   ## Example response (stream)
-  ```
+  ```elixir
     %{
       "choices" => [
         %{"delta" => %{"role" => "assistant"}, "finish_reason" => nil, "index" => 0}
@@ -1542,24 +1568,28 @@ defmodule OpenAI do
   Creates a new edit for the provided input, instruction, and parameters
 
   ## Example request
-  OpenAI.edits(
-    model: "text-davinci-edit-001",
-    input: "What day of the wek is it?",
-    instruction: "Fix the spelling mistakes"
-  )
+  ```elixir
+    OpenAI.edits(
+      model: "text-davinci-edit-001",
+      input: "What day of the wek is it?",
+      instruction: "Fix the spelling mistakes"
+    )
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   choices: [%{"index" => 0, "text" => "What day of the week is it?\n"}],
-   created: 1675443483,
-   object: "edit",
-   usage: %{
-     "completion_tokens" => 28,
-     "prompt_tokens" => 25,
-     "total_tokens" => 53
-   }
-  }}
+  ```elixir
+    {:ok,
+    %{
+    choices: [%{"index" => 0, "text" => "What day of the week is it?\n"}],
+    created: 1675443483,
+    object: "edit",
+    usage: %{
+      "completion_tokens" => 28,
+      "prompt_tokens" => 25,
+      "total_tokens" => 53
+    }
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/edits/create
   """
@@ -1571,38 +1601,42 @@ defmodule OpenAI do
   Creates an embedding vector representing the input text.
 
   ## Example request
-  OpenAI.embeddings(
-    model: "text-embedding-ada-002",
-    input: "The food was delicious and the waiter..."
-  )
+  ```elixir
+    OpenAI.embeddings(
+      model: "text-embedding-ada-002",
+      input: "The food was delicious and the waiter..."
+    )
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   data: [
-     %{
-       "embedding" => [0.0022523515000000003, -0.009276069000000001,
-        0.015758524000000003, -0.007790373999999999, -0.004714223999999999,
-        0.014806155000000001, -0.009803046499999999, -0.038323310000000006,
-        -0.006844355, -0.028672641, 0.025345700000000002, 0.018145794000000003,
-        -0.0035904291999999997, -0.025498080000000003, 5.142790000000001e-4,
-        -0.016317246, 0.028444072, 0.0053713582, 0.009631619999999999,
-        -0.016469626, -0.015390275, 0.004301531, 0.006984035499999999,
-        -0.007079272499999999, -0.003926933, 0.018602932000000003, 0.008666554,
-        -0.022717162999999995, 0.011460166999999997, 0.023860006,
-        0.015568050999999998, -0.003587254600000001, -0.034843990000000005,
-        -0.0041555012999999995, -0.026107594000000005, -0.02151083,
-        -0.0057618289999999996, 0.011714132499999998, 0.008355445999999999,
-        0.004098358999999999, 0.019199749999999998, -0.014336321, 0.008952264,
-        0.0063395994, -0.04576447999999999, ...],
-       "index" => 0,
-       "object" => "embedding"
-     }
-   ],
-   model: "text-embedding-ada-002-v2",
-   object: "list",
-   usage: %{"prompt_tokens" => 8, "total_tokens" => 8}
-  }}
+  ```elixir
+    {:ok,
+    %{
+    data: [
+      %{
+        "embedding" => [0.0022523515000000003, -0.009276069000000001,
+          0.015758524000000003, -0.007790373999999999, -0.004714223999999999,
+          0.014806155000000001, -0.009803046499999999, -0.038323310000000006,
+          -0.006844355, -0.028672641, 0.025345700000000002, 0.018145794000000003,
+          -0.0035904291999999997, -0.025498080000000003, 5.142790000000001e-4,
+          -0.016317246, 0.028444072, 0.0053713582, 0.009631619999999999,
+          -0.016469626, -0.015390275, 0.004301531, 0.006984035499999999,
+          -0.007079272499999999, -0.003926933, 0.018602932000000003, 0.008666554,
+          -0.022717162999999995, 0.011460166999999997, 0.023860006,
+          0.015568050999999998, -0.003587254600000001, -0.034843990000000005,
+          -0.0041555012999999995, -0.026107594000000005, -0.02151083,
+          -0.0057618289999999996, 0.011714132499999998, 0.008355445999999999,
+          0.004098358999999999, 0.019199749999999998, -0.014336321, 0.008952264,
+          0.0063395994, -0.04576447999999999, ...],
+        "index" => 0,
+        "object" => "embedding"
+      }
+    ],
+    model: "text-embedding-ada-002-v2",
+    object: "list",
+    usage: %{"prompt_tokens" => 8, "total_tokens" => 8}
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/embeddings/create
   """
@@ -1614,16 +1648,20 @@ defmodule OpenAI do
   Transcribes audio into the input language.
 
   ## Example request
-  OpenAI.audio_transcription(
-    "./path_to_file/blade_runner.mp3", # file path
-    model: "whisper-1"
-  )
+  ```elixir
+    OpenAI.audio_transcription(
+      "./path_to_file/blade_runner.mp3", # file path
+      model: "whisper-1"
+    )
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   text: "I've seen things you people wouldn't believe.."
-  }}
+  ```elixir
+    {:ok,
+    %{
+    text: "I've seen things you people wouldn't believe.."
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/audio/create
   """
@@ -1635,16 +1673,20 @@ defmodule OpenAI do
   Translates audio into into English.
 
   ## Example request
-  OpenAI.audio_translation(
-    "./path_to_file/werner_herzog_interview.mp3", # file path
-    model: "whisper-1"
-  )
+  ```elixir
+    OpenAI.audio_translation(
+      "./path_to_file/werner_herzog_interview.mp3", # file path
+      model: "whisper-1"
+    )
+  ```
 
   ## Example response
-  {:ok,
-  %{
-    text:  "I thought if I walked, I would be saved. It was almost like a pilgrimage. I will definitely continue to walk long distances. It is a very unique form of life and existence that we have lost almost entirely from our normal life."
-  }}
+  ```elixir
+    {:ok,
+    %{
+      text:  "I thought if I walked, I would be saved. It was almost like a pilgrimage. I will definitely continue to walk long distances. It is a very unique form of life and existence that we have lost almost entirely from our normal life."
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/audio/create
   """
@@ -1656,37 +1698,41 @@ defmodule OpenAI do
   Classifies if text violates OpenAI's Content Policy
 
   ## Example request
-  OpenAI.moderations(input: "I want to kill everyone!")
+  ```elixir
+    OpenAI.moderations(input: "I want to kill everyone!")
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   id: "modr-6gEWXyuaU8dqiHpbAHIsdru0zuC88",
-   model: "text-moderation-004",
-   results: [
-     %{
-       "categories" => %{
-         "hate" => false,
-         "hate/threatening" => false,
-         "self-harm" => false,
-         "sexual" => false,
-         "sexual/minors" => false,
-         "violence" => true,
-         "violence/graphic" => false
-       },
-       "category_scores" => %{
-         "hate" => 0.05119025334715844,
-         "hate/threatening" => 0.00321022979915142,
-         "self-harm" => 7.337320857914165e-5,
-         "sexual" => 1.1111642379546538e-6,
-         "sexual/minors" => 3.588798147546868e-10,
-         "violence" => 0.9190407395362855,
-         "violence/graphic" => 1.2791929293598514e-7
-       },
-       "flagged" => true
-     }
-   ]
-  }}
+  ```elixir
+    {:ok,
+    %{
+    id: "modr-6gEWXyuaU8dqiHpbAHIsdru0zuC88",
+    model: "text-moderation-004",
+    results: [
+      %{
+        "categories" => %{
+          "hate" => false,
+          "hate/threatening" => false,
+          "self-harm" => false,
+          "sexual" => false,
+          "sexual/minors" => false,
+          "violence" => true,
+          "violence/graphic" => false
+        },
+        "category_scores" => %{
+          "hate" => 0.05119025334715844,
+          "hate/threatening" => 0.00321022979915142,
+          "self-harm" => 7.337320857914165e-5,
+          "sexual" => 1.1111642379546538e-6,
+          "sexual/minors" => 3.588798147546868e-10,
+          "violence" => 0.9190407395362855,
+          "violence/graphic" => 1.2791929293598514e-7
+        },
+        "flagged" => true
+      }
+    ]
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/moderations/create
   """
@@ -1697,9 +1743,12 @@ defmodule OpenAI do
   @doc """
   List your organization's fine-tuning jobs
   ## Example request
+  ```elixir
       OpenAI.finetunes()
+  ```
 
   ## Example response
+  ```elixir
       {:ok, %{
         "data" => [
           %{"created_at" => 1614807352, "fine_tuned_model" => "curie:ft-acmeco-2021-03-03-21-44-20", "model": ...},
@@ -1707,13 +1756,18 @@ defmodule OpenAI do
           ...
         ]
       }
+  ```
+
   See: https://beta.openai.com/docs/api-reference/fine-tunes/list
 
   Gets info about the fine-tune job.
   ## Example request
+  ```elixir
       OpenAI.finetunes("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
+  ```
 
   ## Example response
+  ```elixir
       {:ok, %{
         created_at: 1614807352,
         events: [
@@ -1732,6 +1786,8 @@ defmodule OpenAI do
           ...,
           ...
       }
+  ```
+
   See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
   """
   def finetunes(config) when is_struct(config), do: Finetunes.fetch(config)
@@ -1746,7 +1802,9 @@ defmodule OpenAI do
   Creates a job that fine-tunes a specified model from a given dataset.
 
   ## Example request
+  ```elixir
       OpenAI.finetunes_create(training_file: "file-123", model: "curie", validation_file: "file-456")
+  ```
 
   ## Example response
 
@@ -1760,49 +1818,53 @@ defmodule OpenAI do
   Immediately cancel a fine-tune job.
 
   ## Example request
+  ```elixir
       OpenAI.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   created_at: 1675527767,
-   events: [
-     ...
-     %{
-       "created_at" => 1675528080,
-       "level" => "info",
-       "message" => "Fine-tune cancelled",
-       "object" => "fine-tune-event"
-     }
-   ],
-   fine_tuned_model: nil,
-   hyperparams: %{
-     "batch_size" => 1,
-     "learning_rate_multiplier" => 0.1,
-     "n_epochs" => 4,
-     "prompt_loss_weight" => 0.01
-   },
-   id: "ft-IaBYfSSAK47UUCbebY5tBIEj",
-   model: "curie",
-   object: "fine-tune",
-   organization_id: "org-1iPTOIak4b5fpuIB697AYMmO",
-   result_files: [],
-   status: "cancelled",
-   training_files: [
-     %{
-       "bytes" => 923,
-       "created_at" => 1675373519,
-       "filename" => "file123.jsonl",
-       "id" => "file-123",
-       "object" => "file",
-       "purpose" => "fine-tune",
-       "status" => "processed",
-       "status_details" => nil
-     }
-   ],
-   updated_at: 1675528080,
-   validation_files: []
-  }}
+  ```elixir
+    {:ok,
+    %{
+    created_at: 1675527767,
+    events: [
+      ...
+      %{
+        "created_at" => 1675528080,
+        "level" => "info",
+        "message" => "Fine-tune cancelled",
+        "object" => "fine-tune-event"
+      }
+    ],
+    fine_tuned_model: nil,
+    hyperparams: %{
+      "batch_size" => 1,
+      "learning_rate_multiplier" => 0.1,
+      "n_epochs" => 4,
+      "prompt_loss_weight" => 0.01
+    },
+    id: "ft-IaBYfSSAK47UUCbebY5tBIEj",
+    model: "curie",
+    object: "fine-tune",
+    organization_id: "org-1iPTOIak4b5fpuIB697AYMmO",
+    result_files: [],
+    status: "cancelled",
+    training_files: [
+      %{
+        "bytes" => 923,
+        "created_at" => 1675373519,
+        "filename" => "file123.jsonl",
+        "id" => "file-123",
+        "object" => "file",
+        "purpose" => "fine-tune",
+        "status" => "processed",
+        "status_details" => nil
+      }
+    ],
+    updated_at: 1675528080,
+    validation_files: []
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/fine-tunes/cancel
   """
@@ -1814,15 +1876,19 @@ defmodule OpenAI do
   Delete a fine-tuned model. You must have the Owner role in your organization.
 
   ## Example request
+  ```elixir
       OpenAI.finetunes_delete_model("model-id")
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   id: "model-id",
-   object: "model",
-   deleted: true
-  }}
+  ```elixir
+    {:ok,
+    %{
+    id: "model-id",
+    object: "model",
+    deleted: true
+    }}
+  ```
 
   See: https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
   """
@@ -1834,34 +1900,38 @@ defmodule OpenAI do
   Get fine-grained status updates for a fine-tune job.
 
   ## Example request
+  ```elixir
       OpenAI.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
+  ```
 
   ## Example response
-  {:ok,
-  %{
-   data: [
-     %{
-       "created_at" => 1675376995,
-       "level" => "info",
-       "message" => "Created fine-tune: ft-123",
-       "object" => "fine-tune-event"
-     },
-     %{
-       "created_at" => 1675377104,
-       "level" => "info",
-       "message" => "Fine-tune costs $0.00",
-       "object" => "fine-tune-event"
-     },
-     %{
-       "created_at" => 1675377105,
-       "level" => "info",
-       "message" => "Fine-tune enqueued. Queue number: 18",
-       "object" => "fine-tune-event"
-     },
-    ...,
-     ]
+  ```elixir
+    {:ok,
+    %{
+    data: [
+      %{
+        "created_at" => 1675376995,
+        "level" => "info",
+        "message" => "Created fine-tune: ft-123",
+        "object" => "fine-tune-event"
+      },
+      %{
+        "created_at" => 1675377104,
+        "level" => "info",
+        "message" => "Fine-tune costs $0.00",
+        "object" => "fine-tune-event"
+      },
+      %{
+        "created_at" => 1675377105,
+        "level" => "info",
+        "message" => "Fine-tune enqueued. Queue number: 18",
+        "object" => "fine-tune-event"
+      },
+      ...,
+      ]
+      }
     }
-  }
+  ```
 
   See: https://platform.openai.com/docs/api-reference/fine-tunes/events
   """
@@ -1874,12 +1944,15 @@ defmodule OpenAI do
   Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
 
   ## Example Request
+  ```elixir
       OpenAI.images_generations(
         [prompt: "A developer writing a test", size: "256x256"],
         %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
       )
+  ```
 
   ## Example Response
+  ```elixir
     {:ok,
       %{
       created: 1670341737,
@@ -1889,6 +1962,8 @@ defmodule OpenAI do
        }
       ]
     }}
+  ```
+
   See: https://beta.openai.com/docs/api-reference/images/create for the complete list of parameters you can pass to the image creation function
 
   note: the official way of passing http_options changed in v0.5.0 to be compliant with the conventions of other APIs, the alias OpenAI.images_generations(file_path, params, request_options), but is still available for retrocompatibility. If you are using it consider to switch to OpenAI.images_variations(params, config)
@@ -2143,9 +2218,12 @@ defmodule OpenAI do
    @deprecated: "use models instead"
   Get the list of available engines
   ## Example request
+  ```elixir
       OpenAI.engines()
+  ```
 
   ## Example response
+  ```elixir
       {:ok, %{
         "data" => [
           %{"id" => "davinci", "object" => "engine", "max_replicas": ...},
@@ -2153,19 +2231,26 @@ defmodule OpenAI do
           ...
         ]
       }
+  ```
+
   See: https://beta.openai.com/docs/api-reference/engines/list
 
   Retrieve specific engine info
   ## Example request
+  ```elixir
       OpenAI.engines("davinci")
+  ```
 
   ## Example response
+  ```elixir
       {:ok, %{
         "id" => "davinci",
         "object" => "engine",
         "max_replicas": ...
       }
       }
+  ```
+
   See: https://beta.openai.com/docs/api-reference/engines/retrieve
   """
   def engines(config) when is_struct(config), do: Engines.fetch(config)
