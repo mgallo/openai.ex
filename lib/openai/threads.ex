@@ -7,6 +7,7 @@ defmodule OpenAI.Threads do
 
   def url(), do: @base_url
   def url(thread_id), do: "#{@base_url}/#{thread_id}"
+  def runs_url(), do: "#{@base_url}/runs"
 
   def fetch(params, config \\ %Config{}) do
     url()
@@ -31,5 +32,10 @@ defmodule OpenAI.Threads do
   def delete(thread_id, config \\ %Config{}) do
     url(thread_id)
     |> Client.api_delete(config)
+  end
+
+  def create_and_run(params, config \\ %Config{}) do
+    runs_url()
+    |> Client.api_post(params, config)
   end
 end

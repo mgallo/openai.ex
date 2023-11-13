@@ -158,7 +158,7 @@ defmodule OpenAI do
 
   See: https://platform.openai.com/docs/api-reference/assistants/listAssistants
 
-  Retrieves an assistant by id.
+  Retrieves an assistant by its id.
 
   ## Example request
   ```elixir
@@ -359,7 +359,7 @@ defmodule OpenAI do
   end
 
   @doc """
-  Retrieves an assistant file by id.
+  Retrieves an assistant file by its id.
 
   ## Example request
   ```elixir
@@ -593,6 +593,82 @@ defmodule OpenAI do
   end
 
   @doc """
+  Creates a new thread and runs it.
+
+  ## Example request
+  ```elixir
+      messages = [
+        %{
+          role: "user",
+          content: "Hello, what is AI?",
+          file_ids: ["file-..."]
+        },
+        %{
+          role: "user",
+          content: "How does AI work? Explain it in simple terms."
+        },
+      ]
+
+      thread_metadata = %{
+        key_1: "value 1",
+        key_2: "value 2"
+      }
+
+      thread = %{
+        messages: messages,
+        metadata: thread_metadata
+      }
+
+      run_metadata = %{
+        key_3: "value 3"
+      }
+
+      params = [
+        assistant_id: "asst_...",
+        thread: thread,
+        model: "gpt-4-1106-preview",
+        instructions: "You are an AI learning assistant.",
+        tools: [%{
+          "type" => "retrieval"
+        }],
+        metadata: run_metadata
+      ]
+
+      OpenAI.threads_create_and_run(params)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: "asst_...",
+        cancelled_at: nil,
+        completed_at: nil,
+        created_at: 1699897907,
+        expires_at: 1699898507,
+        failed_at: nil,
+        file_ids: ["file-..."],
+        id: "run_...",
+        instructions: "You are an AI learning assistant.",
+        last_error: nil,
+        metadata: %{"key_3" => "value 3"},
+        model: "gpt-4-1106-preview",
+        object: "thread.run",
+        started_at: nil,
+        status: "queued",
+        thread_id: "thread_...",
+        tools: [%{"type" => "retrieval"}]
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/createThreadAndRun
+  """
+  def threads_create_and_run(params \\ [], config \\ %Config{})
+    when is_list(params) and is_struct(config)
+  do
+    Threads.create_and_run(params, config)
+  end
+  @doc """
   Modifies an existing thread.
 
   ## Example request
@@ -738,7 +814,7 @@ defmodule OpenAI do
   end
 
   @doc """
-  Retrieves a thread message by id.
+  Retrieves a thread message by its id.
 
   ## Example request
   ```elixir
@@ -1045,6 +1121,223 @@ defmodule OpenAI do
     when is_bitstring(thread_id) and is_list(params) and is_struct(config)
   do
     Threads.Runs.create(thread_id, params, config)
+  end
+
+  @doc """
+  Modifies an existing thread run.
+
+  ## Example request
+  ```elixir
+      params = [
+        metadata: %{
+          key_3: "value 3"
+        }
+      ]
+
+      OpenAI.thread_run_modify("thread_...", "run_...", params)
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: "asst_...",
+        cancelled_at: nil,
+        completed_at: 1699711125,
+        created_at: 1699711115,
+        expires_at: nil,
+        failed_at: nil,
+        file_ids: ["file-..."],
+        id: "run_...",
+        instructions: "...",
+        last_error: nil,
+        metadata: %{"key_3" => "value 3"},
+        model: "gpt-4-1106-preview",
+        object: "thread.run",
+        started_at: 1699711115,
+        status: "expired",
+        thread_id: "thread_...",
+        tools: [%{"type" => "retrieval"}]
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/modifyRun
+  """
+  def thread_run_modify(thread_id, run_id, params, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(run_id) and is_list(params)
+     and is_struct(config)
+  do
+    Threads.Runs.update(thread_id, run_id, params, config)
+  end
+
+  @doc """
+  Cancels an `in_progress` run.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_run_cancel("thread_...", "run_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: "asst_...",
+        cancelled_at: nil,
+        completed_at: nil,
+        created_at: 1699896939,
+        expires_at: 1699897539,
+        failed_at: nil,
+        file_ids: ["file-..."],
+        id: "run_...",
+        instructions: "...",
+        last_error: nil,
+        metadata: %{},
+        model: "gpt-4-1106-preview",
+        object: "thread.run",
+        started_at: 1699896939,
+        status: "cancelling",
+        thread_id: "thread_...",
+        tools: [%{"type" => "retrieval"}]
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/cancelRun
+  """
+  def thread_run_cancel(thread_id, run_id, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(run_id) and is_struct(config)
+  do
+    Threads.Runs.cancel(thread_id, run_id, config)
+  end
+
+  @doc """
+  Retrieves the list of steps associated with a particular run of a thread.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_run_steps("thread_...", "run_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "assistant_id" => "asst_...",
+            "cancelled_at" => nil,
+            "completed_at" => 1699897927,
+            "created_at" => 1699897908,
+            "expires_at" => nil,
+            "failed_at" => nil,
+            "id" => "step_...",
+            "last_error" => nil,
+            "object" => "thread.run.step",
+            "run_id" => "run_...",
+            "status" => "completed",
+            "step_details" => %{
+              "message_creation" => %{"message_id" => "msg_..."},
+              "type" => "message_creation"
+            },
+            "thread_id" => "thread_...",
+            "type" => "message_creation"
+          }
+        ],
+        first_id: "step_...",
+        has_more: false,
+        last_id: "step_...",
+        object: "list"
+      }}
+  ```
+
+  Retrieves the list of steps associated with a particular run of a thread,
+  filtered by query params.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_run_steps("thread_...", "run_...", order: "asc")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        data: [
+          %{
+            "assistant_id" => "asst_...",
+            "cancelled_at" => nil,
+            "completed_at" => 1699897927,
+            "created_at" => 1699897908,
+            "expires_at" => nil,
+            "failed_at" => nil,
+            "id" => "step_...",
+            "last_error" => nil,
+            "object" => "thread.run.step",
+            "run_id" => "run_...",
+            "status" => "completed",
+            "step_details" => %{
+              "message_creation" => %{"message_id" => "msg_..."},
+              "type" => "message_creation"
+            },
+            "thread_id" => "thread_...",
+            "type" => "message_creation"
+          }
+        ],
+        first_id: "step_...",
+        has_more: false,
+        last_id: "step_...",
+        object: "list"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/listRunSteps
+  """
+  def thread_run_steps(thread_id, run_id, params \\ [], config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(run_id) and is_list(params)
+     and is_struct(config)
+  do
+    Threads.Runs.Steps.fetch(thread_id, run_id, params, config)
+  end
+
+  @doc """
+  Retrieves a thread run step by its id.
+
+  ## Example request
+  ```elixir
+      OpenAI.thread_run_step("thread_...", "run_...", "step_...")
+  ```
+
+  ## Example response
+  ```elixir
+      {:ok,
+      %{
+        assistant_id: "asst_...",
+        cancelled_at: nil,
+        completed_at: 1699897927,
+        created_at: 1699897908,
+        expires_at: nil,
+        failed_at: nil,
+        id: "step_...",
+        last_error: nil,
+        object: "thread.run.step",
+        run_id: "run_...",
+        status: "completed",
+        step_details: %{
+          "message_creation" => %{"message_id" => "msg_..."},
+          "type" => "message_creation"
+        },
+        thread_id: "thread_...",
+        type: "message_creation"
+      }}
+  ```
+
+  See: https://platform.openai.com/docs/api-reference/runs/getRunStep
+  """
+  def thread_run_step(thread_id, run_id, step_id, config \\ %Config{})
+    when is_bitstring(thread_id) and is_bitstring(run_id) and is_bitstring(step_id)
+     and is_struct(config)
+  do
+    Threads.Runs.Steps.fetch_by_id(thread_id, run_id, step_id, config)
   end
 
   @doc """

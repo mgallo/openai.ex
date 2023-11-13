@@ -7,6 +7,7 @@ defmodule OpenAI.Threads.Runs do
 
   def url(thread_id), do: "#{@base_url}/#{thread_id}/runs"
   def url(thread_id, run_id), do: "#{@base_url}/#{thread_id}/runs/#{run_id}"
+  def cancel_url(thread_id, run_id), do: "#{@base_url}/#{thread_id}/runs/#{run_id}/cancel"
 
   def fetch(thread_id, params \\ [], config \\ %Config{}) do
     url(thread_id)
@@ -28,8 +29,8 @@ defmodule OpenAI.Threads.Runs do
     |> Client.api_post(params, config)
   end
 
-  def delete(thread_id, run_id, config \\ %Config{}) do
-    url(thread_id, run_id)
-    |> Client.api_delete(config)
+  def cancel(thread_id, run_id, config \\ %Config{}) do
+    cancel_url(thread_id, run_id)
+    |> Client.api_post(config)
   end
 end
