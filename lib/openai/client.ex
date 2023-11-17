@@ -83,7 +83,19 @@ defmodule OpenAI.Client do
 
   def request_options(config), do: config.http_options || Config.http_options()
 
-  def query_params(request_options, [_|_] = params) do
+  def stream_request_options(config) do
+    http_options = request_options(config)
+
+    case http_options[:stream_to] do
+      nil ->
+        http_options ++ [stream_to: self()]
+
+      _ ->
+        http_options
+    end
+  end
+
+  def query_params(request_options, [_ | _] = params) do
     # The `request_options` may or may not be present, but the `params` are.
     # Therefore we can guarantee to return a non-empty keyword list, so we cam
     # modify the `request_options` unconditionnaly.
@@ -93,6 +105,7 @@ defmodule OpenAI.Client do
       Keyword.merge(old_params, new_params)
     end)
   end
+
   def query_params(request_options, _params), do: request_options
 
   def api_get(url, params \\ [], config) do
@@ -116,7 +129,7 @@ defmodule OpenAI.Client do
       true ->
         Stream.new(fn ->
           url
-          |> post(body, request_headers(config), request_options(config))
+          |> post(body, request_headers(config), stream_request_options(config))
         end)
 
       false ->
