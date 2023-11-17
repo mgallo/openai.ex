@@ -12,7 +12,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.5.2"}
+    {:openai, "~> 0.6.0"}
   ]
 end
 ```
@@ -263,7 +263,7 @@ OpenAI.chat_completion(
 See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
 
 ### chat_completion() with stream
-Creates a completion for the chat message
+Creates a completion for the chat message, by default it streams to `self()`, but you can override the configuration by passing a config override to the function with a different `stream_to`  http_options parameter.
 
 #### Example request
 ```elixir
@@ -271,7 +271,7 @@ import Config
 
 config :openai,
   api_key: "your-api-key",
-  http_options: [recv_timeout: :infinity, stream_to: self(), async: :once],
+  http_options: [recv_timeout: :infinity, async: :once],
   ...
 ```
 
