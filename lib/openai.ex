@@ -1642,6 +1642,25 @@ defmodule OpenAI do
   end
 
   @doc """
+  Generates audio from the input text.
+
+  ## Example request
+  OpenAI.audio_speech(
+    model: "tts-1",
+    input: "You know that Voight-Kampf test of yours. Did you ever take that test yourself?",
+    voice: "alloy"
+  )
+
+  ## Example response
+  {:ok, <<255, 255, ...>>}
+  
+  See: https://platform.openai.com/docs/api-reference/audio/create
+  """
+  def audio_speech(params, config \\ %Config{}) do
+    Audio.speech(params, config)
+  end
+
+  @doc """
   Transcribes audio into the input language.
   
   ## Example request
