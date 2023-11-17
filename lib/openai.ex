@@ -34,7 +34,7 @@ defmodule OpenAI do
   ```elixir
       OpenAI.models()
   ```
-
+  
   ## Example response
   ```elixir
        %{
@@ -54,15 +54,15 @@ defmodule OpenAI do
        "root" => "davinci-search-query"
      }
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/models/retrieve
-
+  
   Retrieve specific model info
   ## Example request
   ```elixir
       OpenAI.models("davinci-search-query")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{
@@ -86,7 +86,7 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/models/retrieve
   """
   def models(config) when is_struct(config), do: Models.fetch(config)
@@ -102,12 +102,12 @@ defmodule OpenAI do
 
   @doc """
   Retrieves the list of assistants.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistants()
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -132,14 +132,14 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves the list of assistants filtered by query params.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistants(after: "", limit: 10)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -165,16 +165,16 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/listAssistants
-
+  
   Retrieves an assistant by its id.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistants("asst_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -191,7 +191,7 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/getAssistant
   """
   def assistants(params \\ [], config \\ %Config{})
@@ -202,9 +202,9 @@ defmodule OpenAI do
   def assistants(assistant_id, config) when is_bitstring(assistant_id) and is_struct(config),
     do: Assistants.fetch_by_id(assistant_id, config)
 
-  @doc"""
+  @doc """
   Creates a new assistant.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistants_create(
@@ -217,7 +217,7 @@ defmodule OpenAI do
         file_ids: ["file-..."]
       )
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -234,18 +234,17 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/createAssistant
   """
   def assistants_create(params, config \\ %Config{})
-    when is_list(params) and is_struct(config)
-  do
+      when is_list(params) and is_struct(config) do
     Assistants.create(params, config)
   end
 
   @doc """
   Modifies an existing assistant.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistants_modify(
@@ -254,7 +253,7 @@ defmodule OpenAI do
         name: "My upgraded assistant"
       )
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -271,23 +270,22 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/modifyAssistant
   """
   def assistants_modify(assistant_id, params, config \\ %Config{})
-    when is_bitstring(assistant_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(assistant_id) and is_list(params) and is_struct(config) do
     Assistants.update(assistant_id, params, config)
   end
 
   @doc """
   Deletes an assistant.
-
+  
   ## Example request
   ```elixir
      OpenAI.assistants_delete("asst_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -297,23 +295,22 @@ defmodule OpenAI do
         object: "assistant.deleted"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
   """
   def assistants_delete(assistant_id, config \\ %Config{})
-    when is_bitstring(assistant_id) and is_struct(config)
-  do
+      when is_bitstring(assistant_id) and is_struct(config) do
     Assistants.delete(assistant_id, config)
   end
 
   @doc """
   Retrieves the list of files associated with a particular assistant.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistant_files("asst_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -332,15 +329,15 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves the list of files associated with a particular assistant, filtered
   by query params.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistant_files("asst_...", order: "desc")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -359,23 +356,22 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles
   """
   def assistant_files(assistant_id, params \\ [], config \\ %Config{})
-    when is_bitstring(assistant_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(assistant_id) and is_list(params) and is_struct(config) do
     Assistants.Files.fetch(assistant_id, params, config)
   end
 
   @doc """
   Retrieves an assistant file by its id.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistant_file("asst_...", "file-...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -386,23 +382,22 @@ defmodule OpenAI do
         object: "assistant.file"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
   """
   def assistant_file(assistant_id, file_id, config \\ %Config{})
-    when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config)
-  do
+      when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config) do
     Assistants.Files.fetch_by_id(assistant_id, file_id, config)
   end
 
   @doc """
   Attaches a previously uploaded file to the assistant.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistant_file_create("asst_...", file_id: "file-...")
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -413,23 +408,22 @@ defmodule OpenAI do
       object: "assistant.file"
     }}
   ```
-
-  See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
+  
+  See: https://platform.openai.com/docs/api-reference/assistants/createAssistantFile
   """
   def assistant_file_create(assistant_id, params, config \\ %Config{})
-    when is_bitstring(assistant_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(assistant_id) and is_list(params) and is_struct(config) do
     Assistants.Files.create(assistant_id, params, config)
   end
 
   @doc """
   Detaches a file from the assistant. The file itself is not automatically deleted.
-
+  
   ## Example request
   ```elixir
       OpenAI.assistant_file_delete("asst_...", "file-...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -439,25 +433,24 @@ defmodule OpenAI do
         object: "assistant.file.deleted"
       }}
   ```
-
-  See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
+  
+  See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistantFile
   """
   def assistant_file_delete(assistant_id, file_id, config \\ %Config{})
-    when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config)
-  do
+      when is_bitstring(assistant_id) and is_bitstring(file_id) and is_struct(config) do
     Assistants.Files.delete(assistant_id, file_id, config)
   end
 
   @doc """
   Retrieves the list of threads.
-
+  
   **NOTE:** At the time of this writing this functionality remains undocumented by OpenAI.
-
+  
   ## Example request
   ```elixir
       OpenAI.threads()
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -477,16 +470,16 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves a filtered list of threads.
-
+  
   **NOTE:** At the time of this writing this functionality remains undocumented by OpenAI.
-
+  
   ## Example request
   ```elixir
       OpenAI.threads(limit: 2)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -511,14 +504,14 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves a thread by its id.
-
+  
   ## Example request
   ```elixir
       OpenAI.threads("thread_..."")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -529,7 +522,7 @@ defmodule OpenAI do
         object: "thread"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/threads/getThread
   """
   def threads(params \\ [], config \\ %Config{})
@@ -542,12 +535,12 @@ defmodule OpenAI do
 
   @doc """
   Creates a new thread.
-
+  
   ## Example request
   ```elixir
       OpenAI.threads_create()
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -558,9 +551,9 @@ defmodule OpenAI do
         object: "thread"
       }}
   ```
-
+  
   Creates a new thread with some messages and metadata.
-
+  
   ## Example request
   ```elixir
       messages = [
@@ -574,15 +567,15 @@ defmodule OpenAI do
           content: "How does AI work? Explain it in simple terms."
         },
       ]
-
+  
       metadata = %{
         key_1: "value 1",
         key_2: "value 2"
       }
-
+  
       OpenAI.threads_create(messages: messages, metadata: metadata)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -593,18 +586,17 @@ defmodule OpenAI do
         object: "thread"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/threads/createThread
   """
   def threads_create(params \\ [], config \\ %Config{})
-    when is_list(params) and is_struct(config)
-  do
+      when is_list(params) and is_struct(config) do
     Threads.create(params, config)
   end
 
   @doc """
   Creates a new thread and runs it.
-
+  
   ## Example request
   ```elixir
       messages = [
@@ -618,21 +610,21 @@ defmodule OpenAI do
           content: "How does AI work? Explain it in simple terms."
         },
       ]
-
+  
       thread_metadata = %{
         key_1: "value 1",
         key_2: "value 2"
       }
-
+  
       thread = %{
         messages: messages,
         metadata: thread_metadata
       }
-
+  
       run_metadata = %{
         key_3: "value 3"
       }
-
+  
       params = [
         assistant_id: "asst_...",
         thread: thread,
@@ -643,10 +635,10 @@ defmodule OpenAI do
         }],
         metadata: run_metadata
       ]
-
+  
       OpenAI.threads_create_and_run(params)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -670,26 +662,26 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/createThreadAndRun
   """
   def threads_create_and_run(params \\ [], config \\ %Config{})
-    when is_list(params) and is_struct(config)
-  do
+      when is_list(params) and is_struct(config) do
     Threads.create_and_run(params, config)
   end
+
   @doc """
   Modifies an existing thread.
-
+  
   ## Example request
   ```elixir
       metadata = %{
         key_3: "value 3"
       }
-
+  
       OpenAI.threads_modify("thread_...", metadata: metadata)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -700,23 +692,22 @@ defmodule OpenAI do
         object: "thread"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/threads/modifyThread
   """
   def threads_modify(thread_id, params, config \\ %Config{})
-    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_list(params) and is_struct(config) do
     Threads.update(thread_id, params, config)
   end
 
   @doc """
   Deletes a thread.
-
+  
   ## Example request
   ```elixir
       OpenAI.threads_delete("thread_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -726,23 +717,22 @@ defmodule OpenAI do
         object: "thread.deleted"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/threads/deleteThread
   """
   def threads_delete(thread_id, config \\ %Config{})
-    when is_bitstring(thread_id) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_struct(config) do
     Threads.delete(thread_id, config)
   end
 
   @doc """
   Retrieves the list of messages associated with a particular thread.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_messages("thread_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -776,15 +766,15 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves the list of messages associated with a particular thread, filtered
   by query params.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_messages("thread_...", after: "msg_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -814,23 +804,22 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/messages/listMessages
   """
   def thread_messages(thread_id, params \\ [], config \\ %Config{})
-    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_list(params) and is_struct(config) do
     Threads.Messages.fetch(thread_id, params, config)
   end
 
   @doc """
   Retrieves a thread message by its id.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_message("thread_...", "msg_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -852,18 +841,17 @@ defmodule OpenAI do
         thread_id: "thread_..."
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/threads/getThread
   """
   def thread_message(thread_id, message_id, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(message_id) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(message_id) and is_struct(config) do
     Threads.Messages.fetch_by_id(thread_id, message_id, config)
   end
 
   @doc """
   Creates a message within a thread.
-
+  
   ## Example request
   ```elixir
       params = [
@@ -875,10 +863,10 @@ defmodule OpenAI do
           key_2: "value 2"
         }
       ]
-
+  
       OpenAI.thread_message_create("thread_...", params)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -900,18 +888,17 @@ defmodule OpenAI do
         thread_id: "thread_..."
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/messages/createMessage
   """
   def thread_message_create(thread_id, params, config \\ %Config{})
-    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_list(params) and is_struct(config) do
     Threads.Messages.create(thread_id, params, config)
   end
 
   @doc """
   Modifies an existing thread message.
-
+  
   ## Example request
   ```elixir
       params = [
@@ -919,10 +906,10 @@ defmodule OpenAI do
           key_3: "value 3"
         }
       ]
-
+  
       OpenAI.thread_message_modify("thread_...", "msg_...", params)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -944,23 +931,23 @@ defmodule OpenAI do
         thread_id: "thread_..."
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/messages/modifyMessage
   """
   def thread_message_modify(thread_id, message_id, params, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(message_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(message_id) and is_list(params) and
+             is_struct(config) do
     Threads.Messages.update(thread_id, message_id, params, config)
   end
 
   @doc """
   Retrieves the list of files associated with a particular message of a thread.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_message_files("thread_...", "msg_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -979,37 +966,36 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves the list of files associated with a particular message of a thread,
   filtered by query params.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_message_files("thread_...", "msg_...", after: "file-...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/messages/listMessageFiles
   """
   def thread_message_files(thread_id, message_id, params \\ [], config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(message_id) and is_list(params)
-     and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(message_id) and is_list(params) and
+             is_struct(config) do
     Threads.Messages.Files.fetch(thread_id, message_id, params, config)
   end
 
   @doc """
   Retrieves the message file object.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_message_file("thread_...", "msg_...", "file-...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1020,74 +1006,90 @@ defmodule OpenAI do
         object: "thread.message.file"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/messages/getMessageFile
   """
   def thread_message_file(thread_id, message_id, file_id, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(message_id) and is_bitstring(file_id)
-     and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(message_id) and is_bitstring(file_id) and
+             is_struct(config) do
     Threads.Messages.Files.fetch_by_id(thread_id, message_id, file_id, config)
   end
 
   @doc """
   Retrieves the list of runs associated with a particular thread.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_runs("thread_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
   ```
-
+  
   Retrieves the list of runs associated with a particular thread, filtered
   by query params.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_runs("thread_...", limit: 10)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/listRuns
   """
   def thread_runs(thread_id, params \\ [], config \\ %Config{})
-    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_list(params) and is_struct(config) do
     Threads.Runs.fetch(thread_id, params, config)
   end
 
   @doc """
   Retrieves a particular thread run by its id.
-
+  
   ## Example request
   ```elixir
-      OpenAI.thread_run("thread_...")
+      OpenAI.thread_run("thread_...", "run_...")
   ```
-
+  
   ## Example response
   ```elixir
-      {:ok, %{data: [], first_id: nil, has_more: false, last_id: nil, object: "list"}}
+  {:ok,
+  %{
+   assistant_id: "asst_J",
+   cancelled_at: nil,
+   completed_at: 1700234149,
+   created_at: 1700234128,
+   expires_at: nil,
+   failed_at: nil,
+   file_ids: [],
+   id: "run_",
+   instructions: "You are an AI learning assistant.",
+   last_error: nil,
+   metadata: %{"key_3" => "value 3"},
+   model: "gpt-4-1106-preview",
+   object: "thread.run",
+   started_at: 1700234129,
+   status: "expired",
+   thread_id: "thread_",
+   tools: [%{"type" => "retrieval"}]
+  }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/getRun
   """
   def thread_run(thread_id, run_id, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(run_id) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(run_id) and is_struct(config) do
     Threads.Runs.fetch_by_id(thread_id, run_id, config)
   end
 
   @doc """
   Creates a run for a thread using a particular assistant.
-
+  
   ## Example request
   ```elixir
       params = [
@@ -1097,10 +1099,10 @@ defmodule OpenAI do
           "type" => "retrieval"
         }]
       ]
-
+  
       OpenAI.thread_run_create("thread_...", params)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1124,18 +1126,17 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/createRun
   """
   def thread_run_create(thread_id, params, config \\ %Config{})
-    when is_bitstring(thread_id) and is_list(params) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_list(params) and is_struct(config) do
     Threads.Runs.create(thread_id, params, config)
   end
 
   @doc """
   Modifies an existing thread run.
-
+  
   ## Example request
   ```elixir
       params = [
@@ -1143,10 +1144,10 @@ defmodule OpenAI do
           key_3: "value 3"
         }
       ]
-
+  
       OpenAI.thread_run_modify("thread_...", "run_...", params)
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1170,24 +1171,23 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/modifyRun
   """
   def thread_run_modify(thread_id, run_id, params, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(run_id) and is_list(params)
-     and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(run_id) and is_list(params) and
+             is_struct(config) do
     Threads.Runs.update(thread_id, run_id, params, config)
   end
 
   @doc """
   Cancels an `in_progress` run.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_run_cancel("thread_...", "run_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1211,23 +1211,22 @@ defmodule OpenAI do
         tools: [%{"type" => "retrieval"}]
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/cancelRun
   """
   def thread_run_cancel(thread_id, run_id, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(run_id) and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(run_id) and is_struct(config) do
     Threads.Runs.cancel(thread_id, run_id, config)
   end
 
   @doc """
   Retrieves the list of steps associated with a particular run of a thread.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_run_steps("thread_...", "run_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1259,15 +1258,15 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   Retrieves the list of steps associated with a particular run of a thread,
   filtered by query params.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_run_steps("thread_...", "run_...", order: "asc")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1299,24 +1298,23 @@ defmodule OpenAI do
         object: "list"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/listRunSteps
   """
   def thread_run_steps(thread_id, run_id, params \\ [], config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(run_id) and is_list(params)
-     and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(run_id) and is_list(params) and
+             is_struct(config) do
     Threads.Runs.Steps.fetch(thread_id, run_id, params, config)
   end
 
   @doc """
   Retrieves a thread run step by its id.
-
+  
   ## Example request
   ```elixir
       OpenAI.thread_run_step("thread_...", "run_...", "step_...")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1340,20 +1338,19 @@ defmodule OpenAI do
         type: "message_creation"
       }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/runs/getRunStep
   """
   def thread_run_step(thread_id, run_id, step_id, config \\ %Config{})
-    when is_bitstring(thread_id) and is_bitstring(run_id) and is_bitstring(step_id)
-     and is_struct(config)
-  do
+      when is_bitstring(thread_id) and is_bitstring(run_id) and is_bitstring(step_id) and
+             is_struct(config) do
     Threads.Runs.Steps.fetch_by_id(thread_id, run_id, step_id, config)
   end
 
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
-
+  
   ## Example request
   ```elixir
     OpenAI.completions(
@@ -1364,7 +1361,7 @@ defmodule OpenAI do
       ...
     )
   ```
-
+  
   ## Example response
   ```elixir
     {:ok, %{
@@ -1383,7 +1380,7 @@ defmodule OpenAI do
       }
     }
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/completions/create
   """
   def completions(params) when is_list(params),
@@ -1395,7 +1392,7 @@ defmodule OpenAI do
   @doc """
   It returns one or more predicted completions given a prompt.
   The function accepts as arguments the "engine_id" and the set of parameters used by the Completions OpenAI api
-
+  
   ## Example request
   ```elixir
       OpenAI.completions(
@@ -1406,7 +1403,7 @@ defmodule OpenAI do
         ...
       )
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{
@@ -1425,7 +1422,7 @@ defmodule OpenAI do
         }
       }
   ```
-
+  
   See: https://beta.openai.com/docs/api-reference/completions/create for the complete list of parameters you can pass to the completions function
   """
   def completions(engine_id, params) when is_bitstring(engine_id) and is_list(params),
@@ -1436,7 +1433,7 @@ defmodule OpenAI do
 
   @doc """
   Creates a completion for the chat message
-
+  
   ## Example request
   ```elixir
       OpenAI.chat_completion(
@@ -1449,7 +1446,7 @@ defmodule OpenAI do
           ]
       )
   ```
-
+  
   ## Example response
   ```elixir
       {:ok,
@@ -1476,15 +1473,15 @@ defmodule OpenAI do
         }
       }
   ```
-
+  
   N.B. to use "stream" mode you must be set http_options as below when you want to treat the chat completion as a stream:
-
+  
   ```elixir
     config :openai,
       api_key: "your-api-key",
       http_options: [recv_timeout: :infinity, stream_to: self(), async: :once]
   ```
-
+  
   ## Example request (stream)
   ```elixir
     OpenAI.chat_completion([
@@ -1503,7 +1500,7 @@ defmodule OpenAI do
     end)
     |> Stream.run()
   ```
-
+  
   ## Example response (stream)
   ```elixir
     %{
@@ -1515,7 +1512,7 @@ defmodule OpenAI do
       "model" => "gpt-3.5-turbo-0301",
       "object" => "chat.completion.chunk"
     }
-
+  
     %{
       "choices" => [
         %{"delta" => %{"content" => "The"}, "finish_reason" => nil, "index" => 0}
@@ -1557,7 +1554,7 @@ defmodule OpenAI do
       "object" => "chat.completion.chunk"
     }
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
   """
   def chat_completion(params, config \\ %Config{}) do
@@ -1566,7 +1563,7 @@ defmodule OpenAI do
 
   @doc """
   Creates a new edit for the provided input, instruction, and parameters
-
+  
   ## Example request
   ```elixir
     OpenAI.edits(
@@ -1575,7 +1572,7 @@ defmodule OpenAI do
       instruction: "Fix the spelling mistakes"
     )
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1590,7 +1587,7 @@ defmodule OpenAI do
     }
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/edits/create
   """
   def edits(params, config \\ %Config{}) do
@@ -1599,7 +1596,7 @@ defmodule OpenAI do
 
   @doc """
   Creates an embedding vector representing the input text.
-
+  
   ## Example request
   ```elixir
     OpenAI.embeddings(
@@ -1607,7 +1604,7 @@ defmodule OpenAI do
       input: "The food was delicious and the waiter..."
     )
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1637,7 +1634,7 @@ defmodule OpenAI do
     usage: %{"prompt_tokens" => 8, "total_tokens" => 8}
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/embeddings/create
   """
   def embeddings(params, config \\ %Config{}) do
@@ -1646,7 +1643,7 @@ defmodule OpenAI do
 
   @doc """
   Transcribes audio into the input language.
-
+  
   ## Example request
   ```elixir
     OpenAI.audio_transcription(
@@ -1654,7 +1651,7 @@ defmodule OpenAI do
       model: "whisper-1"
     )
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1662,7 +1659,7 @@ defmodule OpenAI do
     text: "I've seen things you people wouldn't believe.."
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/audio/create
   """
   def audio_transcription(file_path, params, config \\ %Config{}) do
@@ -1671,7 +1668,7 @@ defmodule OpenAI do
 
   @doc """
   Translates audio into into English.
-
+  
   ## Example request
   ```elixir
     OpenAI.audio_translation(
@@ -1679,7 +1676,7 @@ defmodule OpenAI do
       model: "whisper-1"
     )
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1687,7 +1684,7 @@ defmodule OpenAI do
       text:  "I thought if I walked, I would be saved. It was almost like a pilgrimage. I will definitely continue to walk long distances. It is a very unique form of life and existence that we have lost almost entirely from our normal life."
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/audio/create
   """
   def audio_translation(file_path, params, config \\ %Config{}) do
@@ -1696,12 +1693,12 @@ defmodule OpenAI do
 
   @doc """
   Classifies if text violates OpenAI's Content Policy
-
+  
   ## Example request
   ```elixir
     OpenAI.moderations(input: "I want to kill everyone!")
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1733,7 +1730,7 @@ defmodule OpenAI do
     ]
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/moderations/create
   """
   def moderations(params, config \\ %Config{}) do
@@ -1746,7 +1743,7 @@ defmodule OpenAI do
   ```elixir
       OpenAI.finetunes()
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{
@@ -1757,15 +1754,15 @@ defmodule OpenAI do
         ]
       }
   ```
-
+  
   See: https://beta.openai.com/docs/api-reference/fine-tunes/list
-
+  
   Gets info about the fine-tune job.
   ## Example request
   ```elixir
       OpenAI.finetunes("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{
@@ -1787,7 +1784,7 @@ defmodule OpenAI do
           ...
       }
   ```
-
+  
   See: https://beta.openai.com/docs/api-reference/fine-tunes/retrieve
   """
   def finetunes(config) when is_struct(config), do: Finetunes.fetch(config)
@@ -1800,14 +1797,14 @@ defmodule OpenAI do
 
   @doc """
   Creates a job that fine-tunes a specified model from a given dataset.
-
+  
   ## Example request
   ```elixir
       OpenAI.finetunes_create(training_file: "file-123", model: "curie", validation_file: "file-456")
   ```
-
+  
   ## Example response
-
+  
   See: https://platform.openai.com/docs/api-reference/fine-tunes/create
   """
   def finetunes_create(params, config \\ %Config{}) do
@@ -1816,12 +1813,12 @@ defmodule OpenAI do
 
   @doc """
   Immediately cancel a fine-tune job.
-
+  
   ## Example request
   ```elixir
       OpenAI.finetunes_cancel("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1865,7 +1862,7 @@ defmodule OpenAI do
     validation_files: []
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/fine-tunes/cancel
   """
   def finetunes_cancel(finetune_id, config \\ %Config{}) do
@@ -1874,12 +1871,12 @@ defmodule OpenAI do
 
   @doc """
   Delete a fine-tuned model. You must have the Owner role in your organization.
-
+  
   ## Example request
   ```elixir
       OpenAI.finetunes_delete_model("model-id")
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1889,7 +1886,7 @@ defmodule OpenAI do
     deleted: true
     }}
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/fine-tunes/delete-model
   """
   def finetunes_delete_model(model_id, config \\ %Config{}) do
@@ -1898,12 +1895,12 @@ defmodule OpenAI do
 
   @doc """
   Get fine-grained status updates for a fine-tune job.
-
+  
   ## Example request
   ```elixir
       OpenAI.finetunes_list_events("ft-AF1WoRqd3aJAHsqc9NY7iL8F")
   ```
-
+  
   ## Example response
   ```elixir
     {:ok,
@@ -1932,7 +1929,7 @@ defmodule OpenAI do
       }
     }
   ```
-
+  
   See: https://platform.openai.com/docs/api-reference/fine-tunes/events
   """
   def finetunes_list_events(finetune_id, config \\ %Config{}) do
@@ -1942,7 +1939,7 @@ defmodule OpenAI do
   @doc """
   This generates an image based on the given prompt.
   Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
-
+  
   ## Example Request
   ```elixir
       OpenAI.images_generations(
@@ -1950,7 +1947,7 @@ defmodule OpenAI do
         %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
       )
   ```
-
+  
   ## Example Response
   ```elixir
     {:ok,
@@ -1963,9 +1960,9 @@ defmodule OpenAI do
       ]
     }}
   ```
-
+  
   See: https://beta.openai.com/docs/api-reference/images/create for the complete list of parameters you can pass to the image creation function
-
+  
   note: the official way of passing http_options changed in v0.5.0 to be compliant with the conventions of other APIs, the alias OpenAI.images_generations(file_path, params, request_options), but is still available for retrocompatibility. If you are using it consider to switch to OpenAI.images_variations(params, config)
   """
   def images_generations(params) do
@@ -1998,7 +1995,7 @@ defmodule OpenAI do
   @doc """
   This edits an image based on the given prompt.
   Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
-
+  
   ## Example Request
   ```elixir
   OpenAI.images_edits(
@@ -2007,7 +2004,7 @@ defmodule OpenAI do
     %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
   )
   ```
-
+  
   ## Example Response
   ```elixir
   {:ok,
@@ -2053,7 +2050,7 @@ defmodule OpenAI do
   @doc """
   Creates a variation of a given image.
   Image functions require some times to execute, and API may return a timeout error, if needed you can pass a configuration object with HTTPoison http_options as second argument of the function to increase the timeout.
-
+  
   ## Example Request
   ```elixir
   OpenAI.images_variations(
@@ -2062,7 +2059,7 @@ defmodule OpenAI do
     %OpenAI.config{http_options: [recv_timeout: 10 * 60 * 1000]} # optional!
   )
   ```
-
+  
   ## Example Response
   ```elixir
   {:ok,
@@ -2107,12 +2104,12 @@ defmodule OpenAI do
 
   @doc """
   Returns a list of files that belong to the user's organization.
-
+  
   ## Example request
   ```elixir
   OpenAI.files()
   ```
-
+  
   ## Example response
   ```elixir
   {:ok,
@@ -2134,14 +2131,14 @@ defmodule OpenAI do
   }
   ```
   See: https://platform.openai.com/docs/api-reference/files
-
+  
   Returns a file that belong to the user's organization, given a file id
-
+  
   ## Example Request
   ```elixir
   OpenAI.files("file-123321")
   ```
-
+  
   ## Example Response
   ```elixir
   {:ok,
@@ -2169,12 +2166,12 @@ defmodule OpenAI do
 
   @doc """
   Upload a file that contains document(s) to be used across various endpoints/features. Currently, the size of all the files uploaded by one organization can be up to 1 GB. Please contact OpenAI if you need to increase the storage limit.
-
+  
   ## Example request
   ```elixir
   OpenAI.files_upload("./file.jsonl", purpose: "fine-tune")
   ```
-
+  
   ## Example response
   ```elixir
   {:ok,
@@ -2198,12 +2195,12 @@ defmodule OpenAI do
 
   @doc """
   delete a file
-
+  
   ## Example Request
   ```elixir
   OpenAI.files_delete("file-123")
   ```
-
+  
   ## Example Response
   ```elixir
   {:ok, %{deleted: true, id: "file-123", object: "file"}}
@@ -2221,7 +2218,7 @@ defmodule OpenAI do
   ```elixir
       OpenAI.engines()
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{
@@ -2232,15 +2229,15 @@ defmodule OpenAI do
         ]
       }
   ```
-
+  
   See: https://beta.openai.com/docs/api-reference/engines/list
-
+  
   Retrieve specific engine info
   ## Example request
   ```elixir
       OpenAI.engines("davinci")
   ```
-
+  
   ## Example response
   ```elixir
       {:ok, %{
@@ -2250,7 +2247,7 @@ defmodule OpenAI do
       }
       }
   ```
-
+  
   See: https://beta.openai.com/docs/api-reference/engines/retrieve
   """
   def engines(config) when is_struct(config), do: Engines.fetch(config)
