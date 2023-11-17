@@ -5,6 +5,12 @@
 Unofficial community-maintained wrapper for OpenAI REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
+⚠️⚠️⚠️**Disclaimer:** The response to an issue or a pull request (PR) may take a significant amount of time, as I am busy with other projects that require prioritization. The library may not always be up-to-date and aligned with the latest API specifications. You can find alternative projects here:
+
+- https://github.com/restlessronin/openai_ex
+- https://github.com/dvcrn/ex_openai
+
+Thank you for your understanding and support and thanks to everyone who has contributed to the library so far!
 
 ## Installation
 Add ***:openai*** as a dependency in your mix.exs file.
