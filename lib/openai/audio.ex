@@ -4,8 +4,14 @@ defmodule OpenAI.Audio do
   alias OpenAI.Config
 
   @base_url "/v1/audio"
+  def speech_url(), do: "#{@base_url}/speech"
   def transcriptions_url(), do: "#{@base_url}/transcriptions"
   def translations_url(), do: "#{@base_url}/translations"
+
+  def speech(params, config \\ %Config{}) do
+    speech_url()
+    |> Client.api_post(params, config)
+  end
 
   def transcription(file_path, params, config \\ %Config{}) do
     transcriptions_url()
