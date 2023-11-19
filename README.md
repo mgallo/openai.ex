@@ -5,7 +5,7 @@
 Unofficial community-maintained wrapper for OpenAI REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
-⚠️⚠️⚠️**Disclaimer:** The response to an issue or a pull request (PR) may take a significant amount of time, as I am busy with other projects that require prioritization. The library may not always be up-to-date and aligned with the latest API specifications. You can find alternative projects here:
+⚠️⚠️⚠️**Disclaimer:** Please be advised that addressing issues or pull requests (PRs) may experience delays, as my current workload involves prioritizing other projects. Consequently, the library may not consistently reflect the latest API specifications. You can explore alternative projects here:
 
 - https://github.com/restlessronin/openai_ex
 - https://github.com/dvcrn/ex_openai
