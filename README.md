@@ -18,7 +18,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.6.0"}
+    {:openai, "~> 0.6.1"}
   ]
 end
 ```
@@ -1854,6 +1854,65 @@ OpenAI.thread_run_modify("thread_...", "run_...", params)
 ```
 See: https://platform.openai.com/docs/api-reference/runs/modifyRun
 
+
+### thread_run_submit_tool_outputs(thread_id, run_id, params)
+When a run has the status: `"requires_action"` and `required_action.type` is `submit_tool_outputs`, this endpoint can be used to submit the outputs from the tool calls once they're all completed. All outputs must be submitted in a single request.
+
+#### Example request
+```elixir
+params = [
+  tool_outputs: [%{
+    tool_call_id: "call_abc123",
+    output: "test"
+  }]
+]
+OpenAI.thread_run_submit_tool_outputs("thread_...", "run_...", params)
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    assistant_id: "asst_abc123",
+    cancelled_at: nil,
+    completed_at: nil,
+    created_at: 1699075592,
+    expires_at: 1699076192,
+    failed_at: nil,
+    file_ids: [],
+    id: "run_abc123",
+    instructions: "You tell the weather.",
+    last_error: nil,
+    metadata: %{},
+    model: "gpt-4",
+    object: "thread.run",
+    started_at: 1699075592,
+    status: "queued",
+    thread_id: "thread_abc123",
+    tools: [
+      %{
+        "function" => %{
+          "description" => "Determine weather in my location",
+          "name" => "get_weather",
+          "parameters" => %{
+            "properties" => %{
+              "location" => %{
+                "description" => "The city and state e.g. San Francisco, CA",
+                "type" => "string"
+              },
+              "unit" => %{"enum" => ["c", "f"], "type" => "string"}
+            },
+            "required" => ["location"],
+            "type" => "object"
+          }
+        },
+        "type" => "function"
+      }
+    ]
+  }
+}
+```
+See: https://platform.openai.com/docs/api-reference/runs/submitToolOutputs
 
 ### thread_run_cancel(thread_id, run_id)
 Cancels an `in_progress` run.
