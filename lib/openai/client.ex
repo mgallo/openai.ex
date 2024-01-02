@@ -60,21 +60,62 @@ defmodule OpenAI.Client do
     end
   end
 
+  def add_beta_header(headers, config) do
+    beta = config.beta || Config.beta()
+
+    if beta do
+      [{"OpenAI-Beta", beta} | headers]
+    else
+      headers
+    end
+  end
+
   def request_headers(config) do
     [
       bearer(config),
       {"Content-type", "application/json"}
     ]
     |> add_organization_header(config)
+    |> add_beta_header(config)
   end
 
   def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
 
   def request_options(config), do: config.http_options || Config.http_options()
 
-  def api_get(url, config) do
+  def stream_request_options(config) do
+    http_options = request_options(config)
+
+    case http_options[:stream_to] do
+      nil ->
+        http_options ++ [stream_to: self()]
+
+      _ ->
+        http_options
+    end
+  end
+
+  def query_params(request_options, [_ | _] = params) do
+    # The `request_options` may or may not be present, but the `params` are.
+    # Therefore we can guarantee to return a non-empty keyword list, so we cam
+    # modify the `request_options` unconditionnaly.
+    request_options
+    |> List.wrap()
+    |> Keyword.merge([params: params], fn :params, old_params, new_params ->
+      Keyword.merge(old_params, new_params)
+    end)
+  end
+
+  def query_params(request_options, _params), do: request_options
+
+  def api_get(url, params \\ [], config) do
+    request_options =
+      config
+      |> request_options()
+      |> query_params(params)
+
     url
-    |> get(request_headers(config), request_options(config))
+    |> get(request_headers(config), request_options)
     |> handle_response()
   end
 
@@ -88,7 +129,7 @@ defmodule OpenAI.Client do
       true ->
         Stream.new(fn ->
           url
-          |> post(body, request_headers(config), request_options(config))
+          |> post(body, request_headers(config), stream_request_options(config))
         end)
 
       false ->

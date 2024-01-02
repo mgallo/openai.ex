@@ -5,6 +5,12 @@
 Unofficial community-maintained wrapper for OpenAI REST APIs
 See https://platform.openai.com/docs/api-reference/introduction for further info on REST endpoints
 
+⚠️⚠️⚠️**Disclaimer:** Please be advised that addressing issues or pull requests (PRs) may experience delays, as my current workload involves prioritizing other projects. Consequently, the library may not consistently reflect the latest API specifications. You can explore alternative projects here:
+
+- https://github.com/restlessronin/openai_ex
+- https://github.com/dvcrn/ex_openai
+
+Thank you for your understanding and support and thanks to everyone who has contributed to the library so far!
 
 ## Installation
 Add ***:openai*** as a dependency in your mix.exs file.
@@ -12,7 +18,7 @@ Add ***:openai*** as a dependency in your mix.exs file.
 ```elixir
 def deps do
   [
-    {:openai, "~> 0.5.2"}
+    {:openai, "~> 0.6.1"}
   ]
 end
 ```
@@ -28,6 +34,8 @@ config :openai,
   api_key: "your-api-key",
   # find it at https://platform.openai.com/account/org-settings under "Organization ID"
   organization_key: "your-organization-key",
+  # optional, use when required by an OpenAI API beta, e.g.:
+  beta: "assistants=v1"
   # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
   http_options: [recv_timeout: 30_000],
   # optional, useful if you want to do local integration tests using Bypass or similar
@@ -37,6 +45,8 @@ config :openai,
 
 ```
 Note: you can load your os ENV variables in the configuration file, if you set an env variable for API key named `OPENAI_API_KEY` you can get it in the code by doing `System.get_env("OPENAI_API_KEY")`.
+
+⚠️`config.exs` is compile time, so the `get_env/1` function is executed during the build, if you want to get the env variables during runtime please use `runtime.exs` instead of `config.exs` in your application ([elixir doc ref](https://elixir-lang.org/getting-started/mix-otp/config-and-releases.html#configuration)).
 
 ## Configuration override
 Client library configuration can be overwritten in runtime by passing a `%OpenAI.Config{}` struct as last argument of the function you need to use. For instance if you need to use a different `api_key`, `organization_key` or `http_options` you can simply do:
@@ -259,7 +269,7 @@ OpenAI.chat_completion(
 See: https://platform.openai.com/docs/api-reference/chat/create for the complete list of parameters you can pass to the completions function
 
 ### chat_completion() with stream
-Creates a completion for the chat message
+Creates a completion for the chat message, by default it streams to `self()`, but you can override the configuration by passing a config override to the function with a different `stream_to`  http_options parameter.
 
 #### Example request
 ```elixir
@@ -267,7 +277,7 @@ import Config
 
 config :openai,
   api_key: "your-api-key",
-  http_options: [recv_timeout: :infinity, stream_to: self(), async: :once],
+  http_options: [recv_timeout: :infinity, async: :once],
   ...
 ```
 
@@ -503,6 +513,24 @@ OpenAI.embeddings(
 ```
 See: https://platform.openai.com/docs/api-reference/embeddings/create
 
+### audio_speech(params)
+Generates audio from the input text.
+
+#### Example request
+```elixir
+OpenAI.audio_speech(
+  model: "tts-1",
+  input: "You know that Voight-Kampf test of yours. Did you ever take that test yourself?",
+  voice: "alloy"
+)
+```
+
+#### Example response
+```elixir
+  {:ok, <<255, 255, ...>>}
+```
+
+See: https://platform.openai.com/docs/api-reference/audio/create to get info on the params accepted by the api
 
 ### audio_transcription(file_path, params)
 Transcribes audio into the input language.
@@ -916,6 +944,1167 @@ OpenAI.moderations(input: "I want to kill everyone!")
 ```
 See: https://platform.openai.com/docs/api-reference/moderations/create
 
+## Beta APIs
+The following APIs are currently in beta, to use them be sure to set the `beta` parameter in your config.
+
+```elixir
+config :openai,
+  # optional, use when required by an OpenAI API beta, e.g.:
+  beta: "assistants=v1"
+```
+
+### assistants()
+Retrieves the list of assistants.
+
+#### Example request
+```elixir
+OpenAI.assistants()
+```
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "created_at" => 1699472932,
+      "description" => nil,
+      "file_ids" => ["file-..."],
+      "id" => "asst_...",
+      "instructions" => "...",
+      "metadata" => %{},
+      "model" => "gpt-4-1106-preview",
+      "name" => "...",
+      "object" => "assistant",
+      "tools" => [%{"type" => "retrieval"}]
+    }
+  ],
+  first_id: "asst_...",
+  has_more: false,
+  last_id: "asst_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/listAssistants
+
+
+### assistants(params)
+Retrieves the list of assistants filtered by query params.
+  
+#### Example request
+```elixir
+OpenAI.assistants(after: "", limit: 10)
+```
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "created_at" => 1699472932,
+      "description" => nil,
+      "file_ids" => ["file-..."],
+      "id" => "asst_...",
+      "instructions" => "...",
+      "metadata" => %{},
+      "model" => "gpt-4-1106-preview",
+      "name" => "...",
+      "object" => "assistant",
+      "tools" => [%{"type" => "retrieval"}]
+    },
+    ...
+  ],
+  first_id: "asst_...",
+  has_more: false,
+  last_id: "asst_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/listAssistants
+
+### assistants(assistant_id)
+Retrieves an assistant by its id.
+  
+#### Example request
+```elixir
+OpenAI.assistants("asst_...")
+```
+#### Example response
+```elixir
+{:ok,
+%{
+  created_at: 1699472932,
+  description: nil,
+  file_ids: ["file-..."],
+  id: "asst_...",
+  instructions: "...",
+  metadata: %{},
+  model: "gpt-4-1106-preview",
+  name: "...",
+  object: "assistant",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/getAssistant
+
+### assistants_create(params)
+Creates a new assistant.
+
+#### Example request
+```elixir
+OpenAI.assistants_create(
+  model: "gpt-3.5-turbo-1106",
+  name: "My assistant",
+  instructions: "You are a research assistant.",
+  tools: [
+    %{type: "retrieval"}
+  ],
+  file_ids: ["file-..."]
+)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  created_at: 1699640038,
+  description: nil,
+  file_ids: ["file-..."],
+  id: "asst_...",
+  instructions: "You are a research assistant.",
+  metadata: %{},
+  model: "gpt-3.5-turbo-1106",
+  name: "My assistant",
+  object: "assistant",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/createAssistant
+
+
+### assistants_modify(assistant_id, params)
+Modifies an existing assistant.
+
+#### Example request
+```elixir
+OpenAI.assistants_modify(
+  "asst_...",
+  model: "gpt-4-1106-preview",
+  name: "My upgraded assistant"
+)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  created_at: 1699640038,
+  description: nil,
+  file_ids: ["file-..."],
+  id: "asst_...",
+  instructions: "You are a research assistant.",
+  metadata: %{},
+  model: "gpt-4-1106-preview",
+  name: "My upgraded assistant"
+  object: "assistant",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/modifyAssistant
+
+### assistants_delete(assistant_id)
+Deletes an assistant.
+
+#### Example request
+```elixir
+OpenAI.assistants_delete("asst_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  deleted: true,
+  id: "asst_...",
+  object: "assistant.deleted"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistant
+
+### assistant_files(assistant_id)
+Retrieves the list of files associated with a particular assistant.
+
+#### Example request
+```elixir
+OpenAI.assistant_files("asst_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => "asst_...",
+      "created_at" => 1699472933,
+      "id" => "file-...",
+      "object" => "assistant.file"
+    }
+  ],
+  first_id: "file-...",
+  has_more: false,
+  last_id: "file-...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles
+
+### assistant_files(assistant_id, params)
+Retrieves the list of files associated with a particular assistant, filtered by query params.
+
+#### Example request
+```elixir
+OpenAI.assistant_files("asst_...", order: "desc")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => "asst_...",
+      "created_at" => 1699472933,
+      "id" => "file-...",
+      "object" => "assistant.file"
+    }
+  ],
+  first_id: "file-...",
+  has_more: false,
+  last_id: "file-...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/listAssistantFiles
+
+### assistant_file(assistant_id, file_id)
+Retrieves an assistant file by its id
+
+#### Example request
+```elixir
+OpenAI.assistant_file("asst_...", "file_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: "asst_...",
+  created_at: 1699472933,
+  id: "file-...",
+  object: "assistant.file"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/getAssistantFile
+
+### assistant_file_create(assistant_id, params)
+Attaches a previously uploaded file to the assistant.
+
+#### Example request
+```elixir
+OpenAI.assistant_file_create("asst_...", file_id: "file-...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: "asst_...",
+  created_at: 1699472933,
+  id: "file-...",
+  object: "assistant.file"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/createAssistantFile
+
+### assistant_file_delete(assistant_id, file_id)
+Detaches a file from the assistant. The file itself is not automatically deleted.
+
+#### Example request
+```elixir
+OpenAI.assistant_file_delete("asst_...", "file-...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  deleted: true,
+  id: "file-...",
+  object: "assistant.file.deleted"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/assistants/deleteAssistantFile
+
+### threads()
+Retrieves the list of threads. 
+**NOTE:** At the time of this writing this functionality remains undocumented by OpenAI.
+
+#### Example request
+```elixir
+OpenAI.threads()
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "created_at" => 1699705727,
+      "id" => "thread_...",
+      "metadata" => %{"key_1" => "value 1", "key_2" => "value 2"},
+      "object" => "thread"
+    },
+    ...
+  ],
+  first_id: "thread_...",
+  has_more: false,
+  last_id: "thread_...",
+  object: "list"
+}}
+```
+
+### threads(params)
+Retrieves the list of threads by query params. 
+**NOTE:** At the time of this writing this functionality remains undocumented by OpenAI.
+
+#### Example request
+```elixir
+OpenAI.threads(limit: 2)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "created_at" => 1699705727,
+      "id" => "thread_...",
+      "metadata" => %{"key_1" => "value 1", "key_2" => "value 2"},
+      "object" => "thread"
+    },
+    ...
+  ],
+  first_id: "thread_...",
+  has_more: false,
+  last_id: "thread_...",
+  object: "list"
+}}
+```
+
+### threads_create(params)
+Creates a new thread with some messages and metadata.
+
+#### Example request
+```elixir
+messages = [
+  %{
+    role: "user",
+    content: "Hello, what is AI?",
+    file_ids: ["file-..."]
+  },
+  %{
+    role: "user",
+    content: "How does AI work? Explain it in simple terms."
+  },
+]
+metadata = %{
+  key_1: "value 1",
+  key_2: "value 2"
+}
+OpenAI.threads_create(messages: messages, metadata: metadata)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  created_at: 1699703890,
+  id: "thread_...",
+  metadata: %{"key_1" => "value 1", "key_2" => "value 2"},
+  object: "thread"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/threads/createThread
+
+### threads_create_and_run(params)
+Creates a new thread and runs it.
+
+#### Example request
+```elixir
+messages = [
+  %{
+    role: "user",
+    content: "Hello, what is AI?",
+    file_ids: ["file-..."]
+  },
+  %{
+    role: "user",
+    content: "How does AI work? Explain it in simple terms."
+  },
+]
+
+thread_metadata = %{
+  key_1: "value 1",
+  key_2: "value 2"
+}
+
+thread = %{
+  messages: messages,
+  metadata: thread_metadata
+}
+
+run_metadata = %{
+  key_3: "value 3"
+}
+
+params = [
+  assistant_id: "asst_...",
+  thread: thread,
+  model: "gpt-4-1106-preview",
+  instructions: "You are an AI learning assistant.",
+  tools: [%{
+    "type" => "retrieval"
+  }],
+  metadata: run_metadata
+]
+
+OpenAI.threads_create_and_run(params)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: "asst_...",
+  cancelled_at: nil,
+  completed_at: nil,
+  created_at: 1699897907,
+  expires_at: 1699898507,
+  failed_at: nil,
+  file_ids: ["file-..."],
+  id: "run_...",
+  instructions: "You are an AI learning assistant.",
+  last_error: nil,
+  metadata: %{"key_3" => "value 3"},
+  model: "gpt-4-1106-preview",
+  object: "thread.run",
+  started_at: nil,
+  status: "queued",
+  thread_id: "thread_...",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/createThreadAndRun
+
+### threads_modify(thread_id, params)
+Modifies an existing thread.
+
+#### Example request
+```elixir
+metadata = %{
+  key_3: "value 3"
+}
+
+OpenAI.threads_modify("thread_...", metadata: metadata)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  created_at: 1699704406,
+  id: "thread_...",
+  metadata: %{"key_1" => "value 1", "key_2" => "value 2", "key_3" => "value 3"},
+  object: "thread"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/threads/modifyThread
+
+### threads_delete(thread_id)
+Modifies an existing thread.
+
+#### Example request
+```elixir
+OpenAI.threads_delete("thread_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  deleted: true,
+  id: "thread_...",
+  object: "thread.deleted"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/threads/deleteThread
+
+### thread_messages(thread_id)
+Retrieves the list of messages associated with a particular thread.
+
+#### Example request
+```elixir
+OpenAI.thread_messages("thread_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => nil,
+      "content" => [
+        %{
+          "text" => %{
+            "annotations" => [],
+            "value" => "How does AI work? Explain it in simple terms."
+          },
+          "type" => "text"
+        }
+      ],
+      "created_at" => 1699705727,
+      "file_ids" => [],
+      "id" => "msg_...",
+      "metadata" => %{},
+      "object" => "thread.message",
+      "role" => "user",
+      "run_id" => nil,
+      "thread_id" => "thread_..."
+    },
+    ...
+  ],
+  first_id: "msg_...",
+  has_more: false,
+  last_id: "msg_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/listMessages
+
+### thread_messages(thread_id, params)
+Retrieves the list of messages associated with a particular thread, filtered by query params.
+
+#### Example request
+```elixir
+OpenAI.thread_messages("thread_...", after: "msg_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => nil,
+      "content" => [
+        %{
+          "text" => %{
+            "annotations" => [],
+            "value" => "How does AI work? Explain it in simple terms."
+          },
+          "type" => "text"
+        }
+      ],
+      "created_at" => 1699705727,
+      "file_ids" => [],
+      "id" => "msg_...",
+      "metadata" => %{},
+      "object" => "thread.message",
+      "role" => "user",
+      "run_id" => nil,
+      "thread_id" => "thread_..."
+    },
+    ...
+  ],
+  first_id: "msg_...",
+  has_more: false,
+  last_id: "msg_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/listMessages
+
+### thread_message(thread_id, message_id)
+Retrieves a thread message by its id.
+
+#### Example request
+```elixir
+OpenAI.thread_message("thread_...", "msg_...")
+```
+
+#### Example response
+```elixir
+ {:ok,
+  %{
+    assistant_id: nil,
+    content: [
+      %{
+        "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+        "type" => "text"
+      }
+    ],
+    created_at: 1699705727,
+    file_ids: ["file-..."],
+    id: "msg_...",
+    metadata: %{},
+    object: "thread.message",
+    role: "user",
+    run_id: nil,
+    thread_id: "thread_..."
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/getMessage
+
+### create_thread_message(thread_id, params)
+Creates a message within a thread.
+
+#### Example request
+```elixir
+params = [
+  role: "user",
+  content: "Hello, what is AI?",
+  file_ids: ["file-9Riyo515uf9KVfwdSrIQiqtC"],
+  metadata: %{
+    key_1: "value 1",
+    key_2: "value 2"
+  }
+]
+OpenAI.thread_message_create("thread_...", params)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: nil,
+  content: [
+    %{
+      "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+      "type" => "text"
+    }
+  ],
+  created_at: 1699706818,
+  file_ids: ["file-..."],
+  id: "msg_...",
+  metadata: %{"key_1" => "value 1", "key_2" => "value 2"},
+  object: "thread.message",
+  role: "user",
+  run_id: nil,
+  thread_id: "thread_..."
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/createMessage
+
+
+### thread_message_modify(thread_id, message_id, params)
+Creates a message within a thread.
+
+#### Example request
+```elixir
+params = [
+  metadata: %{
+    key_3: "value 3"
+  }
+]
+
+OpenAI.thread_message_modify("thread_...", "msg_...", params)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: nil,
+  content: [
+    %{
+      "text" => %{"annotations" => [], "value" => "Hello, what is AI?"},
+      "type" => "text"
+    }
+  ],
+  created_at: 1699706818,
+  file_ids: ["file-..."],
+  id: "msg_...",
+  metadata: %{"key_1" => "value 1", "key_2" => "value 2", "key_3" => "value 3"},
+  object: "thread.message",
+  role: "user",
+  run_id: nil,
+  thread_id: "thread_..."
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/modifyMessage
+
+### thread_message_files(thread_id, message_id)
+Retrieves the list of files associated with a particular message of a thread.
+
+#### Example request
+```elixir
+OpenAI.thread_message_files("thread_...", "msg_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "created_at" => 1699706818,
+      "id" => "file-...",
+      "message_id" => "msg_...",
+      "object" => "thread.message.file"
+    }
+  ],
+  first_id: "file-...",
+  has_more: false,
+  last_id: "file-...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/listMessageFiles
+
+### thread_message_files(thread_id, message_id, params)
+ Retrieves the list of files associated with a particular message of a thread, filtered by query params.
+
+#### Example request
+```elixir
+OpenAI.thread_message_files("thread_...", "msg_...", after: "file-...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  data: [
+    %{
+      "created_at" => 1699706818,
+      "id" => "file-...",
+      "message_id" => "msg_...",
+      "object" => "thread.message.file"
+    }
+  ],
+  first_id: "file-...",
+  has_more: false,
+  last_id: "file-...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/listMessageFiles
+
+### thread_message_file(thread_id, message_id, file_id)
+Retrieves the message file object.
+
+#### Example request
+```elixir
+OpenAI.thread_message_file("thread_...", "msg_...", "file-...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  created_at: 1699706818,
+  id: "file-...",
+  message_id: "msg_...",
+  object: "thread.message.file"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/messages/getMessageFile
+
+### thread_runs(thread_id, params)
+Retrieves the list of runs associated with a particular thread, filtered by query params.
+
+#### Example request
+```elixir
+OpenAI.thread_runs("thread_...", limit: 10)
+```
+
+#### Example response
+```elixir
+{:ok, %{
+  data: [],
+  first_id: nil,
+  has_more: false,
+  last_id: nil,
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/listRuns
+
+### thread_run(thread_id, run_id)
+Retrieves a particular thread run by its id.
+
+#### Example request
+```elixir
+OpenAI.thread_run("thread_...", "run_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+ %{
+   assistant_id: "asst_J",
+   cancelled_at: nil,
+   completed_at: 1700234149,
+   created_at: 1700234128,
+   expires_at: nil,
+   failed_at: nil,
+   file_ids: [],
+   id: "run_",
+   instructions: "You are an AI learning assistant.",
+   last_error: nil,
+   metadata: %{"key_3" => "value 3"},
+   model: "gpt-4-1106-preview",
+   object: "thread.run",
+   started_at: 1700234129,
+   status: "expired",
+   thread_id: "thread_",
+   tools: [%{"type" => "retrieval"}]
+ }}
+```
+See: https://platform.openai.com/docs/api-reference/runs/getRun
+
+### thread_run_create(thread_id, params)
+Creates a run for a thread using a particular assistant.
+
+#### Example request
+```elixir
+params = [
+  assistant_id: "asst_...",
+  model: "gpt-4-1106-preview",
+  tools: [%{
+    "type" => "retrieval"
+  }]
+]
+OpenAI.thread_run_create("thread_...", params)
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: "asst_...",
+  cancelled_at: nil,
+  completed_at: nil,
+  created_at: 1699711115,
+  expires_at: 1699711715,
+  failed_at: nil,
+  file_ids: ["file-..."],
+  id: "run_...",
+  instructions: "...",
+  last_error: nil,
+  metadata: %{},
+  model: "gpt-4-1106-preview",
+  object: "thread.run",
+  started_at: nil,
+  status: "queued",
+  thread_id: "thread_...",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/createRun
+
+
+### thread_run_modify(thread_id, run_id, params)
+Modifies an existing thread run.
+
+#### Example request
+```elixir
+params = [
+  metadata: %{
+    key_3: "value 3"
+  }
+]
+OpenAI.thread_run_modify("thread_...", "run_...", params)
+```
+
+#### Example response
+```elixir
+ {:ok,
+%{
+  assistant_id: "asst_...",
+  cancelled_at: nil,
+  completed_at: 1699711125,
+  created_at: 1699711115,
+  expires_at: nil,
+  failed_at: nil,
+  file_ids: ["file-..."],
+  id: "run_...",
+  instructions: "...",
+  last_error: nil,
+  metadata: %{"key_3" => "value 3"},
+  model: "gpt-4-1106-preview",
+  object: "thread.run",
+  started_at: 1699711115,
+  status: "expired",
+  thread_id: "thread_...",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/modifyRun
+
+
+### thread_run_submit_tool_outputs(thread_id, run_id, params)
+When a run has the status: `"requires_action"` and `required_action.type` is `submit_tool_outputs`, this endpoint can be used to submit the outputs from the tool calls once they're all completed. All outputs must be submitted in a single request.
+
+#### Example request
+```elixir
+params = [
+  tool_outputs: [%{
+    tool_call_id: "call_abc123",
+    output: "test"
+  }]
+]
+OpenAI.thread_run_submit_tool_outputs("thread_...", "run_...", params)
+```
+
+#### Example response
+```elixir
+{:ok,
+  %{
+    assistant_id: "asst_abc123",
+    cancelled_at: nil,
+    completed_at: nil,
+    created_at: 1699075592,
+    expires_at: 1699076192,
+    failed_at: nil,
+    file_ids: [],
+    id: "run_abc123",
+    instructions: "You tell the weather.",
+    last_error: nil,
+    metadata: %{},
+    model: "gpt-4",
+    object: "thread.run",
+    started_at: 1699075592,
+    status: "queued",
+    thread_id: "thread_abc123",
+    tools: [
+      %{
+        "function" => %{
+          "description" => "Determine weather in my location",
+          "name" => "get_weather",
+          "parameters" => %{
+            "properties" => %{
+              "location" => %{
+                "description" => "The city and state e.g. San Francisco, CA",
+                "type" => "string"
+              },
+              "unit" => %{"enum" => ["c", "f"], "type" => "string"}
+            },
+            "required" => ["location"],
+            "type" => "object"
+          }
+        },
+        "type" => "function"
+      }
+    ]
+  }
+}
+```
+See: https://platform.openai.com/docs/api-reference/runs/submitToolOutputs
+
+### thread_run_cancel(thread_id, run_id)
+Cancels an `in_progress` run.
+
+#### Example request
+```elixir
+OpenAI.thread_run_cancel("thread_...", "run_...")
+```
+
+#### Example response
+```elixir
+ {:ok,
+%{
+  assistant_id: "asst_...",
+  cancelled_at: nil,
+  completed_at: 1699711125,
+  created_at: 1699711115,
+  expires_at: nil,
+  failed_at: nil,
+  file_ids: ["file-..."],
+  id: "run_...",
+  instructions: "...",
+  last_error: nil,
+  metadata: %{"key_3" => "value 3"},
+  model: "gpt-4-1106-preview",
+  object: "thread.run",
+  started_at: 1699711115,
+  status: "expired",
+  thread_id: "thread_...",
+  tools: [%{"type" => "retrieval"}]
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/cancelRun
+
+### thread_run_steps(thread_id, run_id)
+Retrieves the list of steps associated with a particular run of a thread.
+
+#### Example request
+```elixir
+OpenAI.thread_run_steps("thread_...", "run_...")
+```
+
+#### Example response
+```elixir
+ {:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => "asst_...",
+      "cancelled_at" => nil,
+      "completed_at" => 1699897927,
+      "created_at" => 1699897908,
+      "expires_at" => nil,
+      "failed_at" => nil,
+      "id" => "step_...",
+      "last_error" => nil,
+      "object" => "thread.run.step",
+      "run_id" => "run_...",
+      "status" => "completed",
+      "step_details" => %{
+        "message_creation" => %{"message_id" => "msg_..."},
+        "type" => "message_creation"
+      },
+      "thread_id" => "thread_...",
+      "type" => "message_creation"
+    }
+  ],
+  first_id: "step_...",
+  has_more: false,
+  last_id: "step_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/listRunSteps
+
+
+### thread_run_steps(thread_id, run_id, params)
+  Retrieves the list of steps associated with a particular run of a thread,
+  filtered by query params.
+
+#### Example request
+```elixir
+OpenAI.thread_run_steps("thread_...", "run_...", order: "asc")
+```
+
+#### Example response
+```elixir
+ {:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => "asst_...",
+      "cancelled_at" => nil,
+      "completed_at" => 1699897927,
+      "created_at" => 1699897908,
+      "expires_at" => nil,
+      "failed_at" => nil,
+      "id" => "step_...",
+      "last_error" => nil,
+      "object" => "thread.run.step",
+      "run_id" => "run_...",
+      "status" => "completed",
+      "step_details" => %{
+        "message_creation" => %{"message_id" => "msg_..."},
+        "type" => "message_creation"
+      },
+      "thread_id" => "thread_...",
+      "type" => "message_creation"
+    }
+  ],
+  first_id: "step_...",
+  has_more: false,
+  last_id: "step_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/listRunSteps
+
+### thread_run_steps(thread_id, run_id, params)
+Retrieves the list of steps associated with a particular run of a thread,
+  filtered by query params.
+
+#### Example request
+```elixir
+OpenAI.thread_run_steps("thread_...", "run_...", order: "asc")
+```
+
+#### Example response
+```elixir
+ {:ok,
+%{
+  data: [
+    %{
+      "assistant_id" => "asst_...",
+      "cancelled_at" => nil,
+      "completed_at" => 1699897927,
+      "created_at" => 1699897908,
+      "expires_at" => nil,
+      "failed_at" => nil,
+      "id" => "step_...",
+      "last_error" => nil,
+      "object" => "thread.run.step",
+      "run_id" => "run_...",
+      "status" => "completed",
+      "step_details" => %{
+        "message_creation" => %{"message_id" => "msg_..."},
+        "type" => "message_creation"
+      },
+      "thread_id" => "thread_...",
+      "type" => "message_creation"
+    }
+  ],
+  first_id: "step_...",
+  has_more: false,
+  last_id: "step_...",
+  object: "list"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/listRunSteps
+
+### thread_run_step(thread_id, run_id, step_id)
+Retrieves a thread run step by its id.
+
+#### Example request
+```elixir
+OpenAI.thread_run_step("thread_...", "run_...", "step_...")
+```
+
+#### Example response
+```elixir
+{:ok,
+%{
+  assistant_id: "asst_...",
+  cancelled_at: nil,
+  completed_at: 1699897927,
+  created_at: 1699897908,
+  expires_at: nil,
+  failed_at: nil,
+  id: "step_...",
+  last_error: nil,
+  object: "thread.run.step",
+  run_id: "run_...",
+  status: "completed",
+  step_details: %{
+    "message_creation" => %{"message_id" => "msg_..."},
+    "type" => "message_creation"
+  },
+  thread_id: "thread_...",
+  type: "message_creation"
+}}
+```
+See: https://platform.openai.com/docs/api-reference/runs/getRunStep
 
 ## Deprecated APIs
 The following APIs are deprecated, but currently supported by the library for retrocompatibility with older versions. If you are using the following APIs consider to remove it ASAP from your project!
