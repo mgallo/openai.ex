@@ -7,6 +7,7 @@ defmodule OpenAI.Files do
 
   def url(), do: @files_base_url
   def url(file_id), do: "#{@files_base_url}/#{file_id}"
+  def url(file_id, path), do: "#{url(file_id)}/#{path}"
 
   def fetch(config \\ %Config{}) do
     url()
@@ -15,6 +16,11 @@ defmodule OpenAI.Files do
 
   def fetch_by_id(file_id, config \\ %Config{}) do
     url(file_id)
+    |> Client.api_get(config)
+  end
+
+  def fetch_content(file_id, config \\ %Config{}) do
+    url(file_id, "content")
     |> Client.api_get(config)
   end
 
