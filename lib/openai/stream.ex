@@ -73,23 +73,32 @@ defmodule OpenAI.Stream do
   end
 
   defp parse_events(stream) do
-    Stream.transform(stream, "", fn
-      chunk, acc when is_binary(chunk) ->
-        case String.split(acc <> chunk, "\n\n") do
-          [] ->
-            {[], ""}
+    Stream.transform(
+      stream,
+      fn -> "" end,
+      fn
+        chunk, acc when is_binary(chunk) ->
+          case String.split(acc <> chunk, "\n\n") do
+            [] ->
+              {[], ""}
 
-          [tail] ->
-            {[], tail}
+            [tail] ->
+              {[], tail}
 
-          [_ | _] = events ->
-            {events, [tail]} = Enum.split(events, -1)
-            {events, tail}
-        end
+            [_ | _] = events ->
+              {events, [tail]} = Enum.split(events, -1)
+              {events, tail}
+          end
 
-      data, _acc ->
-        {[data], ""}
-    end)
+        data, _acc ->
+          {[data], ""}
+      end,
+      fn
+        "" -> {[], nil}
+        acc -> {[acc], nil}
+      end,
+      fn _acc -> :ok end
+    )
   end
 
   defp parse_data(stream) do
