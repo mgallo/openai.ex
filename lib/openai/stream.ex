@@ -95,7 +95,7 @@ defmodule OpenAI.Stream do
   defp parse_data(stream) do
     Stream.transform(stream, nil, fn
       "data: [DONE]", acc ->
-        {:halt, acc}
+        {[], acc}
 
       "data: " <> data, acc ->
         data = Jason.decode!(data)
