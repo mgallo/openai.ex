@@ -110,6 +110,10 @@ defmodule OpenAI.Stream do
         data = Jason.decode!(data)
         {[data], acc}
 
+      data, acc when is_binary(data) ->
+        data = Jason.decode!(data)
+        {[data], acc}
+
       data, acc ->
         {[data], acc}
     end)
