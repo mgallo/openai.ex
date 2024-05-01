@@ -6,6 +6,7 @@ defmodule OpenAI.Config do
 
   defstruct api_key: nil,
             organization_key: nil,
+            project_key: nil,
             beta: nil,
             http_options: nil,
             api_url: nil
@@ -17,6 +18,7 @@ defmodule OpenAI.Config do
   @config_keys [
     :api_key,
     :organization_key,
+    :project_key,
     :http_options
   ]
 
@@ -35,6 +37,7 @@ defmodule OpenAI.Config do
   # API Key
   def api_key, do: get_config_value(:api_key)
   def org_key, do: get_config_value(:organization_key)
+  def project_key, do: get_config_value(:project_key)
   def beta, do: get_config_value(:beta)
 
   # API Url

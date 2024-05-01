@@ -34,6 +34,8 @@ config :openai,
   api_key: "your-api-key",
   # find it at https://platform.openai.com/account/org-settings under "Organization ID"
   organization_key: "your-organization-key",
+  # optional, in case you are using Project API Keys 
+  project_key: "your-project-key",
   # optional, use when required by an OpenAI API beta, e.g.:
   beta: "assistants=v1",
   # optional, passed to [HTTPoison.Request](https://hexdocs.pm/httpoison/HTTPoison.Request.html) options
