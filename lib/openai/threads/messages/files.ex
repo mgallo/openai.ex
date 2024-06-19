@@ -6,7 +6,9 @@ defmodule OpenAI.Threads.Messages.Files do
   @base_url "/v1/threads"
 
   def url(thread_id, message_id), do: "#{@base_url}/#{thread_id}/messages/#{message_id}/files"
-  def url(thread_id, message_id, file_id), do: "#{@base_url}/#{thread_id}/messages/#{message_id}/files/#{file_id}"
+
+  def url(thread_id, message_id, file_id),
+    do: "#{@base_url}/#{thread_id}/messages/#{message_id}/files/#{file_id}"
 
   def fetch(thread_id, message_id, params \\ [], config \\ %Config{}) do
     url(thread_id, message_id)

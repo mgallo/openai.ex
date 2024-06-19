@@ -6,7 +6,9 @@ defmodule OpenAI.Threads.Runs.Steps do
   @base_url "/v1/threads"
 
   def url(thread_id, run_id), do: "#{@base_url}/#{thread_id}/runs/#{run_id}/steps"
-  def url(thread_id, run_id, step_id), do: "#{@base_url}/#{thread_id}/runs/#{run_id}/steps/#{step_id}"
+
+  def url(thread_id, run_id, step_id),
+    do: "#{@base_url}/#{thread_id}/runs/#{run_id}/steps/#{step_id}"
 
   def fetch(thread_id, run_id, params \\ [], config \\ %Config{}) do
     url(thread_id, run_id)
