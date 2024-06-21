@@ -19,7 +19,7 @@ defmodule OpenAI.MixProject do
   def application do
     [
       mod: {OpenAI, []},
-      applications: [:httpoison, :jason, :logger],
+      # applications: [:httpoison, :jason, :logger],
       extra_applications: [:logger]
     ]
   end
@@ -50,7 +50,8 @@ defmodule OpenAI.MixProject do
       {:httpoison, "~> 2.0"},
       {:mock, "~> 0.3.6", only: [:test]},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, ">= 0.29.3", only: :dev}
+      {:ex_doc, ">= 0.29.3", only: :dev},
+      {:ssl_verify_fun, "~> 1.1.7", manager: :rebar3, override: true}
     ]
   end
 end
