@@ -139,6 +139,22 @@ defmodule OpenAI.Client do
     end
   end
 
+  def multipart_api_post(url, file_path, name, file_name, params, config) do
+    body_params = params |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
+
+    body = {
+      :multipart,
+      [
+        {:file, file_path, {"form-data", [{:name, name}, {:filename, Path.basename(file_name)}]},
+         []}
+      ] ++ body_params
+    }
+
+    url
+    |> post(body, request_headers(config), request_options(config))
+    |> handle_response()
+  end
+
   def multipart_api_post(url, file_path, file_param, params, config) do
     body_params = params |> Enum.map(fn {k, v} -> {Atom.to_string(k), v} end)
 

@@ -3,7 +3,7 @@ defmodule OpenAI.Assistants do
   alias OpenAI.Client
   alias OpenAI.Config
 
-  @base_url "/v1/assistants"
+  @base_url "/v2/assistants"
 
   def url(), do: @base_url
   def url(assistant_id), do: "#{@base_url}/#{assistant_id}"
