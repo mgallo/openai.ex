@@ -20,8 +20,16 @@ defmodule OpenAI.MixProject do
     [
       mod: {OpenAI, []},
       applications: [:httpoison, :jason, :logger],
-      extra_applications: [:logger]
+      extra_applications: extra_applications()
     ]
+  end
+
+  defp extra_applications do
+    if Mix.env() == :test do
+      [:logger, :bypass]
+    else
+      [:logger]
+    end
   end
 
   defp description do
@@ -50,7 +58,9 @@ defmodule OpenAI.MixProject do
       {:httpoison, "~> 2.0"},
       {:mock, "~> 0.3.6", only: [:test]},
       {:mix_test_watch, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:ex_doc, ">= 0.29.3", only: :dev}
+      {:ex_doc, ">= 0.29.3", only: :dev},
+      {:plug, "~> 1.0", only: :test},
+      {:bypass, "~> 2.1", only: :test}
     ]
   end
 end
