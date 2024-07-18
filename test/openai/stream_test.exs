@@ -71,6 +71,8 @@ defmodule OpenAI.StreamTest do
           conn,
           ~s|event: thread.run.created\ndata: {"id":"run_01","object":"thread.run","created_at":1721218990,"assistant_id":"asst_01","thread_id":"thread_01","status":"queued","started_at":null,"expires_at":1721219590,"cancelled_at":null,"failed_at":null,"completed_at":null,"required_action":null,"last_error":null,"model":"gpt-4o","instructions":"content","tools":[],"tool_resources":{"code_interpreter":{"file_ids":[]}},"metadata":{},"temperature":0.01,"top_p":1.0,"max_completion_tokens":null,"max_prompt_tokens":null,"truncation_strategy":{"type":"auto","last_messages":null},"incomplete_details":null,"usage":null,"response_format":"auto","tool_choice":"auto","parallel_tool_calls":true}\n\n|
         )
+
+        conn
       end)
 
       results =
