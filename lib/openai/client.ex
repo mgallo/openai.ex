@@ -52,10 +52,14 @@ defmodule OpenAI.Client do
 
   def add_organization_header(headers, config) do
     org_key = config.organization_key || Config.org_key()
+    project_key = config.project_key || Config.project_key()
 
-    if org_key do
+    cond do
+    org_key && project_key ->
+      [{"OpenAI-Organization", org_key}, {"OpenAI-Project", project_key}] ++ headers
+    org_key ->
       [{"OpenAI-Organization", org_key} | headers]
-    else
+    true ->
       headers
     end
   end
