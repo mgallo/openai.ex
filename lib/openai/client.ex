@@ -59,7 +59,7 @@ defmodule OpenAI.Client do
       [{"OpenAI-Organization", org_key}, {"OpenAI-Project", project_key}] ++ headers
     org_key ->
       [{"OpenAI-Organization", org_key} | headers]
-    true
+    true ->
       headers
     end
   end
