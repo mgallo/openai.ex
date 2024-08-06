@@ -2297,6 +2297,31 @@ defmodule OpenAI do
     Files.delete(file_id, config)
   end
 
+  def vector_stores(params, config \\ %Config{})
+      when is_list(params) and is_struct(config) do
+    VectorStores.fetch(params, config)
+  end
+
+  def vector_stores(vector_store_id, config \\ %Config{})
+      when is_bitstring(vector_store_id) and is_struct(config) do
+    VectorStores.fetch_by_id(vector_store_id, config)
+  end
+
+  def vector_stores_create(params, config \\ %Config{})
+      when is_list(params) and is_struct(config) do
+    VectorStores.create(params, config)
+  end
+
+  def vector_stores_modify(vector_store_id, params, config \\ %Config{})
+      when is_bitstring(vector_store_id) and is_list(params) and is_struct(config) do
+    VectorStores.update(vector_store_id, params, config)
+  end
+
+  def vector_stores_delete(vector_store_id,config \\ %Config{})
+      when is_bitstring(vector_store_id) and is_struct(config) do
+    VectorStores.delete(vector_store_id, config)
+  end
+
   @doc """
    @deprecated: "use models instead"
   Get the list of available engines
