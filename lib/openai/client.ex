@@ -77,6 +77,16 @@ defmodule OpenAI.Client do
     ]
     |> add_organization_header(config)
     |> add_beta_header(config)
+    |> add_custom_headers(config)
+  end
+
+  def add_custom_headers(headers, config) do
+    custom_headers = config.headers || Config.headers()
+    if custom_headers do
+      headers ++ custom_headers
+    else
+      headers
+    end
   end
 
   def bearer(config), do: {"Authorization", "Bearer #{config.api_key || Config.api_key()}"}
